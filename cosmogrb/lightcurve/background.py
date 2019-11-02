@@ -1,6 +1,8 @@
 import numpy as np
 from numba import jit, njit
 
+from .sampler import Sampler
+
 
 
 @jit
@@ -94,18 +96,40 @@ class BackgroundSpectrumTemplate(object):
 
 
 
-class Background(object):
+class Background(Sampler):
 
     def __init__(self, tstart, tstop, average_rate, background_spectrum_template):
 
-        self._tstart = tstart
-        self._tstop = tstop
-        
 
-    def _get_background_template(self):
+        # TODO: change this as it is currently stupid
+        self._background_rate = np.random.normal(average_rate, 1)
+
+        super(Background, self).__init__(tstart=tstart,
+                                         tstop=tstop,
+                                         
+        )
+        
+        
+        
+    def _sample_background_template(self):
 
         pass
 
+    def _sample_times(self):
+        """
+        sample the background times
+
+        :returns: 
+        :rtype: 
+
+        """
+
+        
+        background_times = background_poisson_generator(self._tstart,
+                                                        self._tstop,
+                                                        self._background_rate )
+
+        return background_times
     
 class GBMBackground(Background):
 

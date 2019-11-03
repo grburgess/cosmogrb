@@ -16,9 +16,9 @@ class Sampler(object):
         """
 
 
-        # construct the times
+
         
-        self._times = self._sample_times()
+
 
 
     def _filter_deadtime(self):
@@ -26,7 +26,7 @@ class Sampler(object):
         pass
 
     
-    def _sample_times(self):
+    def sample_times(self):
 
         raise NotImplementedError()
         

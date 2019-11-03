@@ -60,12 +60,10 @@ class CPLSourceFunction(SourceFunction):
         self._trise = trise
         self._tdecay = tdecay
         self._alpha = alpha
-        self._emin = emin,
-        self._emax = emax
-        
+  
 
         
-        super(CPLSourceFunction, self).__init__()
+        super(CPLSourceFunction, self).__init__(emin=emin, emax=emax)
 
     def evolution(self, energy, time):
 

@@ -14,22 +14,15 @@ class Sampler(object):
         :rtype: 
 
         """
-
-
-
-        
-
-
-
-    def _filter_deadtime(self):
-
-        pass
-
     
     def sample_times(self):
 
         raise NotImplementedError()
-        
+
+    def sample_channel(self, size=None):
+
+        raise NotImplementedError()
+    
     @property
     def times(self):
         return self._times

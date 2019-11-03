@@ -54,6 +54,7 @@ class CPLSourceFunction(SourceFunction):
         emax=1e4,
     ):
 
+        # attach variables
         self._peak_flux = peak_flux
         self._ep_start = ep_start
         self._ep_index = ep_index
@@ -67,6 +68,7 @@ class CPLSourceFunction(SourceFunction):
 
     def evolution(self, energy, time):
 
+        # call the numba function for speed
         return _cpl_evolution(
             energy=energy,
             time=time,
@@ -85,6 +87,23 @@ class CPLSourceFunction(SourceFunction):
 def _cpl_evolution(
     energy, time, peak_flux, ep_start, ep_index, alpha, trise, tdecay, emin, emax
 ):
+    """
+    evolution of the CPL function with time
+
+    :param energy: 
+    :param time: 
+    :param peak_flux: 
+    :param ep_start: 
+    :param ep_index: 
+    :param alpha: 
+    :param trise: 
+    :param tdecay: 
+    :param emin: 
+    :param emax: 
+    :returns: 
+    :rtype: 
+
+    """
 
     out = np.zeros((time.shape[0], energy.shape[0]))
 

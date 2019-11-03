@@ -76,7 +76,7 @@ class Response(object):
 
             p_total -= 1
 
-        return pha_channel, detected
+        return pha_channel, np.array(detected)
 
 
 class GBMResponse(Response):
@@ -93,7 +93,7 @@ class GBMResponse(Response):
 
     def _compute_geometric_area(self, angle):
         """
-        compute the geometric area of the detector 
+        compute the geometric area of the detector
         for a given viewing angle
 
         :param angle: 

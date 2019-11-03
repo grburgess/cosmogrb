@@ -26,7 +26,7 @@ REQUIRED = [
     "astropy",
     "cython",
     "betagen",
-    "popsynth"
+    "popsynth",
 #    "stan_utility",
     "tqdm",
     "numba",

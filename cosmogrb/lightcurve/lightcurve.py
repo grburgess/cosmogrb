@@ -10,7 +10,7 @@ class LightCurve(object):
         Lightcurve generator for source and background
         per detector. 
 
-        Detectors have to be added for this to work
+
 
         :param source: 
         :param background: 
@@ -22,55 +22,38 @@ class LightCurve(object):
         self._source = source
         self._background = background
 
-        self._detectors = OrderedDict()
-        self._initial_source_light_curves = OrderedDict()
-        self._initial_bkg_light_curves = OrderedDict()
 
-        self._initial_source_channels = OrderedDict()
-        self._initial_bkg_channels = OrderedDict()
+        self._initial_source_light_curves = None 
+        self._initial_bkg_light_curves = None 
+
+        self._initial_source_channels = None 
+        self._initial_bkg_channels = None 
 
 
         
-
-    def add_detector(self, name, response):
-
-
-        self._detectors[name] = response
 
 
     def _sample_source(self):
 
-        for k,v in self._detectors.items():
 
+        times = self._source.sample_times()
+        pha, selection = self._source.sample_channel()
 
-            times = self._source.sample_times()
-            pha, selection = self._source.sample_channel()
+        # we have to removed the photons that were not detected
+        # 
 
-            # we have to removed the photons that were not detected
-            # 
-            
-            self._initial_source_light_curves[k] = times[selection]
-            self._initial_source_channels[k] = pha[selection]
+        self._initial_source_light_curves[k] = times[selection]
+        self._initial_source_channels[k] = pha[selection]
 
     def _sample_background(self):
 
-        for k,v in self._detectors.items():
-
-
-            self._initial_bkg_light_curves[k] = self._background.sample_times()
-            self._initial_bkg_channels[k] = self._background.sample_channel()
+        self._initial_bkg_light_curves[k] = self._background.sample_times()
+        self._initial_bkg_channels[k] = self._background.sample_channel()
         
         
     def _apply_responses(self):
+        pass
 
-        for k, v in self._detectors.items():
-
-            pass
-
-        
-    @property
-    def detectors(self):
-        return self._detectors
         
 
 

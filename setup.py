@@ -25,12 +25,10 @@ REQUIRED = [
     "pandas",
     "astropy",
     "cython",
-    "betagen",
     "popsynth",
-#    "stan_utility",
     "tqdm",
     "numba",
-    "hypothesis"
+
 ]
 
 # What packages are optional?

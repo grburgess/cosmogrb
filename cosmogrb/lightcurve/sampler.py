@@ -14,7 +14,11 @@ class Sampler(object):
         :rtype: 
 
         """
-    
+
+        self._tstart = tstart
+        self._tstop = tstop
+
+        
     def sample_times(self):
 
         raise NotImplementedError()

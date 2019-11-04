@@ -1,11 +1,15 @@
 import numpy as np
 from numba import jit, njit
+import h5py
+import os
+
 
 from .sampler import Sampler
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
 
-@jit
+@jit(forceobj=True)
 def background_poisson_generator(tstart, tstop, rate):
     """
 
@@ -28,7 +32,7 @@ def background_poisson_generator(tstart, tstop, rate):
         time = time - (1.0 / fmax) * np.log(np.random.rand())
         test = np.random.rand()
 
-        p_test = (intercept + slope * time) / fmax
+        p_test = rate / fmax
 
         if test <= p_test:
             arrival_times.append(time)
@@ -39,7 +43,7 @@ def background_poisson_generator(tstart, tstop, rate):
 
 class BackgroundSpectrumTemplate(object):
 
-    def __init__(self, counts):
+    def __init__(self, counts, start_at_one=False):
         """
         A background template stores and samples 
         from a predefined background distribution
@@ -52,7 +56,13 @@ class BackgroundSpectrumTemplate(object):
 
 
         self._counts = counts
-        self._channels = np.range(len(counts))
+
+        j = 0
+        if start_at_one:
+            j=1
+
+        
+        self._channels = [i + j for i in range(len(counts))]
 
         
         self._normalize_counts()
@@ -88,9 +98,24 @@ class BackgroundSpectrumTemplate(object):
 
 
     @classmethod
-    def from_file(cls, file_name):
+    def from_file(cls, file_name, start_at_one=False):
+        """
+        Read the counts from a HDF5 file that has
+        a dataset in its top directory called counts
 
-        return cls()
+        :param cls: 
+        :param file_name: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        with h5py.File(file_name, 'r') as f:
+
+            counts = f['counts'][()]
+            
+        
+        return cls(counts, start_at_one)
 
 
 
@@ -98,12 +123,14 @@ class BackgroundSpectrumTemplate(object):
 
 class Background(Sampler):
 
-    def __init__(self, tstart, tstop, average_rate, background_spectrum_template):
+    def __init__(self, tstart, tstop, average_rate=1000, background_spectrum_template=None):
 
 
         # TODO: change this as it is currently stupid
-        self._background_rate = np.random.normal(average_rate, 1)
+        self._background_rate = np.random.normal(average_rate, 10)
 
+        self._background_spectrum_template = background_spectrum_template
+        
         super(Background, self).__init__(tstart=tstart,
                                          tstop=tstop,
                                          
@@ -111,11 +138,8 @@ class Background(Sampler):
         
         
         
-    def _sample_background_template(self):
 
-        pass
-
-    def _sample_times(self):
+    def sample_times(self):
         """
         sample the background times
 
@@ -130,11 +154,55 @@ class Background(Sampler):
                                                         self._background_rate )
 
         return background_times
+
+    def sample_channel(self, size=None):
+        """
+        Sample the background template. Other options
+        do not exist yet
+
+        :param size: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if self._background_spectrum_template is not None:
+
+            return self._background_spectrum_template.sample_channel(size=size)
+
+        else:
+
+            raise NotImplementedError()
+
+        
+        
+
+_allowed_gbm_detectors = ('n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'na', 'nb', 'b1', 'b0')
     
 class GBMBackground(Background):
 
-    def __init__(self):
+    def __init__(self, tstart, tstop, average_rate=1000, detector= None  ):
 
+
+        assert detector in _allowed_gbm_detectors, 'must use a proper GBM detector n<> or b<>'
+
+        # get the GBM background spectral template
+
+        detector_file = get_path_of_data_file(os.path.join('gbm_backgrounds', f'{detector}.h5'))
+
+        # create a template
+        
+        background_spectrum_template = BackgroundSpectrumTemplate.from_file(detector_file, start_at_one=True)
+
+        # call the super class
+        
+        super(GBMBackground, self).__init__(tstart = tstart,
+                                            tstop = tstop,
+                                            average_rate = average_rate,
+                                            background_spectrum_template = background_spectrum_template
+
+        )
+        
         
         
 

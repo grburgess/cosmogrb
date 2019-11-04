@@ -17,7 +17,7 @@ def norris(x, K, t_start, t_rise, t_decay):
         return 0.0
 
 
-@jit
+@jit(forceobj=True)
 def source_poisson_generator(tstart, tstop, function, fmax):
     """
     Non-homogeneous poisson process generator

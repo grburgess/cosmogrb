@@ -1,4 +1,12 @@
 import numpy as np
+import os
+
+from gbmgeometry import PositionInterpolator, GBM
+from gbm_drm_gen import DRMGenTTE
+
+from astropy.coordinates import SkyCoord
+
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
 class Response(object):
@@ -79,19 +87,47 @@ class Response(object):
         return pha_channel, np.array(detected)
 
 
+_T0 = 576201540.940077
+_pos_interp = PositionInterpolator(
+    poshist=get_path_of_data_file("posthist.fit"), T0=_T0
+)
+
+
 class GBMResponse(Response):
-    def __init__(self, file_name, radius, height, angle):
+    def __init__(self, detector_name, ra, dec, time, radius, height):
 
         self._radius = radius
         self._height = height
 
+        self._setup_gbm_geometry(detector_name, ra, dec, time)
+
+        self._create_matrix(detector_name, ra, dec, time)
+
         geomtric_area = self._compute_geometric_area(angle)
 
-        matrix = self._read_matrix(file_name)
+        matrix = self._read_matrix(detector_name, ra, dec)
 
         super(GBMResponse, self).__init__(matrix=matrix, geomtric_area=geomtric_area)
 
-    def _compute_geometric_area(self, angle):
+    def _setup_gbm_geometry(self, detector_name, ra, dec, time):
+
+        # create a gbm for this time
+
+        gbm = GBM(_pos_interp.quaternion(time), _pos_interp.sc_pos(time))
+
+        # get the detector
+        detector = gbm.detectors[detector_name]
+
+        # make a scky coordinate
+        coord = SkyCoord(ra, dec, unit="deg", frame="icrs")
+
+        # get the detector center
+        detector_center = detector.center
+
+        # computer the seperation angle in rad
+        self._seperation_angle = np.deg2rad(detector_center.separation(coord).value)
+
+    def _compute_geometric_area(self):
         """
         compute the geometric area of the detector
         for a given viewing angle
@@ -102,39 +138,62 @@ class GBMResponse(Response):
 
         """
 
-        return np.fabs(np.pi * (self._radius ** 2) * np.cos(angle)) + np.fabs(
-            2 * self._radius * self._height * np.sin(angle)
-        )
+        return np.fabs(
+            np.pi * (self._radius ** 2) * np.cos(self._separation_angle)
+        ) + np.fabs(2 * self._radius * self._height * np.sin(self._separation_angle))
 
-
-    def _read_matrix(self, file_name):
+    def _create_matrix(self, detector_name, ra, dec, time):
         """
-        read a 
+        Create the response matrix for the given time and location
 
-        :param file_name: 
+        :param detector_name: 
+        :param ra: 
+        :param dec: 
+        :param time: 
         :returns: 
         :rtype: 
 
         """
-        
-        pass
+
+        drm_gen = DRMGenTTE(
+            det_name=det_translate[detector_name],
+            time=time,
+            T0=_T0,
+            cspecfile=get_path_of_data_file(
+                os.path.join("gbm_cspec", f"{detector_name}.pha")
+            ),
+            posthist=get_path_of_data_file("posthist.fit"),
+            mat_type=2,
+        )
+
+        drm_gen.set_location(ra, dec)
+
+        return drm_gen.matrix
 
 
-        
-    
 class NaIResponse(GBMResponse):
-    def __init__(self, file_name, angle):
+    def __init__(self, detector_name, ra, dec, time):
 
         super(NaIResponse, self).__init__(
-            file_name=file_name, angle=angle, radius=0.5 * 12.7, height=1.27
+            ra=ra,
+            dec=dec,
+            time=time,
+            detector_name=detector_name,
+            radius=0.5 * 12.7,
+            height=1.27,
         )
 
 
 class BGOResponse(GBMResponse):
-    def __init__(self, file_name, angle):
+    def __init__(self, detector_name, ra, dec, time):
 
         super(BGOResponse, self).__init__(
-            file_name=file_name, angle=angle, radius=0.5 * 12.7, height=12.7
+            detector_name=detector_name,
+            ra=ra,
+            dec=dec,
+            time=time,
+            radius=0.5 * 12.7,
+            height=12.7,
         )
 
     def _compute_geometric_area(self, angle):

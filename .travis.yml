@@ -4,9 +4,13 @@ language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
 #  - "2.7"
-  - "3.5"
+#  - "3.5"
   - "3.6"
-#  - "3.7-dev"
+  - "3.7"
+os:
+  - linux
+  - osx
+
 install:
   - pip install numpy ipython scipy astropy  matplotlib pytest-cov codecov numba
   - python setup.py install

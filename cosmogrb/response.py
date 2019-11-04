@@ -42,7 +42,7 @@ class Response(object):
 
         # needs to be non zero... fix later
         self._normed_probability_matrix = np.divide(
-            self._probability_matrix, self._total_probability_per_bin
+            self._probability_matrix, self._total_probability_per_bin.reshape(1, len(self._total_probability_per_bin))
         )
 
         self._cumulative_maxtrix = np.cumsum(self._normed_probability_matrix, axis=1)
@@ -92,6 +92,23 @@ _pos_interp = PositionInterpolator(
     poshist=get_path_of_data_file("posthist.fit"), T0=_T0
 )
 
+_det_translate = dict(n0='NAI_00',
+                      n1='NAI_01',
+                      n2='NAI_02',
+                      n3='NAI_03',
+                      n4='NAI_04',
+                      n5='NAI_05',
+                      n6='NAI_06',
+                      n7='NAI_07',
+                      n8='NAI_08',
+                      n9='NAI_09',
+                      na='NAI_10',
+                      nb='NAI_11',
+                      b0='BGO_00',
+                      b1='BGO_01',
+
+)
+
 
 class GBMResponse(Response):
     def __init__(self, detector_name, ra, dec, time, radius, height):
@@ -103,11 +120,11 @@ class GBMResponse(Response):
 
         self._create_matrix(detector_name, ra, dec, time)
 
-        geomtric_area = self._compute_geometric_area(angle)
+        geometric_area = self._compute_geometric_area()
 
-        matrix = self._read_matrix(detector_name, ra, dec)
+        matrix = self._create_matrix(detector_name, ra, dec, time)
 
-        super(GBMResponse, self).__init__(matrix=matrix, geomtric_area=geomtric_area)
+        super(GBMResponse, self).__init__(matrix=matrix, geometric_area=geometric_area)
 
     def _setup_gbm_geometry(self, detector_name, ra, dec, time):
 
@@ -125,7 +142,7 @@ class GBMResponse(Response):
         detector_center = detector.center
 
         # computer the seperation angle in rad
-        self._seperation_angle = np.deg2rad(detector_center.separation(coord).value)
+        self._separation_angle = np.deg2rad(detector_center.separation(coord).value)
 
     def _compute_geometric_area(self):
         """
@@ -156,13 +173,13 @@ class GBMResponse(Response):
         """
 
         drm_gen = DRMGenTTE(
-            det_name=det_translate[detector_name],
+            det_name= _det_translate[detector_name],
             time=time,
             T0=_T0,
             cspecfile=get_path_of_data_file(
                 os.path.join("gbm_cspec", f"{detector_name}.pha")
             ),
-            posthist=get_path_of_data_file("posthist.fit"),
+            poshist=get_path_of_data_file("posthist.fit"),
             mat_type=2,
         )
 

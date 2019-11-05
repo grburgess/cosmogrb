@@ -1,4 +1,5 @@
 import numpy as np
+import numba as nb
 import os
 
 from gbmgeometry import PositionInterpolator, GBM
@@ -9,10 +10,55 @@ from astropy.coordinates import SkyCoord
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
+
+# def _sample_response()
+
+
+
+
+
+@nb.njit(fastmath=True)
+def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
+
+    pha_channels = np.zeros(len(photon_energies))
+    detections = np.zeros(len(photon_energies))
+
+    for i in range(len(photon_energies)):
+
+        idx = np.searchsorted(energy_edges, photon_energies[i]) - 1
+        p_total = total_probability[idx]
+
+        detected = False
+        pha = -99
+
+        while p_total > 0.0:
+
+            # get a uniform random number
+
+            r = np.random.random()
+
+            if r < p_total:
+
+                # get the pha channel from the cumulative distribution
+
+                pha = np.abs(cum_matrix[idx] - r).argmin()
+
+                detected = True
+
+            p_total -= 1
+
+        pha_channels[i] = pha
+        detections[i] = detected
+
+    return pha_channels, detections
+
+
+
 class Response(object):
-    def __init__(self, matrix, geometric_area):
+    def __init__(self, matrix, geometric_area, energy_edges):
 
         self._matrix = matrix
+        self._energy_edges =  energy_edges
         self._geometric_area = geometric_area
 
         self._construct_probabilities()
@@ -28,8 +74,15 @@ class Response(object):
 
         """
 
-        return self.effective_area
+        return self._effective_area
 
+    def get_photon_bin(self, energy):
+
+        return np.searchsorted(self._energy_edges, energy) - 1
+
+
+        
+    
     def _construct_probabilities(self):
 
         self._probability_matrix = self._matrix / self._geometric_area
@@ -38,16 +91,21 @@ class Response(object):
         # the total probability in each photon bin
         self._total_probability_per_bin = self._probability_matrix.sum(axis=1)
 
+        #np.linalg.norm(self._probability_matrix, axis=1, keepdims=True)
+
         non_zero_idx = self._total_probability_per_bin > 0
 
         # needs to be non zero... fix later
-        self._normed_probability_matrix = np.divide(
-            self._probability_matrix, self._total_probability_per_bin.reshape(1, len(self._total_probability_per_bin))
+        self._normed_probability_matrix = self._probability_matrix
+
+        self._normed_probability_matrix[np.where(non_zero_idx)[0], :] = (
+            self._normed_probability_matrix[np.where(non_zero_idx)[0], :]
+            / self._total_probability_per_bin[non_zero_idx, np.newaxis]
         )
 
         self._cumulative_maxtrix = np.cumsum(self._normed_probability_matrix, axis=1)
 
-    def digitize(self, photon_energy):
+    def digitize(self, photon_energies):
         """
         digitze the photon into a energy bin
         via the energy dispersion
@@ -57,56 +115,32 @@ class Response(object):
         :rtype: 
 
         """
+        pha_channels, detections = _digitize(photon_energies, self._energy_edges, self._total_probability_per_bin, self._cumulative_maxtrix)
 
-        # figure out which photon bin we have
 
-        idx = self.get_photon_bin(photon_energy)
-
-        p_total = self._total_probability_per_bin[idx]
-
-        # initially the photon is not detected
-        # and the channel is set to a dummy number
-        detected = False
-        pha_channel = -99
-
-        while p_total > 0.0:
-
-            # get a uniform random number
-
-            r = np.random.random()
-
-            if r < p_total:
-
-                # get the pha channel from the cumulative distribution
-                pha_channel = np.abs(self._cumulative_maxtrix[idx] - r).argmin()
-
-                detected = True
-
-            p_total -= 1
-
-        return pha_channel, np.array(detected)
-
+        return pha_channels, detections
+        
 
 _T0 = 576201540.940077
 _pos_interp = PositionInterpolator(
     poshist=get_path_of_data_file("posthist.fit"), T0=_T0
 )
 
-_det_translate = dict(n0='NAI_00',
-                      n1='NAI_01',
-                      n2='NAI_02',
-                      n3='NAI_03',
-                      n4='NAI_04',
-                      n5='NAI_05',
-                      n6='NAI_06',
-                      n7='NAI_07',
-                      n8='NAI_08',
-                      n9='NAI_09',
-                      na='NAI_10',
-                      nb='NAI_11',
-                      b0='BGO_00',
-                      b1='BGO_01',
-
+_det_translate = dict(
+    n0="NAI_00",
+    n1="NAI_01",
+    n2="NAI_02",
+    n3="NAI_03",
+    n4="NAI_04",
+    n5="NAI_05",
+    n6="NAI_06",
+    n7="NAI_07",
+    n8="NAI_08",
+    n9="NAI_09",
+    na="NAI_10",
+    nb="NAI_11",
+    b0="BGO_00",
+    b1="BGO_01",
 )
 
 
@@ -118,13 +152,13 @@ class GBMResponse(Response):
 
         self._setup_gbm_geometry(detector_name, ra, dec, time)
 
-        self._create_matrix(detector_name, ra, dec, time)
+
 
         geometric_area = self._compute_geometric_area()
 
-        matrix = self._create_matrix(detector_name, ra, dec, time)
+        matrix, energy_edges = self._create_matrix(detector_name, ra, dec, time)
 
-        super(GBMResponse, self).__init__(matrix=matrix, geometric_area=geometric_area)
+        super(GBMResponse, self).__init__(matrix=matrix, geometric_area=geometric_area, energy_edges=energy_edges)
 
     def _setup_gbm_geometry(self, detector_name, ra, dec, time):
 
@@ -139,10 +173,10 @@ class GBMResponse(Response):
         coord = SkyCoord(ra, dec, unit="deg", frame="icrs")
 
         # get the detector center
-        detector_center = detector.center
+        self._detector_center = detector.center
 
         # computer the seperation angle in rad
-        self._separation_angle = np.deg2rad(detector_center.separation(coord).value)
+        self._separation_angle = np.deg2rad(self._detector_center.separation(coord).value)
 
     def _compute_geometric_area(self):
         """
@@ -173,7 +207,7 @@ class GBMResponse(Response):
         """
 
         drm_gen = DRMGenTTE(
-            det_name= _det_translate[detector_name],
+            det_name=_det_translate[detector_name],
             time=time,
             T0=_T0,
             cspecfile=get_path_of_data_file(
@@ -185,7 +219,7 @@ class GBMResponse(Response):
 
         drm_gen.set_location(ra, dec)
 
-        return drm_gen.matrix
+        return drm_gen.matrix.T, drm_gen.monte_carlo_energies
 
 
 class NaIResponse(GBMResponse):

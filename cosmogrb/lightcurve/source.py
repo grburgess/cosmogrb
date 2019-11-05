@@ -1,23 +1,11 @@
 import numpy as np
 import scipy.integrate as integrate
-
+import numba as nb
 
 from .sampler import Sampler
 
 
-@njit
-def norris(x, K, t_start, t_rise, t_decay):
-    if x > t_start:
-        return (
-            K
-            * np.exp(2 * (t_rise / t_decay) ** (1 / 2))
-            * np.exp(-t_rise / (x - t_start) - (x - t_start) / t_decay)
-        )
-    else:
-        return 0.0
-
-
-@jit(forceobj=True)
+@nb.jit(forceobj=True)
 def source_poisson_generator(tstart, tstop, function, fmax):
     """
     Non-homogeneous poisson process generator
@@ -42,8 +30,33 @@ def source_poisson_generator(tstart, tstop, function, fmax):
     return np.array(arrival_times)
 
 
+@nb.jit(forceobj=True)
+def evolution_sampler(times, N, function, grid, emin, emax):
+
+    out = np.zeros(N)
+
+    for i, t in enumerate(times):
+
+        flag = True
+
+        # find the maximum of the function.
+        fmax = np.max(function(grid, np.array([t]))[0, :])
+
+        while flag:
+
+            test = np.random.uniform(0, fmax)
+            x = np.random.uniform(emin, emax)
+
+            if test <= function( np.array([x]), np.array([t]) )[0, 0] :
+
+                out[i] = x
+                flag = False
+
+    return out
+
+
 class SourceFunction(object):
-    def __init__(self, emin= 10.,  emax = 1.E4):
+    def __init__(self, emin=10.0, emax=1.0e4):
         """
         The source function in time an energy
 
@@ -54,8 +67,6 @@ class SourceFunction(object):
 
         self._emin = emin
         self._emax = emax
-
-        
 
     def evolution(self, energy, time):
 
@@ -75,22 +86,39 @@ class SourceFunction(object):
 
         ene_grid = np.logspace(np.log10(self._emin), np.log10(self._emax), 11)
 
-        return integrate.sims(self.evolution(ene_grid, time), ene_grid)
+        return integrate.simps(
+            self.evolution(ene_grid, np.array([time]))[0, :], ene_grid
+        )
+
+    @property
+    def emin(self):
+        return self._emin
+
+    @property
+    def emax(self):
+        return self._emax
 
 
 class Source(Sampler):
-    def __init_(self, tstart, tstop, source_function):
-
+    def __init__(self, tstart, tstop, source_function):
 
         self._source_function = source_function
 
-        self._fmax = self._get_energy_integrated_max()
-        
-        
+        self._energy_grid = np.logspace(
+            np.log10(self._source_function.emin),
+            np.log10(self._source_function.emax),
+            25,
+        )
+
+        # pass on tstart and tstop
+
         super(Source, self).__init__(tstart=tstart, tstop=tstop)
 
+        # precompute fmax by integrating over energy
 
-    def _get_energy_integrated_max(self, start, stop):
+        self._fmax = self._get_energy_integrated_max()
+
+    def _get_energy_integrated_max(self):
         """
         return the maximum flux in photon number integrated over the energy
         range
@@ -105,18 +133,46 @@ class Source(Sampler):
         # need to find the energy integrated peak flux
         num_grid_points = 50
 
-        time_grid = np.linspace(tstart, tstop, num_grid_points)
+        time_grid = np.linspace(self._tstart, self._tstop, num_grid_points)
 
-        fluxes= [self._source_function.energy_integrated_evolution(t) for t in time_grid]
+        fluxes = [
+            self._source_function.energy_integrated_evolution(t) for t in time_grid
+        ]
 
         return np.max(fluxes)
-        
 
-        
-        
-        
-    def _sample_times(self):
+    def sample_times(self):
+        """
+        sample the evolution function INTEGRATED
+        over energy
 
-        pass
-    
-        
+        :returns: 
+        :rtype: 
+
+        """
+
+        return source_poisson_generator(
+            self._tstart,
+            self._tstop,
+            self._source_function.energy_integrated_evolution,
+            self._fmax,
+        )
+
+    def sample_photons(self, times):
+
+        return evolution_sampler(
+            times,
+            len(times),
+            self._source_function.evolution,
+            self._energy_grid,
+            self._source_function.emin,
+            self._source_function.emax,
+        )
+
+    def sample_channel(self, photons, response):
+
+
+        channel, detect = response.digitize(photons)
+
+
+        return channel, detect

@@ -5,6 +5,18 @@ from scipy.special import gammaincc, gamma
 from .source import SourceFunction
 
 
+@nb.njit
+def norris(x, K, t_start, t_rise, t_decay):
+    if x > t_start:
+        return (
+            K
+            * np.exp(2 * (t_rise / t_decay) ** (1 / 2))
+            * np.exp(-t_rise / (x - t_start) - (x - t_start) / t_decay)
+        )
+    else:
+        return 0.0
+
+
 def ggrb_int_cpl(a, Ec, Emin, Emax):
 
     # Gammaincc does not support quantities
@@ -46,7 +58,7 @@ class CPLSourceFunction(SourceFunction):
         self,
         peak_flux=1e-6,
         ep_start=300.0,
-        ep_index=-1.0,
+        ep_tau=1.0,
         alpha=-1.0,
         trise=1.0,
         tdecay=2,
@@ -57,13 +69,11 @@ class CPLSourceFunction(SourceFunction):
         # attach variables
         self._peak_flux = peak_flux
         self._ep_start = ep_start
-        self._ep_index = ep_index
+        self._ep_tau = ep_tau
         self._trise = trise
         self._tdecay = tdecay
         self._alpha = alpha
-  
 
-        
         super(CPLSourceFunction, self).__init__(emin=emin, emax=emax)
 
     def evolution(self, energy, time):
@@ -74,7 +84,7 @@ class CPLSourceFunction(SourceFunction):
             time=time,
             peak_flux=self._peak_flux,
             ep_start=self._ep_start,
-            ep_index=self._ep_index,
+            ep_tau=self._ep_tau,
             alpha=self._alpha,
             trise=self._trise,
             tdecay=self._tdecay,
@@ -85,7 +95,7 @@ class CPLSourceFunction(SourceFunction):
 
 @nb.jit(forceobj=True)
 def _cpl_evolution(
-    energy, time, peak_flux, ep_start, ep_index, alpha, trise, tdecay, emin, emax
+    energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax
 ):
     """
     evolution of the CPL function with time
@@ -94,7 +104,7 @@ def _cpl_evolution(
     :param time: 
     :param peak_flux: 
     :param ep_start: 
-    :param ep_index: 
+    :param ep_tau: 
     :param alpha: 
     :param trise: 
     :param tdecay: 
@@ -111,8 +121,8 @@ def _cpl_evolution(
 
         K = norris(time[i], K=peak_flux, t_start=0.0, t_rise=trise, t_decay=tdecay)
 
-        ep = ep_start * np.power(time[i] / (time[i] + 1), ep_index)
+        ep = ep_start/ (1 + time[i]/ ep_tau)
 
-        out[i, :] = evaluate(energy, alpha=alpha, xp=ep, F=K, a=emin, b=emax)
+        out[i, :] = cpl(energy, alpha=alpha, xp=ep, F=K, a=emin, b=emax)
 
     return out

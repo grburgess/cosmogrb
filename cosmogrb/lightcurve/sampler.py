@@ -26,6 +26,14 @@ class Sampler(object):
     def sample_channel(self, size=None):
 
         raise NotImplementedError()
+
+    @property
+    def tstart(self):
+        return self._tstart
+
+    @property
+    def tstop(self):
+        return self._tstop
     
     @property
     def times(self):

@@ -174,8 +174,10 @@ class GBMResponse(Response):
         self._dec = dec
         self._time = time
 
+        self._detector_name = detector_name
+        
         # compute the trigger time
-        self._trigger_time = time _T0
+        self._trigger_time = time + _T0
 
         geometric_area = self._compute_geometric_area()
 
@@ -244,7 +246,7 @@ class GBMResponse(Response):
 
         self._drm_gen = drm_gen
         
-        return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm.ebounds
+        return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm_gen.ebounds
 
     @property
     def ra(self):
@@ -262,7 +264,14 @@ class GBMResponse(Response):
     def trigger_time(self):
         return self._trigger_time
 
+    @property
+    def T0(self):
+        return _T0
 
+    @property
+    def detector_name(self):
+        return self._detector_name
+    
     
     def write_rsp(self, file_name):
         """
@@ -275,7 +284,7 @@ class GBMResponse(Response):
 
         """
         
-         self._drm_gen.writeto(file_name)
+        self._drm_gen.writeto(file_name)
         
 
 class NaIResponse(GBMResponse):

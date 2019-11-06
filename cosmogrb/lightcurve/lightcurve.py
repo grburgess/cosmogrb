@@ -3,6 +3,9 @@ import numba as nb
 from collections import OrderedDict
 
 
+from cosmogrb.lightcurve.tte import TTEFile
+
+
 class LightCurve(object):
     def __init__(self, source, background, response):
         """
@@ -47,7 +50,9 @@ class LightCurve(object):
     def _sample_background(self):
 
         self._initial_bkg_light_curves = self._background.sample_times()
-        self._initial_bkg_channels = self._background.sample_channel(size=len(self._initial_bkg_light_curves))
+        self._initial_bkg_channels = self._background.sample_channel(
+            size=len(self._initial_bkg_light_curves)
+        )
 
     def _combine(self):
 
@@ -94,9 +99,28 @@ class GBMLightCurve(LightCurve):
         time, pha, selection = _gbm_dead_time(self._times, self._pha, n_intervals)
 
         selection = np.array(selection, dtype=bool)
-        
+
         self._times = time[selection]
         self._pha = pha[selection]
+
+    def write_tte(self, file_name):
+
+        tstart = self._background.tstart + self._response.T0
+        tstop = self._background.tstop + self._response.T0
+
+        tte_file = TTEFile(
+            det_name=self._response.detector_name,
+            tstart=tstart,
+            tstop=tstop,
+            trigger_time=self._response.trigger_time,
+            ra=self._response.ra,
+            dec=self._response.dec,
+            channel=np.arange(1, 129, dtype=np.int16),
+            emin=self._response.channel_edges[:-1],
+            emax=self._response.channel_edges[1:],
+            pha=self._pha,
+            time=self._times,
+        )
 
 
 @nb.njit(fastmath=True)

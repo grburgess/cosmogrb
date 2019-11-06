@@ -1,4 +1,4 @@
-from fits_file import FITSFile, FITSExtension
+from .fits_file import FITSFile, FITSExtension
 
 _det_translate = dict(
     n0="NAI_00",

@@ -74,7 +74,10 @@ class CPLSourceFunction(SourceFunction):
         self._tdecay = tdecay
         self._alpha = alpha
 
-        super(CPLSourceFunction, self).__init__(emin=emin, emax=emax)
+        assert alpha < 0., 'the rejection sampler is slow as fuck if alpha is positive'
+
+        
+        super(CPLSourceFunction, self).__init__(emin=emin, emax=emax, index=alpha)
 
     def evolution(self, energy, time):
 

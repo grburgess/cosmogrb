@@ -47,7 +47,53 @@ def evolution_sampler(times, N, function, grid, emin, emax):
             test = np.random.uniform(0, fmax)
             x = np.random.uniform(emin, emax)
 
-            if test <= function( np.array([x]), np.array([t]) )[0, 0] :
+            if test <= function(np.array([x]), np.array([t]))[0, 0]:
+
+                out[i] = x
+                flag = False
+
+    return out
+
+
+@nb.jit(forceobj=True)
+def plaw_evolution_sampler(times, N, function, index, emin, emax):
+    """
+    specialized sample for power law like functions for 
+    increased speed
+
+
+    :param times: 
+    :param N: 
+    :param function: 
+    :param index: 
+    :param emin: 
+    :param emax: 
+    :returns: 
+    :rtype: 
+
+    """
+
+    out = np.zeros(N)
+
+    for i, t in enumerate(times):
+
+        flag = True
+
+        C = function(np.array([emin]), np.array([t]))[0, 0]
+
+        while flag:
+
+            # sample from a power law
+            u = np.random.uniform(0, 1)
+            x = np.power(
+                (np.power(emax, index + 1) - np.power(emin, index + 1)) * u
+                + np.power(emin, index + 1),
+                1.0 / (index + 1.0),
+            )
+
+            y = np.random.uniform(0, C * x ** index)
+
+            if y <= function(np.array([x]), np.array([t]))[0, 0]:
 
                 out[i] = x
                 flag = False
@@ -56,7 +102,7 @@ def evolution_sampler(times, N, function, grid, emin, emax):
 
 
 class SourceFunction(object):
-    def __init__(self, emin=10.0, emax=1.0e4):
+    def __init__(self, emin=10.0, emax=1.0e4, index=None):
         """
         The source function in time an energy
 
@@ -65,6 +111,7 @@ class SourceFunction(object):
 
         """
 
+        self._index = index
         self._emin = emin
         self._emax = emax
 
@@ -90,6 +137,11 @@ class SourceFunction(object):
             self.evolution(ene_grid, np.array([time]))[0, :], ene_grid
         )
 
+
+    @property
+    def index(self):
+        return self._index
+    
     @property
     def emin(self):
         return self._emin
@@ -100,10 +152,13 @@ class SourceFunction(object):
 
 
 class Source(Sampler):
-    def __init__(self, tstart, tstop, source_function):
+    def __init__(self, tstart, tstop, source_function, use_plaw_sample=False):
 
         self._source_function = source_function
 
+
+        self._use_plaw_sample = use_plaw_sample
+        
         self._energy_grid = np.logspace(
             np.log10(self._source_function.emin),
             np.log10(self._source_function.emax),
@@ -160,19 +215,31 @@ class Source(Sampler):
 
     def sample_photons(self, times):
 
-        return evolution_sampler(
-            times,
-            len(times),
-            self._source_function.evolution,
-            self._energy_grid,
-            self._source_function.emin,
-            self._source_function.emax,
-        )
+        if not self._use_plaw_sample:
 
+            return evolution_sampler(
+                times,
+                len(times),
+                self._source_function.evolution,
+                self._energy_grid,
+                self._source_function.emin,
+                self._source_function.emax,
+            )
+
+        else:
+
+            return plaw_evolution_sampler(
+                times,
+                len(times),
+                self._source_function.evolution,
+                self._source_function.index,
+                self._source_function.emin,
+                self._source_function.emax,
+            )
+            
+        
     def sample_channel(self, photons, response):
 
-
         channel, detect = response.digitize(photons)
-
 
         return channel, detect

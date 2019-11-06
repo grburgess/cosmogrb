@@ -55,10 +55,11 @@ def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
 
 
 class Response(object):
-    def __init__(self, matrix, geometric_area, energy_edges):
+    def __init__(self, matrix, geometric_area, energy_edges, channel_edges=None):
 
         self._matrix = matrix
         self._energy_edges =  energy_edges
+        self._channel_edges = channel_edges
         self._geometric_area = geometric_area
 
         self._construct_probabilities()
@@ -121,7 +122,21 @@ class Response(object):
         return pha_channels, detections
         
 
+    @property
+    def energy_edges(self):
+        return self._energy_edges
+
+    @property
+    def channel_edges(self):
+        return self._channel_edges
+
+
+# These are just here for the position interpolator we used
+    
 _T0 = 576201540.940077
+
+_Tmax = 576288060.940076
+
 _pos_interp = PositionInterpolator(
     poshist=get_path_of_data_file("posthist.fit"), T0=_T0
 )
@@ -153,12 +168,20 @@ class GBMResponse(Response):
         self._setup_gbm_geometry(detector_name, ra, dec, time)
 
 
+        assert time + _T0 < _Tmax, 'the time specified is out of bounds for the poshist'
+        
+        self._ra = ra
+        self._dec = dec
+        self._time = time
+
+        # compute the trigger time
+        self._trigger_time = time _T0
 
         geometric_area = self._compute_geometric_area()
 
-        matrix, energy_edges = self._create_matrix(detector_name, ra, dec, time)
+        matrix, energy_edges, channel_edges = self._create_matrix(detector_name, ra, dec, time)
 
-        super(GBMResponse, self).__init__(matrix=matrix, geometric_area=geometric_area, energy_edges=energy_edges)
+        super(GBMResponse, self).__init__(matrix=matrix, geometric_area=geometric_area, energy_edges=energy_edges, channel_edges=channel_edges)
 
     def _setup_gbm_geometry(self, detector_name, ra, dec, time):
 
@@ -219,8 +242,41 @@ class GBMResponse(Response):
 
         drm_gen.set_location(ra, dec)
 
-        return drm_gen.matrix.T, drm_gen.monte_carlo_energies
+        self._drm_gen = drm_gen
+        
+        return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm.ebounds
 
+    @property
+    def ra(self):
+        return self._ra
+
+    @property
+    def dec(self):
+        return self._dec
+
+    @property
+    def time(self):
+        return self._time
+
+    @property
+    def trigger_time(self):
+        return self._trigger_time
+
+
+    
+    def write_rsp(self, file_name):
+        """
+        save the generated response to 
+        a file
+
+        :param file_name: 
+        :returns: 
+        :rtype: 
+
+        """
+        
+         self._drm_gen.writeto(file_name)
+        
 
 class NaIResponse(GBMResponse):
     def __init__(self, detector_name, ra, dec, time):

@@ -55,7 +55,7 @@ def evolution_sampler(times, N, function, grid, emin, emax):
     return out
 
 
-@nb.jit(forceobj=True)
+@nb.jit()
 def plaw_evolution_sampler(times, N, function, index, emin, emax):
     """
     specialized sample for power law like functions for 
@@ -75,11 +75,11 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax):
 
     out = np.zeros(N)
 
-    for i, t in enumerate(times):
+    for i in range(N):
 
         flag = True
 
-        C = function(np.array([emin]), np.array([t]))[0, 0]
+        C = function(emin, times[i])[0, 0]
 
         while flag:
 
@@ -91,9 +91,9 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax):
                 1.0 / (index + 1.0),
             )
 
-            y = np.random.uniform(0, C * x ** index)
+            y = np.random.uniform(0, 1) * C * np.power(x, index)
 
-            if y <= function(np.array([x]), np.array([t]))[0, 0]:
+            if y <= function(x, times[i])[0, 0]:
 
                 out[i] = x
                 flag = False
@@ -134,14 +134,13 @@ class SourceFunction(object):
         ene_grid = np.logspace(np.log10(self._emin), np.log10(self._emax), 11)
 
         return integrate.simps(
-            self.evolution(ene_grid, np.array([time]))[0, :], ene_grid
+            self.evolution(ene_grid, time)[0, :], ene_grid
         )
-
 
     @property
     def index(self):
         return self._index
-    
+
     @property
     def emin(self):
         return self._emin
@@ -156,9 +155,8 @@ class Source(Sampler):
 
         self._source_function = source_function
 
-
         self._use_plaw_sample = use_plaw_sample
-        
+
         self._energy_grid = np.logspace(
             np.log10(self._source_function.emin),
             np.log10(self._source_function.emax),
@@ -236,8 +234,7 @@ class Source(Sampler):
                 self._source_function.emin,
                 self._source_function.emax,
             )
-            
-        
+
     def sample_channel(self, photons, response):
 
         channel, detect = response.digitize(photons)

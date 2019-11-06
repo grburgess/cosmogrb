@@ -5,12 +5,12 @@ from scipy.special import gammaincc, gamma
 from .source import SourceFunction
 
 
-@nb.njit
+@nb.njit(fastmath=True)
 def norris(x, K, t_start, t_rise, t_decay):
     if x > t_start:
         return (
             K
-            * np.exp(2 * (t_rise / t_decay) ** (1 / 2))
+            * np.exp(2 * np.sqrt(t_rise / t_decay))
             * np.exp(-t_rise / (x - t_start) - (x - t_start) / t_decay)
         )
     else:
@@ -83,8 +83,8 @@ class CPLSourceFunction(SourceFunction):
 
         # call the numba function for speed
         return _cpl_evolution(
-            energy=energy,
-            time=time,
+            energy = np.atleast_1d(energy),
+            time = np.atleast_1d(time),
             peak_flux=self._peak_flux,
             ep_start=self._ep_start,
             ep_tau=self._ep_tau,

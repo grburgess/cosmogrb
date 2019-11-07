@@ -133,9 +133,7 @@ class SourceFunction(object):
 
         ene_grid = np.logspace(np.log10(self._emin), np.log10(self._emax), 11)
 
-        return integrate.simps(
-            self.evolution(ene_grid, time)[0, :], ene_grid
-        )
+        return integrate.simps(self.evolution(ene_grid, time)[0, :], ene_grid)
 
     @property
     def index(self):

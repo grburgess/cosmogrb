@@ -10,11 +10,7 @@ from astropy.coordinates import SkyCoord
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
-
 # def _sample_response()
-
-
-
 
 
 @nb.njit(fastmath=True)
@@ -53,12 +49,11 @@ def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
     return pha_channels, detections
 
 
-
 class Response(object):
     def __init__(self, matrix, geometric_area, energy_edges, channel_edges=None):
 
         self._matrix = matrix
-        self._energy_edges =  energy_edges
+        self._energy_edges = energy_edges
         self._channel_edges = channel_edges
         self._geometric_area = geometric_area
 
@@ -81,9 +76,6 @@ class Response(object):
 
         return np.searchsorted(self._energy_edges, energy) - 1
 
-
-        
-    
     def _construct_probabilities(self):
 
         self._probability_matrix = self._matrix / self._geometric_area
@@ -92,7 +84,7 @@ class Response(object):
         # the total probability in each photon bin
         self._total_probability_per_bin = self._probability_matrix.sum(axis=1)
 
-        #np.linalg.norm(self._probability_matrix, axis=1, keepdims=True)
+        # np.linalg.norm(self._probability_matrix, axis=1, keepdims=True)
 
         non_zero_idx = self._total_probability_per_bin > 0
 
@@ -116,11 +108,14 @@ class Response(object):
         :rtype: 
 
         """
-        pha_channels, detections = _digitize(photon_energies, self._energy_edges, self._total_probability_per_bin, self._cumulative_maxtrix)
-
+        pha_channels, detections = _digitize(
+            photon_energies,
+            self._energy_edges,
+            self._total_probability_per_bin,
+            self._cumulative_maxtrix,
+        )
 
         return pha_channels, detections
-        
 
     @property
     def energy_edges(self):
@@ -132,7 +127,7 @@ class Response(object):
 
 
 # These are just here for the position interpolator we used
-    
+
 _T0 = 576201540.940077
 
 _Tmax = 576288060.940076
@@ -167,23 +162,29 @@ class GBMResponse(Response):
 
         self._setup_gbm_geometry(detector_name, ra, dec, time)
 
+        assert time + _T0 < _Tmax, "the time specified is out of bounds for the poshist"
 
-        assert time + _T0 < _Tmax, 'the time specified is out of bounds for the poshist'
-        
         self._ra = ra
         self._dec = dec
         self._time = time
 
         self._detector_name = detector_name
-        
+
         # compute the trigger time
         self._trigger_time = time + _T0
 
         geometric_area = self._compute_geometric_area()
 
-        matrix, energy_edges, channel_edges = self._create_matrix(detector_name, ra, dec, time)
+        matrix, energy_edges, channel_edges = self._create_matrix(
+            detector_name, ra, dec, time
+        )
 
-        super(GBMResponse, self).__init__(matrix=matrix, geometric_area=geometric_area, energy_edges=energy_edges, channel_edges=channel_edges)
+        super(GBMResponse, self).__init__(
+            matrix=matrix,
+            geometric_area=geometric_area,
+            energy_edges=energy_edges,
+            channel_edges=channel_edges,
+        )
 
     def _setup_gbm_geometry(self, detector_name, ra, dec, time):
 
@@ -201,7 +202,9 @@ class GBMResponse(Response):
         self._detector_center = detector.center
 
         # computer the seperation angle in rad
-        self._separation_angle = np.deg2rad(self._detector_center.separation(coord).value)
+        self._separation_angle = np.deg2rad(
+            self._detector_center.separation(coord).value
+        )
 
     def _compute_geometric_area(self):
         """
@@ -245,7 +248,7 @@ class GBMResponse(Response):
         drm_gen.set_location(ra, dec)
 
         self._drm_gen = drm_gen
-        
+
         return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm_gen.ebounds
 
     @property
@@ -271,8 +274,7 @@ class GBMResponse(Response):
     @property
     def detector_name(self):
         return self._detector_name
-    
-    
+
     def write_rsp(self, file_name):
         """
         save the generated response to 
@@ -283,9 +285,9 @@ class GBMResponse(Response):
         :rtype: 
 
         """
-        
-        self._drm_gen.to_fits(self._ra, self._dec, file_name, overwrite = True)
-        
+
+        self._drm_gen.to_fits(self._ra, self._dec, file_name, overwrite=True)
+
 
 class NaIResponse(GBMResponse):
     def __init__(self, detector_name, ra, dec, time):

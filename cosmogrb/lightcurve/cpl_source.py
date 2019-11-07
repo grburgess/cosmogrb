@@ -74,17 +74,16 @@ class CPLSourceFunction(SourceFunction):
         self._tdecay = tdecay
         self._alpha = alpha
 
-        assert alpha < 0., 'the rejection sampler is slow as fuck if alpha is positive'
+        assert alpha < 0.0, "the rejection sampler is slow as fuck if alpha is positive"
 
-        
         super(CPLSourceFunction, self).__init__(emin=emin, emax=emax, index=alpha)
 
     def evolution(self, energy, time):
 
         # call the numba function for speed
         return _cpl_evolution(
-            energy = np.atleast_1d(energy),
-            time = np.atleast_1d(time),
+            energy=np.atleast_1d(energy),
+            time=np.atleast_1d(time),
             peak_flux=self._peak_flux,
             ep_start=self._ep_start,
             ep_tau=self._ep_tau,
@@ -124,7 +123,7 @@ def _cpl_evolution(
 
         K = norris(time[i], K=peak_flux, t_start=0.0, t_rise=trise, t_decay=tdecay)
 
-        ep = ep_start/ (1 + time[i]/ ep_tau)
+        ep = ep_start / (1 + time[i] / ep_tau)
 
         out[i, :] = cpl(energy, alpha=alpha, xp=ep, F=K, a=emin, b=emax)
 

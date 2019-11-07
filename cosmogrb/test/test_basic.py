@@ -10,11 +10,10 @@ from cosmogrb.lightcurve.lightcurve import GBMLightCurve
 
 def test_basic_gbm():
 
-    bkg = GBMBackground(-50,50,average_rate=100., detector='n1')
-    nai = NaIResponse('n1', 312.,-62. , 1)
-    cpl = CPLSourceFunction(peak_flux=1E-5, trise=.5,tdecay=5)
-    source = Source(0., 10.,cpl )
-
+    bkg = GBMBackground(-50, 50, average_rate=100.0, detector="n1")
+    nai = NaIResponse("n1", 312.0, -62.0, 1)
+    cpl = CPLSourceFunction(peak_flux=1e-5, trise=0.5, tdecay=5)
+    source = Source(0.0, 10.0, cpl)
 
     lc = GBMLightCurve(source, bkg, nai)
 

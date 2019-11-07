@@ -42,7 +42,7 @@ class LightCurve(object):
         selection = np.array(selection, dtype=bool)
 
         self._photons = photons
-        
+
         # we have to remove the photons that were not detected
         #
 
@@ -126,8 +126,8 @@ class GBMLightCurve(LightCurve):
 
         tte_file.writeto(file_name, overwrite=True)
 
-
         self._tte = tte_file
+
 
 @nb.njit(fastmath=True)
 def _gbm_dead_time(time, pha, n_intervals):

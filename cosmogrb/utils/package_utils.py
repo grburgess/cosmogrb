@@ -13,4 +13,3 @@ def get_path_of_data_dir():
     file_path = pkg_resources.resource_filename("cosmogrb", "data")
 
     return file_path
-

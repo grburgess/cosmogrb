@@ -8,7 +8,6 @@ from .sampler import Sampler
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
-
 @jit(forceobj=True)
 def background_poisson_generator(tstart, tstop, rate):
     """
@@ -20,7 +19,7 @@ def background_poisson_generator(tstart, tstop, rate):
     :rtype: 
 
     """
-    
+
     fmax = rate
 
     time = tstart
@@ -40,9 +39,7 @@ def background_poisson_generator(tstart, tstop, rate):
     return np.array(arrival_times)
 
 
-
 class BackgroundSpectrumTemplate(object):
-
     def __init__(self, counts, start_at_one=False):
         """
         A background template stores and samples 
@@ -54,17 +51,14 @@ class BackgroundSpectrumTemplate(object):
 
         """
 
-
         self._counts = counts
 
         j = 0
         if start_at_one:
-            j=1
+            j = 1
 
-        
         self._channels = [i + j for i in range(len(counts))]
 
-        
         self._normalize_counts()
 
     def _normalize_counts(self):
@@ -75,7 +69,7 @@ class BackgroundSpectrumTemplate(object):
         :rtype: 
 
         """
-        
+
         self._weights = self._counts / self._counts.sum()
 
     def sample_channel(self, size=None):
@@ -87,15 +81,9 @@ class BackgroundSpectrumTemplate(object):
         :rtype: 
 
         """
-        
 
-        
         # sample a channel from the background
-        return np.random.choice(self._channels,size=size, p=self._weights)
-        
-
-        
-
+        return np.random.choice(self._channels, size=size, p=self._weights)
 
     @classmethod
     def from_file(cls, file_name, start_at_one=False):
@@ -110,34 +98,26 @@ class BackgroundSpectrumTemplate(object):
 
         """
 
-        with h5py.File(file_name, 'r') as f:
+        with h5py.File(file_name, "r") as f:
 
-            counts = f['counts'][()]
-            
-        
+            counts = f["counts"][()]
+
         return cls(counts, start_at_one)
 
 
-
-
-
 class Background(Sampler):
-
-    def __init__(self, tstart, tstop, average_rate=1000, background_spectrum_template=None):
-
+    def __init__(
+        self, tstart, tstop, average_rate=1000, background_spectrum_template=None
+    ):
 
         # TODO: change this as it is currently stupid
         self._background_rate = np.random.normal(average_rate, 10)
 
         self._background_spectrum_template = background_spectrum_template
-        
-        super(Background, self).__init__(tstart=tstart,
-                                         tstop=tstop,
-                                         
+
+        super(Background, self).__init__(
+            tstart=tstart, tstop=tstop,
         )
-        
-        
-        
 
     def sample_times(self):
         """
@@ -148,10 +128,9 @@ class Background(Sampler):
 
         """
 
-        
-        background_times = background_poisson_generator(self._tstart,
-                                                        self._tstop,
-                                                        self._background_rate )
+        background_times = background_poisson_generator(
+            self._tstart, self._tstop, self._background_rate
+        )
 
         return background_times
 
@@ -174,35 +153,49 @@ class Background(Sampler):
 
             raise NotImplementedError()
 
-        
-        
 
-_allowed_gbm_detectors = ('n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'na', 'nb', 'b1', 'b0')
-    
+_allowed_gbm_detectors = (
+    "n0",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "n6",
+    "n7",
+    "n8",
+    "n9",
+    "na",
+    "nb",
+    "b1",
+    "b0",
+)
+
+
 class GBMBackground(Background):
+    def __init__(self, tstart, tstop, average_rate=1000, detector=None):
 
-    def __init__(self, tstart, tstop, average_rate=1000, detector= None  ):
-
-
-        assert detector in _allowed_gbm_detectors, 'must use a proper GBM detector n<> or b<>'
+        assert (
+            detector in _allowed_gbm_detectors
+        ), "must use a proper GBM detector n<> or b<>"
 
         # get the GBM background spectral template
 
-        detector_file = get_path_of_data_file(os.path.join('gbm_backgrounds', f'{detector}.h5'))
+        detector_file = get_path_of_data_file(
+            os.path.join("gbm_backgrounds", f"{detector}.h5")
+        )
 
         # create a template
-        
-        background_spectrum_template = BackgroundSpectrumTemplate.from_file(detector_file, start_at_one=False)
+
+        background_spectrum_template = BackgroundSpectrumTemplate.from_file(
+            detector_file, start_at_one=False
+        )
 
         # call the super class
-        
-        super(GBMBackground, self).__init__(tstart = tstart,
-                                            tstop = tstop,
-                                            average_rate = average_rate,
-                                            background_spectrum_template = background_spectrum_template
 
+        super(GBMBackground, self).__init__(
+            tstart=tstart,
+            tstop=tstop,
+            average_rate=average_rate,
+            background_spectrum_template=background_spectrum_template,
         )
-        
-        
-        
-

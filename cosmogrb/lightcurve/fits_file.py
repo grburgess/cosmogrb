@@ -116,7 +116,6 @@ class FITSExtension(object):
 
             test_value = column_data[0]
 
-            
             # Generate FITS column
 
             # By default a column does not have units, unless the content is an astropy.Quantity
@@ -146,9 +145,8 @@ class FITSExtension(object):
                     format = "%i%s" % (test_value.shape[0], format)
 
                 else:
-                    format = "1%s" % ( format)
+                    format = "1%s" % (format)
 
-                    
                 # Store the unit as text
 
                 units = str(test_value.unit)
@@ -164,7 +162,7 @@ class FITSExtension(object):
 
             elif np.isscalar(test_value):
 
-                format = '1' + _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
+                format = "1" + _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
 
             elif isinstance(test_value, list) or isinstance(test_value, np.ndarray):
 
@@ -212,7 +210,10 @@ class FITSExtension(object):
                         # All good. Check the length
                         # NOTE: variable length arrays are not supported
                         line_length = len(test_value)
-                        format = "%i%s" % (line_length + 1, _NUMPY_TO_FITS_CODE[col_type])
+                        format = "%i%s" % (
+                            line_length + 1,
+                            _NUMPY_TO_FITS_CODE[col_type],
+                        )
 
             else:
 

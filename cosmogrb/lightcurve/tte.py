@@ -125,7 +125,7 @@ class EVENTS(FITSExtension):
         ("TSTART", None, "[GLAST MET] Observation start time"),
         ("TSTOP", None, "[GLAST MET] Observation stop time"),
         ("TRIGTIME", None, "Trigger time realtive to MJDREF, double precision"),
-        #("TZERO1", None, "Time offset"),
+        # ("TZERO1", None, "Time offset"),
         ("FIFO_END", None, "Time of the last event in FIFO"),
         ("PRMT_BEG", None, "Time of the first event in prompt"),
         ("DETNAM", None, "Individual detector name"),
@@ -133,11 +133,8 @@ class EVENTS(FITSExtension):
 
     def __init__(self, det_name, tstart, tstop, trigger_time, ra, dec, pha, time):
 
-
-        
         data_list = [("TIME", time * astropy_units.s), ("PHA", pha)]
 
-                
         super(EVENTS, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
 
         self.hdu.header.set("RA_OBJ", ra)
@@ -145,7 +142,7 @@ class EVENTS(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
-        #self.hdu.header.set("TZERO1", trigger_time)
+        # self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("PRMT_BEG", trigger_time)
         self.hdu.header.set("FIFO_END", tstop)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
@@ -190,7 +187,7 @@ class GTI(FITSExtension):
         ("TSTART", None, "[GLAST MET] Observation start time"),
         ("TSTOP", None, "[GLAST MET] Observation stop time"),
         ("TRIGTIME", None, "Trigger time realtive to MJDREF, double precision"),
-       # ("TZERO1", None, "Time offset"),
+        # ("TZERO1", None, "Time offset"),
         ("DETNAM", None, "Individual detector name"),
     )
 
@@ -205,7 +202,7 @@ class GTI(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
-        #self.hdu.header.set("TZERO1", trigger_time)
+        # self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
 
 

@@ -2,7 +2,6 @@ import numpy as np
 
 
 class Sampler(object):
-
     def __init__(self, tstart, tstop):
         """
         Superclass of the background and source
@@ -18,7 +17,6 @@ class Sampler(object):
         self._tstart = tstart
         self._tstop = tstop
 
-        
     def sample_times(self):
 
         raise NotImplementedError()
@@ -34,7 +32,7 @@ class Sampler(object):
     @property
     def tstop(self):
         return self._tstop
-    
+
     @property
     def times(self):
         return self._times

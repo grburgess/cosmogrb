@@ -155,7 +155,9 @@ _det_translate = dict(
 
 
 class GBMResponse(Response):
-    def __init__(self, detector_name, ra, dec, time, radius, height):
+    def __init__(
+        self, detector_name, ra, dec, time, radius, height, save=False, name=None
+    ):
 
         self._radius = radius
         self._height = height
@@ -172,6 +174,12 @@ class GBMResponse(Response):
 
         # compute the trigger time
         self._trigger_time = time + _T0
+
+        if save:
+            assert name is not None, "if you want to save, you must have a name"
+
+        self._save = save
+        self._name = name
 
         geometric_area = self._compute_geometric_area()
 
@@ -245,9 +253,11 @@ class GBMResponse(Response):
             mat_type=2,
         )
 
-        drm_gen.set_location(ra, dec)
+        if self._save:
+            drm_gen.to_fits(ra, dec, f"{self._name}_{detector_name}.rsp", overwrite=True)
 
-        self._drm_gen = drm_gen
+        else:
+            drm_gen.set_location(ra, dec)
 
         return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm_gen.ebounds
 
@@ -290,7 +300,7 @@ class GBMResponse(Response):
 
 
 class NaIResponse(GBMResponse):
-    def __init__(self, detector_name, ra, dec, time):
+    def __init__(self, detector_name, ra, dec, time, save=False, name=None):
 
         super(NaIResponse, self).__init__(
             ra=ra,
@@ -299,11 +309,13 @@ class NaIResponse(GBMResponse):
             detector_name=detector_name,
             radius=0.5 * 12.7,
             height=1.27,
+            save=save,
+            name=name,
         )
 
 
 class BGOResponse(GBMResponse):
-    def __init__(self, detector_name, ra, dec, time):
+    def __init__(self, detector_name, ra, dec, time, save=False, name=None):
 
         super(BGOResponse, self).__init__(
             detector_name=detector_name,
@@ -312,11 +324,24 @@ class BGOResponse(GBMResponse):
             time=time,
             radius=0.5 * 12.7,
             height=12.7,
+            save=save,
+            name=name,
         )
 
-    def _compute_geometric_area(self, angle):
+    def _compute_geometric_area(self):
 
-        super(BGOResponse, self)._compute_geometric_area(angle + 0.5 * np.pi)
+        # super(BGOResponse, self)._compute_geometric_area(self._separation_angle + 0.5 * np.pi)
+
+        # this may be wrong
+
+        return np.fabs(
+            np.pi * (self._radius ** 2) * np.cos(self._separation_angle + 0.5 * np.pi)
+        ) + np.fabs(
+            2
+            * self._radius
+            * self._height
+            * np.sin(self._separation_angle + 0.5 * np.pi)
+        )
 
 
 __all__ = ["Response", "BGOResponse", "NaIResponse"]

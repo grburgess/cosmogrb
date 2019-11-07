@@ -57,11 +57,11 @@ class GBMGRB(object):
 
             if det[0] == 'b':
 
-                rsp = BGOResponse(det, ra, dec, T0)
+                rsp = BGOResponse(det, ra, dec, T0, save=True, name=name)
 
             else:
 
-                rsp = NaIResponse(det, ra, dec, T0)
+                rsp = NaIResponse(det, ra, dec, T0, save=True, name=name)
 
             bkg = GBMBackground(self._background_start, self._background_stop, average_rate = 500, detector=det)
 

@@ -3,7 +3,7 @@ import numba as nb
 from collections import OrderedDict
 
 
-from cosmogrb.lightcurve.tte import TTEFile
+from cosmogrb.utils.tte_file import TTEFile
 
 
 class LightCurve(object):

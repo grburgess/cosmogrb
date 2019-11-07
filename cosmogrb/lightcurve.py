@@ -7,7 +7,7 @@ from cosmogrb.utils.tte_file import TTEFile
 
 
 class LightCurve(object):
-    def __init__(self, source, background, response):
+    def __init__(self, source, background, response, name='SynthGRB'):
         """
         Lightcurve generator for source and background
         per detector. 
@@ -30,6 +30,8 @@ class LightCurve(object):
 
         self._initial_source_channels = None
         self._initial_bkg_channels = None
+        self._name = name
+        
 
     def _sample_source(self):
 
@@ -105,7 +107,7 @@ class GBMLightCurve(LightCurve):
         self._times = time[selection]
         self._pha = pha[selection]
 
-    def write_tte(self, file_name):
+    def write_tte(self):
 
         tstart = self._background.tstart + self._response.T0
         tstop = self._background.tstop + self._response.T0
@@ -124,9 +126,7 @@ class GBMLightCurve(LightCurve):
             time=self._times + self._response.T0,
         )
 
-        tte_file.writeto(file_name, overwrite=True)
-
-        self._tte = tte_file
+        tte_file.writeto(f"{self._name}_{self._response.detector_name}.fits", overwrite=True)
 
 
 @nb.njit(fastmath=True)

@@ -41,7 +41,7 @@ def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
 
                 # get the pha channel from the cumulative distribution
 
-                pha = np.abs(cum_matrix[idx] - r).argmin()
+                pha = int(np.abs(cum_matrix[idx] - r).argmin())
 
                 detected = True
 
@@ -284,7 +284,7 @@ class GBMResponse(Response):
 
         """
         
-        self._drm_gen.writeto(file_name)
+        self._drm_gen.to_fits(self._ra, self._dec, file_name, overwrite = True)
         
 
 class NaIResponse(GBMResponse):

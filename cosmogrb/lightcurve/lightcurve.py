@@ -41,6 +41,8 @@ class LightCurve(object):
 
         selection = np.array(selection, dtype=bool)
 
+        self._photons = photons
+        
         # we have to remove the photons that were not detected
         #
 
@@ -115,13 +117,17 @@ class GBMLightCurve(LightCurve):
             trigger_time=self._response.trigger_time,
             ra=self._response.ra,
             dec=self._response.dec,
-            channel=np.arange(1, 129, dtype=np.int16),
+            channel=np.arange(0, 128, dtype=np.int16),
             emin=self._response.channel_edges[:-1],
             emax=self._response.channel_edges[1:],
-            pha=self._pha,
-            time=self._times,
+            pha=self._pha.astype(np.int16),
+            time=self._times + self._response.T0,
         )
 
+        tte_file.writeto(file_name, overwrite=True)
+
+
+        self._tte = tte_file
 
 @nb.njit(fastmath=True)
 def _gbm_dead_time(time, pha, n_intervals):

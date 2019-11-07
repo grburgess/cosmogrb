@@ -1,3 +1,7 @@
+import numpy as np
+import astropy.units as astropy_units
+import astropy.io.fits as fits
+
 from .fits_file import FITSFile, FITSExtension
 
 _det_translate = dict(
@@ -66,7 +70,11 @@ class EBOUNDS(FITSExtension):
         self, det_name, tstart, tstop, trigger_time, ra, dec, channel, emin, emax
     ):
 
-        data_list = [("CHANNEL", channel), ("E_MIN", emin), ("E_MAX", emax)]
+        data_list = [
+            ("CHANNEL", channel),
+            ("E_MIN", emin * astropy_units.keV),
+            ("E_MAX", emax * astropy_units.keV),
+        ]
 
         super(EBOUNDS, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
 
@@ -117,7 +125,7 @@ class EVENTS(FITSExtension):
         ("TSTART", None, "[GLAST MET] Observation start time"),
         ("TSTOP", None, "[GLAST MET] Observation stop time"),
         ("TRIGTIME", None, "Trigger time realtive to MJDREF, double precision"),
-        ("TZERO1", None, "Time offset"),
+        #("TZERO1", None, "Time offset"),
         ("FIFO_END", None, "Time of the last event in FIFO"),
         ("PRMT_BEG", None, "Time of the first event in prompt"),
         ("DETNAM", None, "Individual detector name"),
@@ -125,8 +133,11 @@ class EVENTS(FITSExtension):
 
     def __init__(self, det_name, tstart, tstop, trigger_time, ra, dec, pha, time):
 
-        data_list = [("PHA", pha), ("TIME", time)]
 
+        
+        data_list = [("TIME", time * astropy_units.s), ("PHA", pha)]
+
+                
         super(EVENTS, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
 
         self.hdu.header.set("RA_OBJ", ra)
@@ -134,7 +145,7 @@ class EVENTS(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
-        self.hdu.header.set("TZERO1", trigger_time)
+        #self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("PRMT_BEG", trigger_time)
         self.hdu.header.set("FIFO_END", tstop)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
@@ -179,7 +190,7 @@ class GTI(FITSExtension):
         ("TSTART", None, "[GLAST MET] Observation start time"),
         ("TSTOP", None, "[GLAST MET] Observation stop time"),
         ("TRIGTIME", None, "Trigger time realtive to MJDREF, double precision"),
-        ("TZERO1", None, "Time offset"),
+       # ("TZERO1", None, "Time offset"),
         ("DETNAM", None, "Individual detector name"),
     )
 
@@ -194,7 +205,7 @@ class GTI(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
-        self.hdu.header.set("TZERO1", trigger_time)
+        #self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
 
 
@@ -214,14 +225,29 @@ class TTEFile(FITSFile):
         time,
     ):
 
+        # just to find the info
+        primary = fits.PrimaryHDU()
+        primary.header.set("TSTART", tstart)
+        primary.header.set("TSTOP", tstop)
+
         ebounds_extension = EBOUNDS(
             det_name, tstart, tstop, trigger_time, ra, dec, channel, emin, emax
         )
+
         events_extension = EVENTS(
-            det_name, tstart, tstop, trigger_time, ra, dec, channel, pha, time
+            det_name=det_name,
+            tstart=tstart,
+            tstop=tstop,
+            trigger_time=trigger_time,
+            ra=ra,
+            dec=dec,
+            pha=pha,
+            time=time,
         )
+
         gti_extension = GTI(det_name, tstart, tstop, trigger_time, ra, dec)
 
         super(TTEFile, self).__init__(
-            fits_extensions=[ebounds_extension, events_extension, gti_extension]
+            primary_hdu=primary,
+            fits_extensions=[ebounds_extension, events_extension, gti_extension],
         )

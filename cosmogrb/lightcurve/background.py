@@ -192,7 +192,7 @@ class GBMBackground(Background):
 
         # create a template
         
-        background_spectrum_template = BackgroundSpectrumTemplate.from_file(detector_file, start_at_one=True)
+        background_spectrum_template = BackgroundSpectrumTemplate.from_file(detector_file, start_at_one=False)
 
         # call the super class
         

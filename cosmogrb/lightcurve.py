@@ -7,7 +7,7 @@ from cosmogrb.utils.tte_file import TTEFile
 
 
 class LightCurve(object):
-    def __init__(self, source, background, response, name='SynthGRB'):
+    def __init__(self, source, background, response, name='SynthGRB', verbose=False):
         """
         Lightcurve generator for source and background
         per detector. 
@@ -31,16 +31,46 @@ class LightCurve(object):
         self._initial_source_channels = None
         self._initial_bkg_channels = None
         self._name = name
+
+        self._verbose = verbose
         
 
     def _sample_source(self):
 
+
+        if self._verbose:
+
+            print(f"{self._name}: sampling photons")
+            
+        
         times = self._source.sample_times()
 
+        if self._verbose:
+
+            print(f"{self._name}: has {len(times)} initial photons")
+            
+
+
+        
         photons = self._source.sample_photons(times)
 
+
+
+
+        
+        if self._verbose:
+
+            print(f"{self._name} sampling response")
+
+        
         pha, selection = self._source.sample_channel(photons, self._response)
 
+        if self._verbose:
+
+            print(f"{self._name}: now has {sum(selection)} counts")
+
+
+        
         selection = np.array(selection, dtype=bool)
 
         self._photons = photons
@@ -74,9 +104,23 @@ class LightCurve(object):
 
         self._sample_source()
         self._sample_background()
+
         self._combine()
+
+        if self._verbose:
+
+            print(f"{self._name}: now has {sum(self._pha)} counts")
+
+
         self._filter_deadtime()
 
+        if self._verbose:
+
+            print(f"{self._name}: now has {sum(self._pha)} counts")
+
+
+
+        
     @property
     def times(self):
         return self._times
@@ -91,10 +135,10 @@ class LightCurve(object):
 
 
 class GBMLightCurve(LightCurve):
-    def __init__(self, source, background, response):
+    def __init__(self, source, background, response, verbose=False):
 
         super(GBMLightCurve, self).__init__(
-            source=source, background=background, response=response
+            source=source, background=background, response=response, verbose=verbose
         )
 
     def _filter_deadtime(self):
@@ -102,8 +146,16 @@ class GBMLightCurve(LightCurve):
         n_intervals = len(self._times)
         time, pha, selection = _gbm_dead_time(self._times, self._pha, n_intervals)
 
+
+
+
         selection = np.array(selection, dtype=bool)
 
+        if self._verbose:
+
+            print(f"{self._name}: now has {sum(selection)} from {len(selection)} counts")
+
+        
         self._times = time[selection]
         self._pha = pha[selection]
 

@@ -82,6 +82,8 @@ class BackgroundSpectrumTemplate(object):
 
         """
 
+        np.random.seed()
+        
         # sample a channel from the background
         return np.random.choice(self._channels, size=size, p=self._weights)
 
@@ -128,6 +130,9 @@ class Background(Sampler):
 
         """
 
+
+        np.random.seed()
+        
         background_times = background_poisson_generator(
             self._tstart, self._tstop, self._background_rate
         )
@@ -145,6 +150,8 @@ class Background(Sampler):
 
         """
 
+        np.random.seed()
+        
         if self._background_spectrum_template is not None:
 
             return self._background_spectrum_template.sample_channel(size=size)

@@ -202,6 +202,8 @@ class Source(Sampler):
 
         """
 
+        np.random.seed()
+        
         return source_poisson_generator(
             self._tstart,
             self._tstop,
@@ -211,6 +213,9 @@ class Source(Sampler):
 
     def sample_photons(self, times):
 
+
+        np.random.seed()
+        
         if not self._use_plaw_sample:
 
             return evolution_sampler(

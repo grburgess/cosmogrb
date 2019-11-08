@@ -6,6 +6,9 @@ from cosmogrb.lightcurve import GBMLightCurve
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import GBMBackground
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
+
+from cosmogrb.sampler.constant_cpl import ConstantCPL
+
 from cosmogrb.response import NaIResponse, BGOResponse
 
 class GBMGRB(object):
@@ -29,7 +32,7 @@ class GBMGRB(object):
         "b1",
     )
 
-    def __init__(self, ra, dec, z, peak_flux, alpha, ep, tau, trise, duration, T0, name='SynthGRB'):
+    def __init__(self, ra, dec, z, peak_flux, alpha, ep, tau, trise, duration, T0, name='SynthGRB', verbose = False):
 
         self._ra = ra
         self._dec = dec
@@ -40,7 +43,7 @@ class GBMGRB(object):
         self._duration = duration
         self._name = name
         
-        self._cpl_source = CPLSourceFunction(peak_flux=peak_flux,
+        self._cpl_source = ConstantCPL(peak_flux=peak_flux,
                                              trise=trise,
                                              tdecay=duration - trise,
                                              ep_tau=tau,
@@ -48,7 +51,22 @@ class GBMGRB(object):
                                              ep_start=ep)
 
 
-        self._source = Source(0., duration * 2., self._cpl_source, use_plaw_sample=True)
+        
+        # self._cpl_source = CPLSourceFunction(peak_flux=peak_flux,
+        #                                      trise=trise,
+        #                                      tdecay=duration - trise,
+        #                                      ep_tau=tau,
+        #                                      alpha=alpha,
+        #                                      ep_start=ep)
+
+
+
+        
+        self._source = Source(0., duration, self._cpl_source, use_plaw_sample=True)
+
+
+        
+        #self._source = Source(0., min(duration * 10., self._background_stop ), self._cpl_source, use_plaw_sample=True)  
 
 
         self._lightcurves = []
@@ -65,7 +83,7 @@ class GBMGRB(object):
 
             bkg = GBMBackground(self._background_start, self._background_stop, average_rate = 500, detector=det)
 
-            self._lightcurves.append( GBMLightCurve(self._source, bkg, rsp)  )
+            self._lightcurves.append( GBMLightCurve(self._source, bkg, rsp, verbose = verbose)  )
 
     def go(self, n_cores=8):
 

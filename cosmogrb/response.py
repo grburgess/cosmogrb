@@ -27,24 +27,22 @@ def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
         detected = False
         pha = -99
 
-        while p_total > 0.0:
+
 
             # get a uniform random number
 
-            r = np.random.random()
+        r = np.random.random()
 
-            if r < p_total:
+        if r > p_total:
 
-                # get the pha channel from the cumulative distribution
+            # get the pha channel from the cumulative distribution
 
-                pha = int(np.abs(cum_matrix[idx] - r).argmin())
+            pha = int(np.abs(cum_matrix[idx] - r).argmin())
 
-                detected = True
+            detected = True
 
-            p_total -= 1
-
-        pha_channels[i] = pha
-        detections[i] = detected
+            pha_channels[i] = pha
+            detections[i] = detected
 
     return pha_channels, detections
 
@@ -79,6 +77,7 @@ class Response(object):
     def _construct_probabilities(self):
 
         self._probability_matrix = self._matrix / self._geometric_area
+        #self._probability_matrix = self._matrix
 
         # sum along the response to get the
         # the total probability in each photon bin
@@ -96,6 +95,9 @@ class Response(object):
             / self._total_probability_per_bin[non_zero_idx, np.newaxis]
         )
 
+
+        self._detection_probability = 1 - np.exp(-self._total_probability_per_bin )
+        
         self._cumulative_maxtrix = np.cumsum(self._normed_probability_matrix, axis=1)
 
     def digitize(self, photon_energies):
@@ -108,10 +110,13 @@ class Response(object):
         :rtype: 
 
         """
+
+        np.random.seed()
+        
         pha_channels, detections = _digitize(
             photon_energies,
             self._energy_edges,
-            self._total_probability_per_bin,
+            self._detection_probability,
             self._cumulative_maxtrix,
         )
 

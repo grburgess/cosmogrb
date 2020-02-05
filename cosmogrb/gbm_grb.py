@@ -83,7 +83,7 @@ class GBMGRB(object):
 
             bkg = GBMBackground(self._background_start, self._background_stop, average_rate = 500, detector=det)
 
-            self._lightcurves.append( GBMLightCurve(self._source, bkg, rsp, verbose = verbose)  )
+            self._lightcurves.append( GBMLightCurve(self._source, bkg, rsp, name=det, grb_name=self._name, verbose = verbose)  )
 
     def go(self, n_cores=8):
 

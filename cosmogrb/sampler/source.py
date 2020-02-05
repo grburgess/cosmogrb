@@ -116,6 +116,11 @@ class SourceFunction(object):
         self._emax = emax
 
     def evolution(self, energy, time):
+        """
+        
+        must return a matrix (time.shape, energy.shape)
+
+        """        
 
         raise NotImplementedError()
 
@@ -135,6 +140,27 @@ class SourceFunction(object):
 
         return integrate.simps(self.evolution(ene_grid, time)[0, :], ene_grid)
 
+
+    def time_integrated_spectrum(self, energy, t1, t2):
+
+        time_grid = np.linspace(t1, t2, 50)
+
+        return integrate.simps(self.evolution(energy, time_grid)[:,0], time_grid)
+
+
+    def intergral_function(self, e1, e2, t1, t2):
+        """
+        
+        """
+
+        return (e2 - e1) / 6.0 * (self.time_integrated_spectrum(e1, t1, t2)
+                                      + 4 * self.time_integrated_spectrum((e1 + e2) / 2.0, t1, t2)
+                                      + self.time_integrated_spectrum(e2, t1, t2))
+
+
+        
+
+    
     @property
     def index(self):
         return self._index

@@ -27,9 +27,7 @@ def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
         detected = False
         pha = -99
 
-
-
-            # get a uniform random number
+        # get a uniform random number
 
         r = np.random.random()
 
@@ -77,7 +75,7 @@ class Response(object):
     def _construct_probabilities(self):
 
         self._probability_matrix = self._matrix / self._geometric_area
-        #self._probability_matrix = self._matrix
+        # self._probability_matrix = self._matrix
 
         # sum along the response to get the
         # the total probability in each photon bin
@@ -95,9 +93,8 @@ class Response(object):
             / self._total_probability_per_bin[non_zero_idx, np.newaxis]
         )
 
+        self._detection_probability = 1 - np.exp(-self._total_probability_per_bin)
 
-        self._detection_probability = 1 - np.exp(-self._total_probability_per_bin )
-        
         self._cumulative_maxtrix = np.cumsum(self._normed_probability_matrix, axis=1)
 
     def digitize(self, photon_energies):
@@ -112,7 +109,7 @@ class Response(object):
         """
 
         np.random.seed()
-        
+
         pha_channels, detections = _digitize(
             photon_energies,
             self._energy_edges,
@@ -129,6 +126,40 @@ class Response(object):
     @property
     def channel_edges(self):
         return self._channel_edges
+
+    def set_function(self, integral_function=None):
+        """
+        Set the function to be used for the convolution
+        
+        :param integral_function: a function f = f(e1,e2) which returns the integral of the model between e1 and e2
+        :type integral_function: callable
+        """
+
+        self._integral_function = integral_function
+
+    def convolve(self, t1, t2):
+
+        true_fluxes = np.array(
+            [
+                self._integral_function(
+                    self._energy_edges[i], self._energy_edges[i + 1], t1, t2
+                )
+                for i in range(len(self._energy_edges) - 1)
+            ]
+        )
+
+        # Sometimes some channels have 0 lenths, or maybe they start at 0, where
+        # many functions (like a power law) are not defined. In the response these
+        # channels have usually a 0, but unfortunately for a computer
+        # inf * zero != zero. Thus, let's force this. We avoid checking this situation
+        # in details because this would have a HUGE hit on performances
+
+        idx = np.isfinite(true_fluxes)
+        true_fluxes[~idx] = 0
+
+        folded_counts = np.dot(true_fluxes, self._matrix)
+
+        return folded_counts
 
 
 # These are just here for the position interpolator we used
@@ -259,7 +290,9 @@ class GBMResponse(Response):
         )
 
         if self._save:
-            drm_gen.to_fits(ra, dec, f"{self._name}_{detector_name}.rsp", overwrite=True)
+            drm_gen.to_fits(
+                ra, dec, f"{self._name}_{detector_name}.rsp", overwrite=True
+            )
 
         else:
             drm_gen.set_location(ra, dec)

@@ -2,6 +2,7 @@ import numpy as np
 import numba as nb
 from collections import OrderedDict
 
+import copy
 
 from cosmogrb.utils.tte_file import TTEFile
 
@@ -29,10 +30,19 @@ class LightCurve(object):
 
         """
 
+        # # we want to make a deep copy because we will
+        # # add the response in and we want it to be independent
+        # self._source = copy.deepcopy(source)
+
         self._source = source
+
         self._background = background
         self._response = response
 
+        # now set the response
+
+#        self._source.set_response(self._response)
+        
         self._initial_source_light_curves = None
         self._initial_bkg_light_curves = None
 

@@ -1,6 +1,8 @@
 import numpy as np
 import numba as nb
 import os
+from scipy.interpolate import interp1d
+
 
 from gbmgeometry import PositionInterpolator, GBM
 from gbm_drm_gen import DRMGenTTE
@@ -50,13 +52,22 @@ class Response(object):
 
         self._matrix = matrix
         self._energy_edges = energy_edges
+        self._energy_width = np.diff(energy_edges)
+        self._energy_mean = (energy_edges[:-1] + energy_edges[1:]) / 2.0
+
         self._channel_edges = channel_edges
+        self._channel_width = np.diff(channel_edges)
+        self._channel_mean = (channel_edges[:-1] + channel_edges[1:]) / 2.0
+
+        
+        self._build_effective_area_curve()
+        
         self._geometric_area = geometric_area
 
         self._construct_probabilities()
 
-    @property
-    def effective_area(self):
+
+    def effective_area(self, energy):
         """
         The effective area of the detector
         in cm^2
@@ -66,7 +77,33 @@ class Response(object):
 
         """
 
-        return self._effective_area
+        return self._effective_area(energy)
+
+    def _build_effective_area_curve(self):
+
+        # first compute the effective area curve
+        # by summing over the matrix and then create
+        # and interpolation for later
+
+        ea_curve = self._matrix.sum(axis=1)
+
+        
+        self._effective_area = interp1d(
+            self._energy_mean,
+            self._matrix.sum(axis=1),
+            kind="cubic",
+            bounds_error=False,
+            fill_value=0.0,
+        )
+
+        idx = ea_curve.argmax()
+        self._max_energy = self._energy_mean[idx]
+
+
+    @property
+    def effective_area_max(self):
+        return self._max_energy
+        
 
     def get_photon_bin(self, energy):
 

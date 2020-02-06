@@ -4,6 +4,8 @@ import numba as nb
 
 from .sampler import Sampler
 
+import functools
+
 
 @nb.jit(forceobj=True)
 def source_poisson_generator(tstart, tstop, function, fmax):
@@ -56,7 +58,7 @@ def evolution_sampler(times, N, function, grid, emin, emax):
 
 
 @nb.jit()
-def plaw_evolution_sampler(times, N, function, index, emin, emax):
+def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
     """
     specialized sample for power law like functions for 
     increased speed
@@ -79,7 +81,11 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax):
 
         flag = True
 
-        C = function(emin, times[i])[0, 0]
+        # the maximum is either at the lower bound or the max effective area
+        
+        C = np.max(
+            [function(emin, times[i])[0, 0], function(eff_area_max, times[i])[0, 0]]
+        )
 
         while flag:
 
@@ -101,8 +107,29 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax):
     return out
 
 
+def evolver(method):
+    """
+    makes sure that evolution functions are correct and that 
+    they take into account the response
+    """
+
+    @functools.wraps(method)
+    def wrapper(instance, energy, time):
+
+        time = np.atleast_1d(time)
+        energy = np.atleast_1d(energy)
+
+        out = method(instance, energy, time)
+
+        assert out.shape == (len(time), len(energy))
+
+        return out * instance._response.effective_area(energy)
+
+    return wrapper
+
+
 class SourceFunction(object):
-    def __init__(self, emin=10.0, emax=1.0e4, index=None):
+    def __init__(self, emin=10.0, emax=1.0e4, index=None, response=None):
         """
         The source function in time an energy
 
@@ -115,12 +142,29 @@ class SourceFunction(object):
         self._emin = emin
         self._emax = emax
 
+        # set a response if needed
+        self._response = response
+        self._source = None
+
+    def set_response(self, response):
+
+        self._response = response
+
+    @property
+    def response(self):
+
+        return self._response
+
+    def set_source(self, source):
+
+        self._source = source
+
     def evolution(self, energy, time):
         """
         
         must return a matrix (time.shape, energy.shape)
 
-        """        
+        """
 
         raise NotImplementedError()
 
@@ -140,27 +184,27 @@ class SourceFunction(object):
 
         return integrate.simps(self.evolution(ene_grid, time)[0, :], ene_grid)
 
-
     def time_integrated_spectrum(self, energy, t1, t2):
 
         time_grid = np.linspace(t1, t2, 50)
 
-        return integrate.simps(self.evolution(energy, time_grid)[:,0], time_grid)
-
+        return integrate.simps(self.evolution(energy, time_grid)[:, 0], time_grid)
 
     def intergral_function(self, e1, e2, t1, t2):
         """
         
         """
 
-        return (e2 - e1) / 6.0 * (self.time_integrated_spectrum(e1, t1, t2)
-                                      + 4 * self.time_integrated_spectrum((e1 + e2) / 2.0, t1, t2)
-                                      + self.time_integrated_spectrum(e2, t1, t2))
+        return (
+            (e2 - e1)
+            / 6.0
+            * (
+                self.time_integrated_spectrum(e1, t1, t2)
+                + 4 * self.time_integrated_spectrum((e1 + e2) / 2.0, t1, t2)
+                + self.time_integrated_spectrum(e2, t1, t2)
+            )
+        )
 
-
-        
-
-    
     @property
     def index(self):
         return self._index
@@ -191,7 +235,19 @@ class Source(Sampler):
 
         super(Source, self).__init__(tstart=tstart, tstop=tstop)
 
+        self._source_function.set_source(self)
+
         # precompute fmax by integrating over energy
+
+        if self._source_function.response is not None:
+
+            self._fmax = self._get_energy_integrated_max()
+
+    def set_response(self, response):
+        """
+        called if there is no response upon creation
+        """
+        self._source_function.set_response(response)
 
         self._fmax = self._get_energy_integrated_max()
 
@@ -229,7 +285,7 @@ class Source(Sampler):
         """
 
         np.random.seed()
-        
+
         return source_poisson_generator(
             self._tstart,
             self._tstop,
@@ -239,9 +295,8 @@ class Source(Sampler):
 
     def sample_photons(self, times):
 
-
         np.random.seed()
-        
+
         if not self._use_plaw_sample:
 
             return evolution_sampler(
@@ -262,6 +317,7 @@ class Source(Sampler):
                 self._source_function.index,
                 self._source_function.emin,
                 self._source_function.emax,
+                self._source_function.response.effective_area_max
             )
 
     def sample_channel(self, photons, response):

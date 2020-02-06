@@ -2,7 +2,7 @@ import numba as nb
 import numpy as np
 from scipy.special import gammaincc, gamma
 
-from .source import SourceFunction
+from .source import SourceFunction, evolver
 
 
 @nb.njit(fastmath=True)
@@ -64,6 +64,7 @@ class CPLSourceFunction(SourceFunction):
         tdecay=2,
         emin=10.0,
         emax=1e4,
+        response=None
     ):
 
         # attach variables
@@ -76,8 +77,9 @@ class CPLSourceFunction(SourceFunction):
 
         assert alpha < 0.0, "the rejection sampler is slow as fuck if alpha is positive"
 
-        super(CPLSourceFunction, self).__init__(emin=emin, emax=emax, index=alpha)
+        super(CPLSourceFunction, self).__init__(emin=emin, emax=emax, index=alpha, response=response)
 
+    @evolver
     def evolution(self, energy, time):
 
         # call the numba function for speed

@@ -82,10 +82,18 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
         flag = True
 
         # the maximum is either at the lower bound or the max effective area
+
+        tmp = [function(emin, times[i])[0, 0], function(eff_area_max, times[i])[0, 0]]
+
+        idx = np.argmax(tmp)
+
+        # bump up C just in case
         
-        C = np.max(
-            [function(emin, times[i])[0, 0], function(eff_area_max, times[i])[0, 0]]
-        )
+        C = tmp[idx] * 5
+
+        # so this scheme for dealing with the effective area
+        # is likely very fragile. The idea is that power law
+        # envelope needs to be greater than the function every where
 
         while flag:
 
@@ -97,7 +105,7 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
                 1.0 / (index + 1.0),
             )
 
-            y = np.random.uniform(0, 1) * C * np.power(x/emin, index)
+            y = np.random.uniform(0, 1) * C * np.power(x/[emin, eff_area_max][idx], index)
 
             if y <= function(x, times[i])[0, 0]:
 

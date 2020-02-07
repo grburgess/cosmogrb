@@ -58,24 +58,6 @@ class GBMGRB(object):
         self._duration = duration
         self._name = name
 
-        # self._cpl_source = ConstantCPL(peak_flux=peak_flux,
-        #                                      trise=trise,
-        #                                      tdecay=duration - trise,
-        #                                      ep_tau=tau,
-        #                                      alpha=alpha,
-        #                                      ep_start=ep)
-
-        # # self._cpl_source = CPLSourceFunction(peak_flux=peak_flux,
-        # #                                      trise=trise,
-        # #                                      tdecay=duration - trise,
-        # #                                      ep_tau=tau,
-        # #                                      alpha=alpha,
-        # #                                      ep_start=ep)
-
-        # self._source = Source(0., duration, self._cpl_source, use_plaw_sample=True)
-
-        # self._source = Source(0., min(duration * 10., self._background_stop ), self._cpl_source, use_plaw_sample=True)
-
         self._lightcurves = []
 
         for det in self._gbm_detectors:
@@ -95,22 +77,26 @@ class GBMGRB(object):
                 detector=det,
             )
 
-            cpl_source = ConstantCPL(
-                peak_flux=peak_flux,
-                trise=trise,
-                tdecay=duration - trise,
-                ep_tau=tau,
-                alpha=alpha,
-                ep_start=ep,
-                response=rsp,
-            )
+            # cpl_source = ConstantCPL(
+            #     peak_flux=peak_flux,
+            #     trise=trise,
+            #     tdecay=duration - trise,
+            #     ep_tau=tau,
+            #     alpha=alpha,
+            #     ep_start=ep,
+            #     response=rsp,
+            # )
 
-            # self._cpl_source = CPLSourceFunction(peak_flux=peak_flux,
-            #                                      trise=trise,
-            #                                      tdecay=duration - trise,
-            #                                      ep_tau=tau,
-            #                                      alpha=alpha,
-            #                                      ep_start=ep)
+            cpl_source = CPLSourceFunction(peak_flux=peak_flux,
+                                           trise=trise,
+                                           tdecay=duration - trise,
+                                           ep_tau=tau,
+                                           alpha=alpha,
+                                           ep_start=ep,
+                                           response=rsp
+
+
+            )
 
             source = Source(0.0, duration, cpl_source, use_plaw_sample=True)
 

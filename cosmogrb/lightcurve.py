@@ -71,24 +71,25 @@ class LightCurve(object):
 
             print(f"{self._grb_name} {self._name} sampling response")
 
-        pha, selection = self._source.sample_channel(photons, self._response)
+        pha = self._source.sample_channel(photons, self._response)
 
         if self._verbose:
 
-            print(f"{self._grb_name} {self._name}: now has {sum(selection)} counts")
+            print(f"{self._grb_name} {self._name}: now has digitized it's events")
 
-        selection = np.array(selection, dtype=bool)
 
         self._photons = photons
-
-        # we have to remove the photons that were not detected
-        #
-
-        self._initial_source_light_curves = times[selection]
-        self._initial_source_channels = pha[selection]
+        self._initial_source_light_curves = times
+        self._initial_source_channels = pha
 
     def _sample_background(self):
 
+        if self._verbose:
+
+            print(f"{self._grb_name} {self._name}: sampling background")
+
+        
+        
         self._initial_bkg_light_curves = self._background.sample_times()
         self._initial_bkg_channels = self._background.sample_channel(
             size=len(self._initial_bkg_light_curves)

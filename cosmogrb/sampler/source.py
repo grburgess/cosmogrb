@@ -330,6 +330,6 @@ class Source(Sampler):
 
     def sample_channel(self, photons, response):
 
-        channel, detect = response.digitize(photons)
+        channel = response.digitize(photons)
 
-        return channel, detect
+        return channel

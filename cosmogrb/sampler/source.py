@@ -75,6 +75,9 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
 
     """
 
+
+    egrid = np.logspace(np.log10(emin), np.log10(emax), 500)
+    
     out = np.zeros(N)
 
     for i in range(N):
@@ -83,8 +86,10 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
 
         # the maximum is either at the lower bound or the max effective area
 
-        tmp = [function(emin, times[i])[0, 0], function(eff_area_max, times[i])[0, 0]]
+        #tmp = [function(emin, times[i])[0, 0], function(eff_area_max, times[i])[0, 0]]
 
+        tmp = function(egrid, times[i])[0,:]
+        
         idx = np.argmax(tmp)
 
         # bump up C just in case
@@ -105,7 +110,7 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
                 1.0 / (index + 1.0),
             )
 
-            y = np.random.uniform(0, 1) * C * np.power(x/[emin, eff_area_max][idx], index)
+            y = np.random.uniform(0, 1) * C * np.power(x/egrid[idx], index)
 
             if y <= function(x, times[i])[0, 0]:
 

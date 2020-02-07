@@ -12,72 +12,23 @@ from astropy.coordinates import SkyCoord
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
-# def _sample_response()
-
-
-# @nb.njit(fastmath=True)
-# def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
-
-#     pha_channels = np.zeros(len(photon_energies))
-#     detections = np.zeros(len(photon_energies))
-
-#     for i in range(len(photon_energies)):
-
-#         idx = np.searchsorted(energy_edges, photon_energies[i]) - 1
-#         p_total = total_probability[idx]
-
-#         detected = False
-#         pha = -99
-
-#         # get a uniform random number
-
-#         r = np.random.random()
-
-#         if r > p_total:
-
-#             # get the pha channel from the cumulative distribution
-
-#             pha = int(np.abs(cum_matrix[idx] - r).argmin())
-
-#             detected = True
-
-#             pha_channels[i] = pha
-#             detections[i] = detected
-
-#     return pha_channels, detections
-
-
 
 @nb.njit(fastmath=True)
-def _digitize(photon_energies, energy_edges, total_probability, cum_matrix):
+def _digitize(photon_energies, energy_edges, cum_matrix):
 
     pha_channels = np.zeros(len(photon_energies))
-    detections = np.zeros(len(photon_energies))
-
     for i in range(len(photon_energies)):
-
         idx = np.searchsorted(energy_edges, photon_energies[i]) - 1
-        p_total = total_probability[idx]
-
-        detected = False
-        pha = -99
 
         # get a uniform random number
-
         r = np.random.random()
 
-        if True:
+        # get the pha channel from the cumulative distribution
+        pha = int(np.abs(cum_matrix[idx] - r).argmin())
 
-            # get the pha channel from the cumulative distribution
+        pha_channels[i] = pha
 
-            pha = int(np.abs(cum_matrix[idx] - r).argmin())
-
-            detected = True
-
-            pha_channels[i] = pha
-            detections[i] = detected
-
-    return pha_channels, detections
+    return pha_channels
 
 
 
@@ -181,14 +132,12 @@ class Response(object):
 
         np.random.seed()
 
-        pha_channels, detections = _digitize(
+        pha_channels = _digitize(
             photon_energies,
             self._energy_edges,
-            self._detection_probability,
             self._cumulative_maxtrix,
         )
-
-        return pha_channels, detections
+        return pha_channels
 
     @property
     def energy_edges(self):

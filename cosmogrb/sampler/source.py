@@ -97,7 +97,7 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
                 1.0 / (index + 1.0),
             )
 
-            y = np.random.uniform(0, 1) * C * np.power(x, index)
+            y = np.random.uniform(0, 1) * C * np.power(x/emin, index)
 
             if y <= function(x, times[i])[0, 0]:
 

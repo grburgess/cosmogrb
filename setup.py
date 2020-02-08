@@ -27,8 +27,8 @@ REQUIRED = [
     "popsynth",
     "tqdm",
     "numba",
-    "gbmgeometry"
-
+    "gbmgeometry",
+    
 ]
 
 # What packages are optional?

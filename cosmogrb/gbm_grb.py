@@ -1,5 +1,5 @@
 from gbmgeometry import GBM
-import multiprocessing as mp
+
 
 
 from cosmogrb.lightcurve import GBMLightCurve
@@ -11,8 +11,9 @@ from cosmogrb.sampler.constant_cpl import ConstantCPL
 
 from cosmogrb.response import NaIResponse, BGOResponse
 
+from cosmogrb.grb import GRB
 
-class GBMGRB(object):
+class GBMGRB(GRB):
 
     _background_start = -100
     _background_stop = 300
@@ -56,10 +57,12 @@ class GBMGRB(object):
         self._ep = ep
         self._trise = trise
         self._duration = duration
-        self._name = name
 
-        self._lightcurves = []
 
+        super(GBMGRB, self).__init__(name, verbose)
+        
+
+        
         for det in self._gbm_detectors:
 
             if det[0] == "b":
@@ -100,21 +103,9 @@ class GBMGRB(object):
 
             source = Source(0.0, duration, cpl_source, use_plaw_sample=True)
 
-            self._lightcurves.append(
+            self._add_lightcurve(
                 GBMLightCurve(
                     source, bkg, rsp, name=det, grb_name=self._name, verbose=verbose
                 )
             )
 
-    def go(self, n_cores=8):
-
-        pool = mp.Pool(n_cores)
-
-        pool.map(process_lightcurve, self._lightcurves)
-        pool.close()
-        pool.join()
-
-
-def process_lightcurve(lc):
-    lc.process()
-    lc.write_tte()

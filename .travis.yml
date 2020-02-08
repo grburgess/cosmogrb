@@ -8,9 +8,9 @@ python:
 #  - "3.5"
   - "3.6"
   - "3.7"
-os:
-  - linux
-  - osx
+# os:
+#   - linux
+#   - osx
 
 install:
   - pip install --upgrade numpy ipython scipy astropy matplotlib pytest-cov codecov numba

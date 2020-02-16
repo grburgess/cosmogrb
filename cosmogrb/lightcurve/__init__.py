@@ -1,0 +1,1 @@
+from cosmogrb.lightcurve.gbm_lightcurve import GBMLightCurve

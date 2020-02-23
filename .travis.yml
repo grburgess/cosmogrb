@@ -14,7 +14,7 @@ python:
 
 install:
   - pip install --upgrade numpy ipython scipy astropy matplotlib pytest-cov codecov numba
-  -pip install git+https://github.com/grburgess/gbm_drm_gen
+  - pip install git+https://github.com/grburgess/gbm_drm_gen
   - python setup.py install
 script:
   - python -m pytest -vv --cov=cosmogrb/

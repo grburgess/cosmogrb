@@ -11,7 +11,8 @@ python:
 # os:
 #   - linux
 #   - osx
-
+before_install:
+  - sudo apt-get install gfortran
 install:
   - pip install --upgrade cython numpy ipython scipy astropy matplotlib pytest-cov codecov numba
   - pip install git+https://github.com/grburgess/gbm_drm_gen

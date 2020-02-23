@@ -1,7 +1,6 @@
 from gbmgeometry import GBM
 
 
-
 from cosmogrb.lightcurve import GBMLightCurve
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import GBMBackground

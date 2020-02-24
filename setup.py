@@ -12,7 +12,7 @@ DESCRIPTION = "A population synthesis code for GRB light curves"
 URL = "https://github.com/grburgess/cosmogrb"
 EMAIL = "jmichaelburgess@gmail.com"
 AUTHOR = "J. Michael Burgess"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.1.0"
 VERSION = None
 
 REQUIRED = [

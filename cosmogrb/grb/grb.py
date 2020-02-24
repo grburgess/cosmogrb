@@ -16,7 +16,7 @@ class GRB(object):
 
     def __init__(self, name='SynthGRB', verbose=False):
 
-        self._verbose = verebose
+        self._verbose = verbose
         self._name = name
 
         self._lightcurves = []
@@ -24,7 +24,7 @@ class GRB(object):
     
 
 
-    def _add_lightcurve(self):
+    def _add_lightcurve(self, lightcurve):
 
         self._lightcurves.append(lightcurve)
         

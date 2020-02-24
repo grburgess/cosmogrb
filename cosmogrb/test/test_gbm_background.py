@@ -1,4 +1,4 @@
-from cosmogrb.lightcurve.background import GBMBackground
+from cosmogrb.sampler.background import GBMBackground
 
 
 allowed_dets = (

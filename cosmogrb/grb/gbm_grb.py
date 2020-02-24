@@ -63,8 +63,8 @@ class GBMGRB(GRB):
 
         
         for det in self._gbm_detectors:
-
             if det[0] == "b":
+
 
                 rsp = BGOResponse(det, ra, dec, T0, save=True, name=name)
 

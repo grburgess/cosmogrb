@@ -20,21 +20,29 @@ REQUIRED = [
     "scipy",
     "ipython",
     "matplotlib",
-    "h5py",
-    "pandas",
     "astropy",
+    "h5py",
     "cython",
     "popsynth",
     "tqdm",
     "numba",
     "gbmgeometry",
+
+    
     
 ]
+
+# install_requires=[
+# 	'gbm_drm_gen@git+https://github.com/grburgess/gbm_drm_gen#egg=gbm_drm_gen-0.2.0',
+# ]
 
 # What packages are optional?
 EXTRAS = {
     # 'fancy feature': ['django'],
 }
+
+
+
 
 
 here = os.path.abspath(os.path.dirname(__file__))

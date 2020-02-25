@@ -26,6 +26,7 @@ REQUIRED = [
     "popsynth",
     "tqdm",
     "numba",
+    "responsum"
     "gbmgeometry",
 
     

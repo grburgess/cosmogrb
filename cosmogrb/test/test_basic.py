@@ -1,4 +1,5 @@
-
+import os
+from glob import glob
 from cosmogrb.grb import GBMGRB
 
 def test_basic_gbm():
@@ -14,3 +15,8 @@ def test_basic_gbm():
              verbose=True)
 
     grb.go(n_cores=1)
+
+    files_to_remove = glob('SynthGRB*.rsp')
+
+    for f in files_to_remove:
+        os.remove(f)

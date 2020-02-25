@@ -19,7 +19,7 @@ install:
   - python setup.py install
 script:
   - python -m pytest -vv --cov=cosmogrb/
-#  - codecov --token=39cbd278-9065-488d-b323-b2b3dcc4ce1e
+  - codecov --token=39cbd278-9065-488d-b323-b2b3dcc4ce1e
 
 
 

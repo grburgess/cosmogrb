@@ -4,13 +4,16 @@
 language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
-#  - "2.7"
-#  - "3.5"
+ 
+  - "3.5"
   - "3.6"
   - "3.7"
 # os:
 #   - linux
 #   - osx
+env:
+  NUMBA_DISABLE_JIT=1
+
 before_install:
   - sudo apt-get install gfortran
 install:

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/grburgess/cosmogrb.svg?branch=master)](https://travis-ci.org/grburgess/cosmogrb)
+
 # cosmogrb
 
 ## Idea

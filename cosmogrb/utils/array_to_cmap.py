@@ -1,6 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
+
 
 def array_to_cmap(values,cmap,use_log=False):
     """

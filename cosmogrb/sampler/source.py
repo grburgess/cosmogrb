@@ -329,6 +329,38 @@ class Source(Sampler):
 
             self._fmax = self._get_energy_integrated_max()
 
+    def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
+        """FIXME! briefly describe function
+
+        :param time: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        self._source_function.display_energy_integrated_light_curve(
+            time=time, ax=ax, **kwargs
+        )
+
+    def display_energy_dependent_light_curve(
+        self, time, energy, ax=None, cmap="viridis", **kwargs
+    ):
+        """FIXME! briefly describe function
+
+        :param time: 
+        :param energy: 
+        :param ax: 
+        :param cmap: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        self._source_function.display_energy_dependent_light_curve(
+            time, energy, ax, cmap, **kwargs
+        )
+
     def set_response(self, response):
         """
         called if there is no response upon creation

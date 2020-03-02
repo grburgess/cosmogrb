@@ -156,3 +156,7 @@ class LightCurve(object):
     def _filter_deadtime(self):
 
         pass
+
+    @property
+    def name(self):
+        return self._name

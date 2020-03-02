@@ -28,6 +28,7 @@ REQUIRED = [
     "numba",
     "responsum",
     "gbmgeometry",
+    "coloredlogs"
 
     
     

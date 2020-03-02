@@ -1,5 +1,7 @@
 import h5py
 import multiprocessing as mp
+import  collections
+
 import coloredlogs, logging
 import cosmogrb.utils.logging
 
@@ -33,8 +35,15 @@ class GRB(object):
         logger.debug(f"created a GRB with duration: {duration} and T0: {T0}")
 
         # create an empty list for the light curves
-        self._lightcurves = []
+        self._lightcurves = collections.OrderedDict
+        self._responses = collections.OrderedDict()
+        
+    def _add_response(self, name, response):
 
+        self._responses[name] = response
+
+        logger.debug(f"Added response: {name}")
+        
     def _add_lightcurve(self, lightcurve):
         """
         add a light curve to the GRB. This is really just adding 
@@ -46,7 +55,7 @@ class GRB(object):
 
         """
 
-        self._lightcurves.append(lightcurve)
+        self._lightcurves[lightcurve.name] = lightcurve
 
         logger.debug(f"Added lightcuve: {lightcurve.name}")
 
@@ -54,7 +63,7 @@ class GRB(object):
 
         pool = mp.Pool(n_cores)
 
-        pool.map(process_lightcurve, self._lightcurves)
+        pool.map(process_lightcurve, self._lightcurves.values())
         pool.close()
         pool.join()
 

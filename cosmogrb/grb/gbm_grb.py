@@ -1,6 +1,3 @@
-from gbmgeometry import GBM
-
-
 from cosmogrb.lightcurve import GBMLightCurve
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import GBMBackground
@@ -11,6 +8,7 @@ from cosmogrb.sampler.constant_cpl import ConstantCPL
 from cosmogrb.response import NaIResponse, BGOResponse
 
 from cosmogrb.grb import GRB
+
 
 class GBMGRB(GRB):
 
@@ -46,7 +44,6 @@ class GBMGRB(GRB):
         duration,
         T0,
         name="SynthGRB",
-        verbose=False,
     ):
 
         self._ra = ra
@@ -57,14 +54,10 @@ class GBMGRB(GRB):
         self._trise = trise
         self._duration = duration
 
+        super(GBMGRB, self).__init__(name)
 
-        super(GBMGRB, self).__init__(name, verbose)
-        
-
-        
         for det in self._gbm_detectors:
             if det[0] == "b":
-
 
                 rsp = BGOResponse(det, ra, dec, T0, save=True, name=name)
 
@@ -89,15 +82,14 @@ class GBMGRB(GRB):
             #     response=rsp,
             # )
 
-            cpl_source = CPLSourceFunction(peak_flux=peak_flux,
-                                           trise=trise,
-                                           tdecay=duration - trise,
-                                           ep_tau=tau,
-                                           alpha=alpha,
-                                           ep_start=ep,
-                                           response=rsp
-
-
+            cpl_source = CPLSourceFunction(
+                peak_flux=peak_flux,
+                trise=trise,
+                tdecay=duration - trise,
+                ep_tau=tau,
+                alpha=alpha,
+                ep_start=ep,
+                response=rsp,
             )
 
             source = Source(0.0, duration, cpl_source, use_plaw_sample=True)
@@ -107,4 +99,3 @@ class GBMGRB(GRB):
                     source, bkg, rsp, name=det, grb_name=self._name, verbose=verbose
                 )
             )
-

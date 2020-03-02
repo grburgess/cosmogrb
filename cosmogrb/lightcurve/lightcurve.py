@@ -175,27 +175,27 @@ class LightCurve(object):
 
     @property
     def times(self):
-        return self._times
+        return self._lc_storage.times
 
     @property
     def pha(self):
-        return self._pha
+        return self._lc_storage.pha
 
     @property
     def pha_source(self):
-        return self._pha_source
+        return self._lc_storage.pha_source
 
     @property
     def times_source(self):
-        return self._times_source
+        return self._lc_storage.times_source
 
     @property
     def pha_background(self):
-        return self._pha_background
+        return self._lc_storage.pha_background
 
     @property
     def times_background(self):
-        return self._times_background
+        return self._lc_storage.times_background
 
     def _filter_deadtime(self):
 

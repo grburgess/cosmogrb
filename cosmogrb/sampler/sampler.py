@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Sampler(object):
     def __init__(self, tstart, tstop):
         """
@@ -13,7 +10,7 @@ class Sampler(object):
         :rtype: 
 
         """
-        
+
         self._tstart = tstart
         self._tstop = tstop
 

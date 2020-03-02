@@ -1,6 +1,9 @@
 import os
+import numpy as np
 from glob import glob
 from cosmogrb.grb import GBMGRB
+
+
 
 def test_basic_gbm():
 
@@ -14,8 +17,19 @@ def test_basic_gbm():
              
              verbose=True)
 
+
+
+    time = np.linspace(0, 20, 10)
+    energy = np.logspace(1,2, 10)
+    
+    grb.display_energy_dependent_light_curve(time, energy)
+    grb.display_energy_integrated_light_curve(time)
+    
     grb.go(n_cores=1)
 
+
+
+    
     files_to_remove = glob('SynthGRB*.rsp')
 
     for f in files_to_remove:

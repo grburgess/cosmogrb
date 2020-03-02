@@ -6,4 +6,4 @@ coloredlogs.install(
     #                    fmt="%(levelname)s:%(message)s"
 )
 
-logger = logging.getLogger("grbfunk")
+logger = logging.getLogger("cosmogrb")

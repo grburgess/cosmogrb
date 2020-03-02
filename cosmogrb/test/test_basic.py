@@ -1,5 +1,5 @@
 import os
-import numpy
+import numpy as np
 from glob import glob
 from cosmogrb.grb import GBMGRB
 

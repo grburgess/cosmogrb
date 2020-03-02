@@ -7,7 +7,7 @@ logger = logging.getLogger("cosmogrb.lightcurve")
 
 class LightCurve(object):
     def __init__(
-        self, source, background, response, name="lightcurve", grb_name="SynthGRB",
+            self, source, background, response, T0=0, name="lightcurve", grb_name="SynthGRB",
     ):
         """
         Lightcurve generator for source and background
@@ -139,8 +139,8 @@ class LightCurve(object):
             times_source=self._times_source,
             pha_background=self._pha_background,
             times_background=self._times_background,
-            channels=self._channels,
-            ebounds=self._ebounds,
+            channels=self._response.channels,
+            ebounds=self._self.response.ebounds,
         )
 
     def display_energy_dependent_light_curve(
@@ -205,6 +205,14 @@ class LightCurve(object):
     def name(self):
         return self._name
 
+    @property
+    def response(self):
+        return self._response
+
+    @property
+    def lightcurve_storage(self):
+        return self._lc_storage
+    
 
 class LightCurveStorage(object):
     def __init__(

@@ -6,6 +6,11 @@ from cosmogrb.sampler.constant_cpl import ConstantCPL
 from cosmogrb.response import NaIResponse, BGOResponse
 from cosmogrb.grb import GRB
 
+import coloredlogs, logging
+import cosmogrb.utils.logging
+
+logger = logging.getLogger("cosmogrb.grb.gbmgrb")
+
 
 class GBMGRB(GRB):
 
@@ -56,9 +61,13 @@ class GBMGRB(GRB):
         for det in self._gbm_detectors:
             if det[0] == "b":
 
+                logger.debug(f"creating BGO reponse for {det} via grb {name}")
+
                 rsp = BGOResponse(det, ra, dec, T0, save=True, name=name)
 
             else:
+
+                logger.debug(f"creating NAI reponse for {det} via GRB {name}")
 
                 rsp = NaIResponse(det, ra, dec, T0, save=True, name=name)
 
@@ -92,6 +101,5 @@ class GBMGRB(GRB):
             source = Source(0.0, duration, cpl_source, use_plaw_sample=True)
 
             self._add_lightcurve(
-                GBMLightCurve(
-                    source, bkg, rsp, name=det, grb_name=self._name )
+                GBMLightCurve(source, bkg, rsp, name=det, grb_name=self._name)
             )

@@ -17,7 +17,6 @@ def test_basic_gbm():
         trise=0.1,
         duration=1.0,
         T0=0.1,
-        verbose=True,
     )
 
     time = np.linspace(0, 20, 10)

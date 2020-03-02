@@ -1,8 +1,13 @@
 import multiprocessing as mp
 
+import coloredlogs, logging
+import  cosmogrb.utils.logging
+
+logger = logging.getLogger('cosmogrb.grb')
+
 
 class GRB(object):
-    def __init__(self, name="SynthGRB", verbose=False):
+    def __init__(self, name="SynthGRB"):
         """
         A basic GRB
 
@@ -12,10 +17,10 @@ class GRB(object):
         :rtype: 
 
         """
-
-        self._verbose = verbose
         self._name = name
 
+        logger.debug(f'created a GRB with name: {name}')
+        
         self._lightcurves = []
 
     def _add_lightcurve(self, lightcurve):

@@ -105,6 +105,18 @@ class LightCurve(object):
         self._times = self._times[idx]
         self._pha = self._pha[idx]
 
+        # now sort the background and source times for fun
+
+        idx = self._initial_bkg_light_curves.argsort()
+
+        self._times_background = self._initial_bkg_light_curves[idx]
+        self._pha_background = self._initial_bkg_channels[idx]
+
+        idx = self._initial_source_light_curves.argsort()
+
+        self._times_source = self._initial_source_light_curves[idx]
+        self._pha_source = self._initial_source_channels[idx]
+
     def process(self):
 
         self._sample_source()
@@ -155,6 +167,22 @@ class LightCurve(object):
     @property
     def pha(self):
         return self._pha
+
+    @property
+    def pha_source(self):
+        return self._pha_source
+
+    @property
+    def times_source(self):
+        return self._times_source
+
+    @property
+    def pha_background(self):
+        return self._pha_background
+
+    @property
+    def times_background(self):
+        return self._times_background
 
     def _filter_deadtime(self):
 

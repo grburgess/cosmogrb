@@ -1,16 +1,6 @@
 import multiprocessing as mp
 
 
-from cosmogrb.lightcurve import GBMLightCurve
-from cosmogrb.sampler.source import Source
-from cosmogrb.sampler.background import GBMBackground
-from cosmogrb.sampler.cpl_source import CPLSourceFunction
-
-from cosmogrb.sampler.constant_cpl import ConstantCPL
-
-from cosmogrb.response import NaIResponse, BGOResponse
-
-
 class GRB(object):
     def __init__(self, name="SynthGRB", verbose=False):
         """

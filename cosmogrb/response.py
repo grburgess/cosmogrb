@@ -12,7 +12,6 @@ from astropy.coordinates import SkyCoord
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
-
 @nb.njit(fastmath=True)
 def _digitize(photon_energies, energy_edges, cum_matrix):
 
@@ -32,7 +31,14 @@ def _digitize(photon_energies, energy_edges, cum_matrix):
 
 
 class Response(object):
-    def __init__(self, matrix, geometric_area, energy_edges, channel_edges=None, channel_starts_at=0):
+    def __init__(
+        self,
+        matrix,
+        geometric_area,
+        energy_edges,
+        channel_edges=None,
+        channel_starts_at=0,
+    ):
 
         self._matrix = matrix
         self._energy_edges = energy_edges
@@ -44,7 +50,7 @@ class Response(object):
         self._channel_mean = (channel_edges[:-1] + channel_edges[1:]) / 2.0
 
         self._channels = np.arange(len(self._channel_width), dtype=np.int64)
-        
+
         self._build_effective_area_curve()
 
         self._geometric_area = geometric_area
@@ -148,12 +154,11 @@ class Response(object):
     @property
     def matrix(self):
         return self._matrix
-    
+
     @property
     def geometric_area(self):
         return self._geometric_area
 
-    
     def set_function(self, integral_function=None):
         """
         Set the function to be used for the convolution

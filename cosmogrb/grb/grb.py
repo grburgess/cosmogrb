@@ -13,6 +13,15 @@ from cosmogrb.response import NaIResponse, BGOResponse
 
 class GRB(object):
     def __init__(self, name="SynthGRB", verbose=False):
+        """
+        A basic GRB
+
+        :param name: 
+        :param verbose: 
+        :returns: 
+        :rtype: 
+
+        """
 
         self._verbose = verbose
         self._name = name

@@ -2,11 +2,8 @@ from cosmogrb.lightcurve import GBMLightCurve
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import GBMBackground
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
-
 from cosmogrb.sampler.constant_cpl import ConstantCPL
-
 from cosmogrb.response import NaIResponse, BGOResponse
-
 from cosmogrb.grb import GRB
 
 
@@ -96,6 +93,5 @@ class GBMGRB(GRB):
 
             self._add_lightcurve(
                 GBMLightCurve(
-                    source, bkg, rsp, name=det, grb_name=self._name, verbose=verbose
-                )
+                    source, bkg, rsp, name=det, grb_name=self._name )
             )

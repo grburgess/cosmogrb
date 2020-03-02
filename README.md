@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/grburgess/cosmogrb.svg?branch=master)](https://travis-ci.org/grburgess/cosmogrb)
+[![codecov](https://codecov.io/gh/grburgess/cosmogrb/branch/master/graph/badge.svg)](https://codecov.io/gh/grburgess/cosmogrb)
+
 # cosmogrb
 
 ## Idea

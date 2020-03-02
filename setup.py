@@ -12,7 +12,7 @@ DESCRIPTION = "A population synthesis code for GRB light curves"
 URL = "https://github.com/grburgess/cosmogrb"
 EMAIL = "jmichaelburgess@gmail.com"
 AUTHOR = "J. Michael Burgess"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.1.0"
 VERSION = None
 
 REQUIRED = [
@@ -20,21 +20,31 @@ REQUIRED = [
     "scipy",
     "ipython",
     "matplotlib",
-    "h5py",
-    "pandas",
     "astropy",
+    "h5py",
     "cython",
     "popsynth",
     "tqdm",
     "numba",
+    "responsum",
     "gbmgeometry",
+    "coloredlogs"
+
+    
     
 ]
+
+# install_requires=[
+# 	'gbm_drm_gen@git+https://github.com/grburgess/gbm_drm_gen#egg=gbm_drm_gen-0.2.0',
+# ]
 
 # What packages are optional?
 EXTRAS = {
     # 'fancy feature': ['django'],
 }
+
+
+
 
 
 here = os.path.abspath(os.path.dirname(__file__))

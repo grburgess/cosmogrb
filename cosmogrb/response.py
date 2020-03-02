@@ -31,7 +31,6 @@ def _digitize(photon_energies, energy_edges, cum_matrix):
     return pha_channels
 
 
-
 class Response(object):
     def __init__(self, matrix, geometric_area, energy_edges, channel_edges=None):
 
@@ -44,13 +43,11 @@ class Response(object):
         self._channel_width = np.diff(channel_edges)
         self._channel_mean = (channel_edges[:-1] + channel_edges[1:]) / 2.0
 
-        
         self._build_effective_area_curve()
-        
+
         self._geometric_area = geometric_area
 
         self._construct_probabilities()
-
 
     def effective_area(self, energy):
         """
@@ -72,7 +69,6 @@ class Response(object):
 
         ea_curve = self._matrix.sum(axis=1)
 
-        
         self._effective_area = interp1d(
             self._energy_mean,
             self._matrix.sum(axis=1),
@@ -84,11 +80,9 @@ class Response(object):
         idx = ea_curve[:-10].argmax()
         self._max_energy = self._energy_mean[idx]
 
-
     @property
     def effective_area_max(self):
         return self._max_energy
-        
 
     def get_photon_bin(self, energy):
 
@@ -133,9 +127,7 @@ class Response(object):
         np.random.seed()
 
         pha_channels = _digitize(
-            photon_energies,
-            self._energy_edges,
-            self._cumulative_maxtrix,
+            photon_energies, self._energy_edges, self._cumulative_maxtrix,
         )
         return pha_channels
 

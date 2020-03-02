@@ -1,20 +1,33 @@
-from cosmogrb.lightcurve.background import GBMBackground
-from cosmogrb.utils.package_utils import get_path_of_data_file
-
-from cosmogrb.response import NaIResponse
-
-from cosmogrb.lightcurve.cpl_source import CPLSourceFunction, norris
-from cosmogrb.lightcurve.source import Source, evolution_sampler
-from cosmogrb.lightcurve.lightcurve import GBMLightCurve
+import os
+import numpy as np
+from glob import glob
+from cosmogrb.grb import GBMGRB
 
 
 def test_basic_gbm():
 
-    bkg = GBMBackground(-50, 50, average_rate=100.0, detector="n1")
-    nai = NaIResponse("n1", 312.0, -62.0, 1)
-    cpl = CPLSourceFunction(peak_flux=1e-5, trise=0.5, tdecay=5)
-    source = Source(0.0, 10.0, cpl)
+    grb = GBMGRB(
+        ra=312.0,
+        dec=-62.0,
+        z=1.0,
+        peak_flux=5e-9,
+        alpha=-0.66,
+        ep=500.0,
+        tau=2.0,
+        trise=0.1,
+        duration=1.0,
+        T0=0.1,
+    )
 
-    lc = GBMLightCurve(source, bkg, nai)
+    time = np.linspace(0, 20, 10)
+    energy = np.logspace(1, 2, 10)
 
-    lc.process()
+    grb.display_energy_dependent_light_curve(time, energy)
+    grb.display_energy_integrated_light_curve(time)
+
+    grb.go(n_cores=1)
+
+    files_to_remove = glob("SynthGRB*.rsp")
+
+    for f in files_to_remove:
+        os.remove(f)

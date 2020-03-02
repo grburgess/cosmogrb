@@ -17,6 +17,15 @@ def norris(x, K, t_start, t_rise, t_decay):
         return 0.0
 
 
+# @nb.njit(fastmath=True)
+# def krl(x, t_max, f_max, rise, decay, c=0):
+
+
+#     top = 
+    
+#     return 
+
+    
 def ggrb_int_cpl(a, Ec, Emin, Emax):
 
     # Gammaincc does not support quantities

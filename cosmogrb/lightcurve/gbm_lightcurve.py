@@ -1,14 +1,17 @@
 import numba as nb
 import numpy as np
-from collections import OrderedDict
-import copy
 
 from cosmogrb.lightcurve.lightcurve import LightCurve
 from cosmogrb.utils.tte_file import TTEFile
 
+import coloredlogs, logging
+import cosmogrb.utils.logging
+
+logger = logging.getLogger("cosmogrb.lightcurve.gbm_lighcurve")
+
 
 class GBMLightCurve(LightCurve):
-    def __init__(self, source, background, response, name, grb_name, verbose=False):
+    def __init__(self, source, background, response, name, grb_name):
         """FIXME! briefly describe function
 
         :param source: 
@@ -28,7 +31,6 @@ class GBMLightCurve(LightCurve):
             response=response,
             name=name,
             grb_name=grb_name,
-            verbose=verbose,
         )
 
     def _filter_deadtime(self):
@@ -38,11 +40,9 @@ class GBMLightCurve(LightCurve):
 
         selection = np.array(selection, dtype=bool)
 
-        if self._verbose:
-
-            print(
-                f"{self._grb_name} {self._name}: now has {sum(selection)} from {len(selection)} counts"
-            )
+        logger.debug(
+            f"{self._grb_name} {self._name}: now has {sum(selection)} from {len(selection)} counts"
+        )
 
         self._times = time[selection]
         self._pha = pha[selection]

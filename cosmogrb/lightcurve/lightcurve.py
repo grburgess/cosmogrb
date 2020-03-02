@@ -1,15 +1,13 @@
 import numpy as np
+import coloredlogs, logging
+import cosmogrb.utils.logging
+
+logger = logging.getLogger("cosmogrb.lightcurve")
 
 
 class LightCurve(object):
     def __init__(
-        self,
-        source,
-        background,
-        response,
-        name="lightcurve",
-        grb_name="SynthGRB",
-        verbose=False,
+        self, source, background, response, name="lightcurve", grb_name="SynthGRB",
     ):
         """
         Lightcurve generator for source and background
@@ -45,41 +43,43 @@ class LightCurve(object):
         self._name = name
         self._grb_name = grb_name
 
-        self._verbose = verbose
-
     def _sample_source(self):
+        """
+        samples the source times and energies
 
-        if self._verbose:
+        :returns: 
+        :rtype: 
 
-            print(f"{self._grb_name} {self._name}: sampling photons")
+        """
+
+        logger.debug(f"{self._grb_name} {self._name}: sampling photons")
 
         times = self._source.sample_times()
 
-        if self._verbose:
-
-            print(f"{self._grb_name} {self._name}: has {len(times)} initial photons")
+        logger.debug(f"{self._grb_name} {self._name}: has {len(times)} initial photons")
 
         photons = self._source.sample_photons(times)
 
-        if self._verbose:
-
-            print(f"{self._grb_name} {self._name} sampling response")
+        logger.debug(f"{self._grb_name} {self._name} sampling response")
 
         pha = self._source.sample_channel(photons, self._response)
 
-        if self._verbose:
-
-            print(f"{self._grb_name} {self._name}: now has digitized it's events")
+        logger.debug(f"{self._grb_name} {self._name}: now has digitized it's events")
 
         self._photons = photons
         self._initial_source_light_curves = times
         self._initial_source_channels = pha
 
     def _sample_background(self):
+        """
+        sample the background
 
-        if self._verbose:
+        :returns: 
+        :rtype: 
 
-            print(f"{self._grb_name} {self._name}: sampling background")
+        """
+
+        logger.debug(f"{self._grb_name} {self._name}: sampling background")
 
         self._initial_bkg_light_curves = self._background.sample_times()
         self._initial_bkg_channels = self._background.sample_channel(
@@ -87,6 +87,13 @@ class LightCurve(object):
         )
 
     def _combine(self):
+        """
+        combine the source and background photons
+
+        :returns: 
+        :rtype: 
+
+        """
 
         self._times = np.append(
             self._initial_bkg_light_curves, self._initial_source_light_curves
@@ -105,15 +112,11 @@ class LightCurve(object):
 
         self._combine()
 
-        if self._verbose:
-
-            print(f"{self._grb_name} {self._name}: now has {sum(self._pha)} counts")
+        logger.debug(f"{self._grb_name} {self._name}: now has {sum(self._pha)} counts")
 
         self._filter_deadtime()
 
-        if self._verbose:
-
-            print(f"{self._grb_name} {self._name}: now has {sum(self._pha)} counts")
+        logger.debug(f"{self._grb_name} {self._name}: now has {sum(self._pha)} counts")
 
     def display_energy_dependent_light_curve(
         self, time, energy, ax=None, cmap="viridis", **kwargs
@@ -156,3 +159,7 @@ class LightCurve(object):
     def _filter_deadtime(self):
 
         pass
+
+    @property
+    def name(self):
+        return self._name

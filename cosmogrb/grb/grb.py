@@ -1,18 +1,12 @@
 import multiprocessing as mp
+import coloredlogs, logging
+import cosmogrb.utils.logging
 
-
-from cosmogrb.lightcurve import GBMLightCurve
-from cosmogrb.sampler.source import Source
-from cosmogrb.sampler.background import GBMBackground
-from cosmogrb.sampler.cpl_source import CPLSourceFunction
-
-from cosmogrb.sampler.constant_cpl import ConstantCPL
-
-from cosmogrb.response import NaIResponse, BGOResponse
+logger = logging.getLogger("cosmogrb.grb")
 
 
 class GRB(object):
-    def __init__(self, name="SynthGRB", verbose=False):
+    def __init__(self, name="SynthGRB"):
         """
         A basic GRB
 
@@ -22,15 +16,26 @@ class GRB(object):
         :rtype: 
 
         """
-
-        self._verbose = verbose
         self._name = name
+
+        logger.debug(f"created a GRB with name: {name}")
 
         self._lightcurves = []
 
     def _add_lightcurve(self, lightcurve):
+        """
+        add a light curve to the GRB. This is really just adding 
+        a detector on
+
+        :param lightcurve: 
+        :returns: 
+        :rtype: 
+
+        """
 
         self._lightcurves.append(lightcurve)
+
+        logger.debug(f"Added lightcuve: {lightcurve.name}")
 
     def go(self, n_cores=8):
 

@@ -1,7 +1,5 @@
 import numba as nb
 import numpy as np
-from collections import OrderedDict
-import copy
 
 from cosmogrb.lightcurve.lightcurve import LightCurve
 from cosmogrb.utils.tte_file import TTEFile

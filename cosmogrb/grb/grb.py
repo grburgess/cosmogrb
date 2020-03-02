@@ -1,5 +1,4 @@
 import multiprocessing as mp
-
 import coloredlogs, logging
 import cosmogrb.utils.logging
 

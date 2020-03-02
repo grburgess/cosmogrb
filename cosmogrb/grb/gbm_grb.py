@@ -56,7 +56,7 @@ class GBMGRB(GRB):
         self._trise = trise
         self._duration = duration
 
-        super(GBMGRB, self).__init__(name)
+        super(GBMGRB, self).__init__(name, T0=T0)
 
         for det in self._gbm_detectors:
             if det[0] == "b":

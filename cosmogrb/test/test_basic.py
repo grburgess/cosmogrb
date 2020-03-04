@@ -5,6 +5,7 @@ from cosmogrb.grb import GBMGRB, GBMGRB_CPL
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
 
+
 def test_gbm_constructor_and_plotting():
 
     grb = GBMGRB_CPL(
@@ -74,12 +75,11 @@ def test_gbm_save():
     for f in files_to_remove:
         os.remove(f)
 
+
 def test_read_gbm_save():
 
-    grb = GRBSave.from_file('test.h5')
+    grb = GRBSave.from_file("test.h5")
 
-    lightcurve = grb['n1']['lightcurve']
-    
+    lightcurve = grb["n1"]["lightcurve"]
 
-
-    grbsave_to_gbm_fits('test.h5')
+    grbsave_to_gbm_fits("test.h5")

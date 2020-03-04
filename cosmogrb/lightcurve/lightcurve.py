@@ -1,7 +1,9 @@
 import numpy as np
 import coloredlogs, logging
 import cosmogrb.utils.logging
+
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
+
 logger = logging.getLogger("cosmogrb.lightcurve")
 
 

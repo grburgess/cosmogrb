@@ -2,7 +2,7 @@ import os
 import numpy as np
 from glob import glob
 from cosmogrb.grb import GBMGRB, GBMGRB_CPL
-
+from cosmogrb.io.grb_save import GRBSave
 
 def test_gbm_constructor_and_plotting():
 
@@ -72,3 +72,10 @@ def test_gbm_save():
 
     for f in files_to_remove:
         os.remove(f)
+
+def test_read_gbm_save():
+
+    grb = GRBSave.from_file('test.h5')
+
+    lightcurve = grb['n1']['lightcurve']
+    

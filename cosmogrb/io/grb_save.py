@@ -5,6 +5,15 @@ from cosmogrb.response import Response
 
 class GRBSave(object):
     def __init__(self, grb_name, lightcurves, responses):
+        """
+
+        :param grb_name: 
+        :param lightcurves: 
+        :param responses: 
+        :returns: 
+        :rtype: 
+
+        """
 
         assert isinstance(
             lightcurves, dict
@@ -42,9 +51,16 @@ class GRBSave(object):
 
         self._name = grb_name
 
-        
+    def __getitem__(self, key):
 
-        
+        if key in self._internal_storage:
+
+            return self._internal_storage[key]
+
+        else:
+
+            raise ValueError(f"{key} is not in th GRB")
+
     @property
     def name(self):
         return self._name
@@ -95,6 +111,7 @@ class GRBSave(object):
                 responses[lc_name] = rsp
 
                 lc_container = LightCurveStorage(
+                    name=lc_name,
                     pha=pha,
                     times=times,
                     times_source=times_source,

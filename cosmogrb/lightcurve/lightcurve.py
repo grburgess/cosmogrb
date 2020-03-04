@@ -140,7 +140,7 @@ class LightCurve(object):
             pha_background=self._pha_background,
             times_background=self._times_background,
             channels=self._response.channels,
-            ebounds=self._self.response.ebounds,
+            ebounds=self._response.channel_edges,
         )
 
     def display_energy_dependent_light_curve(

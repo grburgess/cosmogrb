@@ -1,18 +1,18 @@
 import h5py
 import multiprocessing as mp
-import  collections
+import collections
 import coloredlogs, logging
 
 
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import Background
 import cosmogrb.utils.logging
+
 logger = logging.getLogger("cosmogrb.grb")
 
 
-
 class GRB(object):
-    def __init__(self, name="SynthGRB", source_class, background_class,  duration=1,  z=1, T0=0, ra=0, dec=0, source_params={}, background_params = {}):
+    def __init__(self, name="SynthGRB", duration=1, z=1, T0=0, ra=0, dec=0):
         """
         A basic GRB
 
@@ -27,19 +27,11 @@ class GRB(object):
         self._duration = duration
         self._z = z
         self._ra = ra
-        self.dec = dec
-        self._source_class = source_class
-        self._background_class = background_class
-        
+        self._dec = dec
 
-        assert z > 0, f'z: {z} must be greater than zero'
-        assert duration > 0, f'duration: {duration} must be greater than zero'
-        assert issubclass(source_class, Source)
-        assert issubclass(background_class, Background)
+        assert z > 0, f"z: {z} must be greater than zero"
+        assert duration > 0, f"duration: {duration} must be greater than zero"
 
-        self._source_params = source_params
-        self._background_params = background_params
-        
         logger.debug(f"created a GRB with name: {name}")
         logger.debug(f"created a GRB with ra: {ra} and dec: {dec}")
         logger.debug(f"created a GRB with redshift: {z}")
@@ -51,24 +43,23 @@ class GRB(object):
         self._responses = collections.OrderedDict()
         self._backgrounds = collections.OrderedDict()
 
+        self._setup()
+        
+        
     def _setup(self):
 
-        assert len(self._responses) > 0
-
-        for key in self._responses.keys():
-
-            
+        pass
 
     def _add_background(self, name, background):
 
         self._backgrounds[name] = background
-        
+
     def _add_response(self, name, response):
 
         self._responses[name] = response
 
         logger.debug(f"Added response: {name}")
-        
+
     def _add_lightcurve(self, lightcurve):
         """
         add a light curve to the GRB. This is really just adding 
@@ -108,7 +99,7 @@ class GRB(object):
             # save the general
             f.attrs["grb_name"] = self._name
             f.attrs["n_lightcurves"] = len(self._lightcurves)
-            f.attrs['T0'] = self._T0
+            f.attrs["T0"] = self._T0
             det_group = f.create_group("detectors")
 
             for lightcurve in self._lightcurves:
@@ -132,7 +123,7 @@ class GRB(object):
                 source_group.create_dataset("pha", data=lc.pha_source)
                 source_group.create_dataset("times", data=lc.times_source)
 
- 3               source_group = lc_group.create_group("background_signal")
+                source_group = lc_group.create_group("background_signal")
 
                 source_group.create_dataset("pha", data=lc.pha_source)
                 source_group.create_dataset("times", data=lc.times_source)
@@ -162,7 +153,7 @@ class GRB(object):
 
         """
 
-        self._lightcurves[0].display_energy_dependent_light_curve(
+        list(self._lightcurves.values())[0].display_energy_dependent_light_curve(
             time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
         )
 
@@ -176,7 +167,7 @@ class GRB(object):
 
         """
 
-        self._lightcurves[0].display_energy_integrated_light_curve(
+        list(self._lightcurves.values())[0].display_energy_integrated_light_curve(
             time=time, ax=ax, **kwargs
         )
 

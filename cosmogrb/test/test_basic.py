@@ -1,12 +1,12 @@
 import os
 import numpy as np
 from glob import glob
-from cosmogrb.grb import GBMGRB
+from cosmogrb.grb import GBMGRB, GBMGRB_CPL
 
 
 def test_basic_gbm():
 
-    grb = GBMGRB(
+    grb = GBMGRB_CPL(
         ra=312.0,
         dec=-62.0,
         z=1.0,

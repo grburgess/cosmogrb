@@ -54,7 +54,7 @@ class GBMGRB(GRB):
         self._use_plaw_sample = True
         # pass up
         super(GBMGRB, self).__init__(
-            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec,tstart=self._background_start,tstop=self._background_stop
+            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec
         )
 
     def _setup_source(self):
@@ -72,15 +72,19 @@ class GBMGRB(GRB):
                 use_plaw_sample=self._use_plaw_sample,
             )
 
-            self._add_lightcurve(
-                GBMLightCurve(
-                    source,
-                    self._backgrounds[key],
-                    self._responses[key],
-                    name=key,
-                    grb_name=self._name,
-                )
+            lc = GBMLightCurve(
+                source,
+                self._backgrounds[key],
+                self._responses[key],
+                name=key,
+                grb_name=self._name,
+                tstart=self._background_start,
+                tstop=self._background_stop,
             )
+
+            lc.set_time_adjustment(self._responses[key].T0)
+
+            self._add_lightcurve(lc)
 
     def _setup(self):
 
@@ -113,6 +117,7 @@ class GBMGRB(GRB):
             self._add_background(det, bkg)
 
         self._setup_source()
+
 
 class GBMGRB_CPL(GBMGRB):
     def __init__(

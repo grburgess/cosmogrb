@@ -28,7 +28,8 @@ class GRB(object):
         self._z = z
         self._ra = ra
         self._dec = dec
-
+        
+        
         assert z > 0, f"z: {z} must be greater than zero"
         assert duration > 0, f"duration: {duration} must be greater than zero"
 
@@ -44,7 +45,8 @@ class GRB(object):
         self._backgrounds = collections.OrderedDict()
 
         self._setup()
-
+        
+        
     def _setup(self):
 
         pass
@@ -135,6 +137,10 @@ class GRB(object):
             f.attrs["grb_name"] = self._name
             f.attrs["n_lightcurves"] = len(self._lightcurves)
             f.attrs["T0"] = self._T0
+
+            f.attrs['ra'] =  self._ra
+            f.attrs['dec'] = self._dec
+            
             det_group = f.create_group("detectors")
 
             for _, lightcurve in self._lightcurves.items():
@@ -142,7 +148,9 @@ class GRB(object):
                 lc = lightcurve.lightcurve_storage
 
                 lc_group = det_group.create_group(f"{lc.name}")
-
+                lc_group.attrs["tstart"] = lc.tstart
+                lc_group.attrs["tstop"] = lc.tstop
+                lc_group.attrs['time_adjustment'] = lc.time_adjustment
                 lc_group.create_dataset("channels", data=lc.channels)
 
                 # now create groups for the total, source and bkg

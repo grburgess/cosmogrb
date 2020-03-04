@@ -1,10 +1,10 @@
 import h5py
-from cosmogrb.lightcurve.lightcurve import LightCurveStorage
+from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 from cosmogrb.response.response import Response
 
 
 class GRBSave(object):
-    def __init__(self, grb_name, lightcurves, responses):
+    def __init__(self, grb_name, T0, ra, dec, lightcurves, responses):
         """
 
         :param grb_name: 
@@ -50,6 +50,9 @@ class GRBSave(object):
             )
 
         self._name = grb_name
+        self._T0 = T0
+        self._ra = ra
+        self._dec = dec
 
     def __getitem__(self, key):
 
@@ -65,6 +68,22 @@ class GRBSave(object):
     def name(self):
         return self._name
 
+    @property
+    def ra(self):
+        return self._ra
+
+    @property
+    def dec(self):
+        return self._dec
+
+    @property
+    def T0(self):
+        return self._T0
+
+    @property
+    def keys(self):
+        return self._internal_storage.keys()
+
     @classmethod
     def from_file(cls, file_name):
 
@@ -75,11 +94,20 @@ class GRBSave(object):
 
             grb_name = f.attrs["grb_name"]
 
+            ra = f.attrs["ra"]
+            dec = f.attrs["dec"]
+            T0 = f.attrs["T0"]
+
+            print(T0)
             det_group = f["detectors"]
 
             for lc_name in det_group.keys():
 
                 lc_group = det_group[lc_name]
+
+                tstart = lc_group.attrs["tstart"]
+                tstop = lc_group.attrs["tstop"]
+                time_adjustment = lc_group.attrs["time_adjustment"]
 
                 channels = lc_group["channels"]
 
@@ -112,6 +140,9 @@ class GRBSave(object):
 
                 lc_container = LightCurveStorage(
                     name=lc_name,
+                    tstart=tstart,
+                    tstop=tstop,
+                    time_adjustment=time_adjustment,
                     pha=pha,
                     times=times,
                     times_source=times_source,
@@ -120,8 +151,16 @@ class GRBSave(object):
                     pha_background=pha_background,
                     channels=rsp.channels,
                     ebounds=rsp.channel_edges,
+                    T0=T0
                 )
 
                 lightcurves[lc_name] = lc_container
 
-        return cls(grb_name=grb_name, lightcurves=lightcurves, responses=responses)
+        return cls(
+            grb_name=grb_name,
+            T0=T0,
+            ra=ra,
+            dec=dec,
+            lightcurves=lightcurves,
+            responses=responses,
+        )

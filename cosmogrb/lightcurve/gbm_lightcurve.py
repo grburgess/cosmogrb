@@ -11,7 +11,7 @@ logger = logging.getLogger("cosmogrb.lightcurve.gbm_lighcurve")
 
 
 class GBMLightCurve(LightCurve):
-    def __init__(self, source, background, response, name, grb_name):
+    def __init__(self, source, background, response, name, grb_name, tstart, tstop):
         """FIXME! briefly describe function
 
         :param source: 
@@ -31,6 +31,8 @@ class GBMLightCurve(LightCurve):
             response=response,
             name=name,
             grb_name=grb_name,
+            tstart=tstart,
+            tstop=tstop
         )
 
     def _filter_deadtime(self):

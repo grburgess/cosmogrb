@@ -3,6 +3,7 @@ import numpy as np
 from glob import glob
 from cosmogrb.grb import GBMGRB, GBMGRB_CPL
 from cosmogrb.io.grb_save import GRBSave
+from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
 
 def test_gbm_constructor_and_plotting():
 
@@ -79,3 +80,6 @@ def test_read_gbm_save():
 
     lightcurve = grb['n1']['lightcurve']
     
+
+
+    grbsave_to_gbm_fits('test.h5')

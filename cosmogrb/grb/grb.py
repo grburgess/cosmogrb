@@ -167,7 +167,7 @@ class GRB(object):
 
                 rsp_group.create_dataset("matrix", data=lightcurve.response.matrix)
                 rsp_group.create_dataset(
-                    "enegy_edges", data=lightcurve.response.energy_edges
+                    "energy_edges", data=lightcurve.response.energy_edges
                 )
                 rsp_group.create_dataset(
                     "channel_edges", data=lightcurve.response.channel_edges

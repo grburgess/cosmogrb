@@ -10,11 +10,11 @@ logger = logging.getLogger("cosmogrb.lightcurve")
 class LightCurve(object):
     def __init__(
         self,
+        name,
         source,
         background,
         response,
         T0=0,
-        
         grb_name="SynthGRB",
         tstart=0,
         tstop=100.0,
@@ -160,11 +160,11 @@ class LightCurve(object):
 
         self._combine()
 
-        
-
         self._filter_deadtime()
 
-        logger.debug(f"{self._grb_name} {self._name}: now has {len(self._pha)} counts after dead time filtering")
+        logger.debug(
+            f"{self._grb_name} {self._name}: now has {len(self._pha)} counts after dead time filtering"
+        )
 
         # now create a lightcurve storage
 

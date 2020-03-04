@@ -54,7 +54,7 @@ class GBMGRB(GRB):
         self._use_plaw_sample = True
         # pass up
         super(GBMGRB, self).__init__(
-            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec,
+            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec,tstart=self._background_start,tstop=self._background_stop
         )
 
     def _setup_source(self):

@@ -14,6 +14,8 @@ class LightCurve(object):
         T0=0,
         name="lightcurve",
         grb_name="SynthGRB",
+        tstart=0,
+        tstop=100.0,
     ):
         """
         Lightcurve generator for source and background
@@ -36,6 +38,11 @@ class LightCurve(object):
 
         self._background = background
         self._response = response
+
+        self._tstart = tstart
+        self._tstop = tstop
+
+        assert tstop > tstart
 
         # now set the response
 
@@ -141,6 +148,8 @@ class LightCurve(object):
 
         lc_storage = LightCurveStorage(
             name=self._name,
+            tstart=self._tstart,
+            tstop=self._tstop,
             pha=self._pha,
             times=self._times,
             pha_source=self._pha_source,
@@ -231,6 +240,8 @@ class LightCurveStorage(object):
     def __init__(
         self,
         name,
+        tstart,
+        tstop,
         pha,
         times,
         pha_source,
@@ -259,6 +270,10 @@ class LightCurveStorage(object):
         """
 
         self._name = name
+
+        self._tstart = tstart
+        self._tstop = tstop
+
         self._pha = pha
         self._times = times + T0
 
@@ -276,6 +291,14 @@ class LightCurveStorage(object):
     @property
     def name(self):
         return self._name
+
+    @property
+    def tstart(self):
+        return self._tstart
+
+    @property
+    def tstop(self):
+        return self._tstop
 
     @property
     def T0(self):

@@ -156,7 +156,6 @@ class LightCurveStorage(object):
 
         return fig
 
-
     def display_background(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
 
         if ax is None:

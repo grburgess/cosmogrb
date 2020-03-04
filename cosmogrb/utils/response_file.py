@@ -1,6 +1,6 @@
 import numpy as np
 from cosmogrb.utils.fits_file import FITSFile, FITSExtension
-
+import astropy.units as u
 
 # lifted from 3ML
 class EBOUNDS(FITSExtension):

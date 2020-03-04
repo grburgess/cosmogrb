@@ -1,6 +1,6 @@
 import h5py
 from cosmogrb.lightcurve.lightcurve import LightCurveStorage
-from cosmogrb.response import Response
+from cosmogrb.response.response import Response
 
 
 class GRBSave(object):

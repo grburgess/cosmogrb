@@ -207,7 +207,7 @@ class Response(object):
         fits_file = RSP(
             self._energy_edges,
             self._channel_edges,
-            self.matrix,
+            self.matrix.T, # we transpose teh matrix earlier for speed
             telescope_name,
             instrument_name,
         )

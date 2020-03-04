@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from gbmgeometry import PositionInterpolator, GBM
 from gbm_drm_gen import DRMGenTTE
 
@@ -77,6 +78,9 @@ class GBMResponse(Response):
             channel_edges=channel_edges,
         )
 
+        if self._save:
+            self.to_fits(f"{self._name}_{detector_name}.rsp", overwrite=True)
+
     def _setup_gbm_geometry(self, detector_name, ra, dec, time):
 
         # create a gbm for this time
@@ -136,11 +140,7 @@ class GBMResponse(Response):
             mat_type=2,
         )
 
-        if self._save:
-            self.to_fits(f"{self._name}_{detector_name}.rsp", overwrite=True)
-
-        else:
-            drm_gen.set_location(ra, dec)
+        drm_gen.set_location(ra, dec)
 
         return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm_gen.ebounds
 
@@ -232,4 +232,4 @@ class BGOResponse(GBMResponse):
         )
 
 
-__all__ = [ "BGOResponse", "NaIResponse"]
+__all__ = ["BGOResponse", "NaIResponse"]

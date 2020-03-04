@@ -3,6 +3,7 @@ from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import GBMBackground
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.constant_cpl import ConstantCPL
+from cosmogrb.sampler.source import SourceFunction
 from cosmogrb.response import NaIResponse, BGOResponse
 from cosmogrb.grb import GRB
 
@@ -35,6 +36,92 @@ class GBMGRB(GRB):
 
     def __init__(
         self,
+        source_function_class,
+        source_params,
+        name="SynthGRB",
+        duration=1,
+        z=1,
+        T0=0,
+        ra=0,
+        dec=0,
+    ):
+
+        assert issubclass(source_function_class, SourceFunction)
+        assert isinstance(source_params, dict)
+
+        self._source_function = source_function_class
+        self._source_params = source_params
+        self._use_plaw_sample = True
+        # pass up
+        super(GBMGRB, self).__init__(
+            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec
+        )
+
+    def _setup_source(self):
+
+        for key in self._responses.keys():
+
+            source_function = self._source_function(
+                response=self._responses[key], **self._source_params
+            )
+
+            source = Source(
+                0.0,
+                self._duration,
+                source_function,
+                use_plaw_sample=self._use_plaw_sample,
+            )
+
+            lc = GBMLightCurve(
+                source,
+                self._backgrounds[key],
+                self._responses[key],
+                name=key,
+                grb_name=self._name,
+                tstart=self._background_start,
+                tstop=self._background_stop,
+            )
+
+            lc.set_time_adjustment(self._responses[key].T0)
+
+            self._add_lightcurve(lc)
+
+    def _setup(self):
+
+        for det in self._gbm_detectors:
+            if det[0] == "b":
+
+                logger.debug(f"creating BGO reponse for {det} via grb {self._name}")
+
+                rsp = BGOResponse(
+                    det, self._ra, self._dec, self._T0, save=True, name=self._name
+                )
+
+            else:
+
+                logger.debug(f"creating NAI reponse for {det} via GRB {self._name}")
+
+                rsp = NaIResponse(
+                    det, self._ra, self._dec, self._T0, save=True, name=self._name
+                )
+
+            self._add_response(det, rsp)
+
+            bkg = GBMBackground(
+                self._background_start,
+                self._background_stop,
+                average_rate=500,
+                detector=det,
+            )
+
+            self._add_background(det, bkg)
+
+        self._setup_source()
+
+
+class GBMGRB_CPL(GBMGRB):
+    def __init__(
+        self,
         ra,
         dec,
         z,
@@ -48,58 +135,27 @@ class GBMGRB(GRB):
         name="SynthGRB",
     ):
 
-        self._ra = ra
-        self._dec = dec
-        self._z = z
         self._alpha = alpha
         self._ep = ep
         self._trise = trise
-        self._duration = duration
 
-        super(GBMGRB, self).__init__(name)
+        source_params = dict(
+            peak_flux=peak_flux,
+            trise=trise,
+            tdecay=(duration - trise),
+            ep_tau=tau,
+            alpha=alpha,
+            ep_start=ep,
+        )
 
-        for det in self._gbm_detectors:
-            if det[0] == "b":
-
-                logger.debug(f"creating BGO reponse for {det} via grb {name}")
-
-                rsp = BGOResponse(det, ra, dec, T0, save=True, name=name)
-
-            else:
-
-                logger.debug(f"creating NAI reponse for {det} via GRB {name}")
-
-                rsp = NaIResponse(det, ra, dec, T0, save=True, name=name)
-
-            bkg = GBMBackground(
-                self._background_start,
-                self._background_stop,
-                average_rate=500,
-                detector=det,
-            )
-
-            # cpl_source = ConstantCPL(
-            #     peak_flux=peak_flux,
-            #     trise=trise,
-            #     tdecay=duration - trise,
-            #     ep_tau=tau,
-            #     alpha=alpha,
-            #     ep_start=ep,
-            #     response=rsp,
-            # )
-
-            cpl_source = CPLSourceFunction(
-                peak_flux=peak_flux,
-                trise=trise,
-                tdecay=duration - trise,
-                ep_tau=tau,
-                alpha=alpha,
-                ep_start=ep,
-                response=rsp,
-            )
-
-            source = Source(0.0, duration, cpl_source, use_plaw_sample=True)
-
-            self._add_lightcurve(
-                GBMLightCurve(source, bkg, rsp, name=det, grb_name=self._name)
-            )
+        # pass up
+        super(GBMGRB_CPL, self).__init__(
+            source_function_class=CPLSourceFunction,
+            source_params=source_params,
+            name=name,
+            duration=duration,
+            z=z,
+            T0=T0,
+            ra=ra,
+            dec=dec,
+        )

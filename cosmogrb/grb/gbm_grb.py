@@ -42,12 +42,19 @@ class GBMGRB(GRB):
         T0,
         source_function_class,
         name="SynthGRB",
-        **source_function_params,    
+        **source_function_params,
     ):
 
         # pass up
         super(GBMGRB, self).__init__(
-            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec
+            name=name,
+            duration=duration,
+            z=z,
+            T0=T0,
+            ra=ra,
+            dec=dec,
+            source_class=source_function_class,
+            background_class=GBMBackground,
         )
 
         for det in self._gbm_detectors:
@@ -71,12 +78,13 @@ class GBMGRB(GRB):
             )
 
             source_function = source_function_class(rsp=rsp, **source_function_params)
-  
+
             source = Source(0.0, duration, source_function, use_plaw_sample=True)
 
             self._add_lightcurve(
                 GBMLightCurve(source, bkg, rsp, name=det, grb_name=self._name)
             )
+
 
 class GBMGRB_CPL(GRB):
 

@@ -1,15 +1,18 @@
 import h5py
 import multiprocessing as mp
 import  collections
-
 import coloredlogs, logging
-import cosmogrb.utils.logging
 
+
+from cosmogrb.sampler.source import Source
+from cosmogrb.sampler.background import Background
+import cosmogrb.utils.logging
 logger = logging.getLogger("cosmogrb.grb")
 
 
+
 class GRB(object):
-    def __init__(self, name="SynthGRB",duration=1,  z=1, T0=0, ra=0, dec=0):
+    def __init__(self, name="SynthGRB", source_class, background_class,  duration=1,  z=1, T0=0, ra=0, dec=0, source_params={}, background_params = {}):
         """
         A basic GRB
 
@@ -25,9 +28,17 @@ class GRB(object):
         self._z = z
         self._ra = ra
         self.dec = dec
+        self._source_class = source_class
+        self._background_class = background_class
+        
 
         assert z > 0, f'z: {z} must be greater than zero'
         assert duration > 0, f'duration: {duration} must be greater than zero'
+        assert issubclass(source_class, Source)
+        assert issubclass(background_class, Background)
+
+        self._source_params = source_params
+        self._background_params = background_params
         
         logger.debug(f"created a GRB with name: {name}")
         logger.debug(f"created a GRB with ra: {ra} and dec: {dec}")
@@ -35,8 +46,22 @@ class GRB(object):
         logger.debug(f"created a GRB with duration: {duration} and T0: {T0}")
 
         # create an empty list for the light curves
-        self._lightcurves = collections.OrderedDict
+        # eetc
+        self._lightcurves = collections.OrderedDict()
         self._responses = collections.OrderedDict()
+        self._backgrounds = collections.OrderedDict()
+
+    def _setup(self):
+
+        assert len(self._responses) > 0
+
+        for key in self._responses.keys():
+
+            
+
+    def _add_background(self, name, background):
+
+        self._backgrounds[name] = background
         
     def _add_response(self, name, response):
 

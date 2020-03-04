@@ -14,13 +14,13 @@ class LightCurve(object):
         background,
         response,
         T0=0,
-        name="lightcurve",
+        
         grb_name="SynthGRB",
         tstart=0,
         tstop=100.0,
     ):
         """
-        Lightcurve generator for source and background
+        Lightcurve generator f{lenource and backgroun after dead time filteringd
         per detector. 
 
 
@@ -47,7 +47,7 @@ class LightCurve(object):
         assert tstop > tstart
 
         self._time_adjustment = 0
-        
+
         # now set the response
 
         #        self._source.set_response(self._response)
@@ -60,11 +60,10 @@ class LightCurve(object):
         self._name = name
         self._grb_name = grb_name
         self._T0 = T0
-        
+
     def set_time_adjustment(self, t):
         self._time_adjustment = t
 
-        
     def _sample_source(self):
         """
         samples the source times and energies
@@ -74,11 +73,13 @@ class LightCurve(object):
 
         """
 
-        logger.debug(f"{self._grb_name} {self._name}: sampling photons")
+        logger.debug(f"{self._grb_name} {self._name}: sampling source")
 
         times = self._source.sample_times()
 
-        logger.debug(f"{self._grb_name} {self._name}: has {len(times)} initial photons")
+        logger.debug(
+            f"{self._grb_name} {self._name}: has {len(times)} initial source photons"
+        )
 
         photons = self._source.sample_photons(times)
 
@@ -86,7 +87,7 @@ class LightCurve(object):
 
         pha = self._source.sample_channel(photons, self._response)
 
-        logger.debug(f"{self._grb_name} {self._name}: now has digitized it's events")
+        logger.debug(f"{self._grb_name} {self._name}: now has digitized its events")
 
         self._photons = photons
         self._initial_source_light_curves = times
@@ -128,6 +129,10 @@ class LightCurve(object):
         self._times = self._times[idx]
         self._pha = self._pha[idx]
 
+        logging.debug(
+            "{self._grb_name} {self._name} has {len(self._pha)} counts after combining "
+        )
+
         # now sort the background and source times for fun
 
         idx = self._initial_bkg_light_curves.argsort()
@@ -135,10 +140,18 @@ class LightCurve(object):
         self._times_background = self._initial_bkg_light_curves[idx]
         self._pha_background = self._initial_bkg_channels[idx]
 
+        logging.debug(
+            "{self._grb_name} {self._name} has {len(self._pha_background)}  background counts after combining "
+        )
+
         idx = self._initial_source_light_curves.argsort()
 
         self._times_source = self._initial_source_light_curves[idx]
         self._pha_source = self._initial_source_channels[idx]
+
+        logging.debug(
+            "{self._grb_name} {self._name} has {len(self._pha_source)}  source counts after combining "
+        )
 
     def process(self):
 
@@ -147,11 +160,11 @@ class LightCurve(object):
 
         self._combine()
 
-        logger.debug(f"{self._grb_name} {self._name}: now has {sum(self._pha)} counts")
+        
 
         self._filter_deadtime()
 
-        logger.debug(f"{self._grb_name} {self._name}: now has {sum(self._pha)} counts")
+        logger.debug(f"{self._grb_name} {self._name}: now has {len(self._pha)} counts after dead time filtering")
 
         # now create a lightcurve storage
 
@@ -159,7 +172,7 @@ class LightCurve(object):
             name=self._name,
             tstart=self._tstart,
             tstop=self._tstop,
-            time_adjustment = self._time_adjustment,
+            time_adjustment=self._time_adjustment,
             pha=self._pha,
             times=self._times,
             pha_source=self._pha_source,
@@ -168,7 +181,7 @@ class LightCurve(object):
             times_background=self._times_background,
             channels=self._response.channels,
             ebounds=self._response.channel_edges,
-            T0=self._T0
+            T0=self._T0,
         )
 
         return lc_storage
@@ -206,11 +219,10 @@ class LightCurve(object):
 
         self._source.display_energy_integrated_light_curve(time=time, ax=ax, **kwargs)
 
-
     @property
     def time_adjustment(self):
         return self._lc_storage.time_adjustment
-        
+
     @property
     def times(self):
         return self._lc_storage.times
@@ -250,5 +262,3 @@ class LightCurve(object):
     @property
     def lightcurve_storage(self):
         return self._lc_storage
-
-

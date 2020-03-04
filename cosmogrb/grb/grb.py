@@ -168,8 +168,8 @@ class GRB(object):
 
                 source_group = lc_group.create_group("background_signal")
 
-                source_group.create_dataset("pha", data=lc.pha_source)
-                source_group.create_dataset("times", data=lc.times_source)
+                source_group.create_dataset("pha", data=lc.pha_background)
+                source_group.create_dataset("times", data=lc.times_background)
 
                 rsp_group = lc_group.create_group("response")
 

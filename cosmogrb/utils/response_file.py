@@ -2,22 +2,26 @@ import numpy as np
 from cosmogrb.utils.fits_file import FITSFile, FITSExtension
 
 
-
 # lifted from 3ML
 class EBOUNDS(FITSExtension):
 
-    _HEADER_KEYWORDS = (('EXTNAME', 'EBOUNDS', 'Extension name'),
-                        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
-                        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
-                        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
-                        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
-                        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
-                        ('CHANTYPE', 'PI', 'Channel type'),
-                        ('CONTENT', 'OGIPResponse Matrix', 'File content'),
-                        ('HDUCLAS1', 'RESPONSE', 'Extension contains response data  '),
-                        ('HDUCLAS2', 'EBOUNDS ', 'Extension contains EBOUNDS'),
-                        ('TLMIN1', 1, 'Minimum legal channel number')
-                        )
+    _HEADER_KEYWORDS = (
+        ("EXTNAME", "EBOUNDS", "Extension name"),
+        ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
+        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUDOC",
+            "OGIP memos CAL/GEN/92-002 & 92-002a",
+            "Documents describing the forma",
+        ),
+        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
+        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        ("CHANTYPE", "PI", "Channel type"),
+        ("CONTENT", "OGIPResponse Matrix", "File content"),
+        ("HDUCLAS1", "RESPONSE", "Extension contains response data  "),
+        ("HDUCLAS2", "EBOUNDS ", "Extension contains EBOUNDS"),
+        ("TLMIN1", 1, "Minimum legal channel number"),
+    )
 
     def __init__(self, energy_boundaries):
         """
@@ -27,9 +31,11 @@ class EBOUNDS(FITSExtension):
 
         n_channels = len(energy_boundaries) - 1
 
-        data_tuple = (('CHANNEL', range(1, n_channels + 1)),
-                      ('E_MIN', energy_boundaries[:-1] * u.keV),
-                      ('E_MAX', energy_boundaries[1:] * u.keV))
+        data_tuple = (
+            ("CHANNEL", range(1, n_channels + 1)),
+            ("E_MIN", energy_boundaries[:-1] * u.keV),
+            ("E_MAX", energy_boundaries[1:] * u.keV),
+        )
 
         super(EBOUNDS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
 
@@ -44,21 +50,24 @@ class MATRIX(FITSExtension):
     :param matrix: the redistribution matrix, representing energy dispersion effects
     """
 
-
     _HEADER_KEYWORDS = [
-        ('EXTNAME', 'MATRIX', 'Extension name'),
-        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
-        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
-        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
-        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
-        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
-        ('HDUCLAS1', 'RESPONSE', 'dataset relates to spectral response'),
-        ('HDUCLAS2', 'RSP_MATRIX', 'dataset is a spectral response matrix'),
-        ('HDUCLAS3', 'REDIST', 'dataset represents energy dispersion only'),
-        ('CHANTYPE', 'PI ', 'Detector Channel Type in use (PHA or PI)'),
-        ('DETCHANS', None, 'Number of channels'),
-        ('FILTER', '', 'Filter used'),
-        ('TLMIN4', 1, 'Minimum legal channel number')
+        ("EXTNAME", "MATRIX", "Extension name"),
+        ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
+        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUDOC",
+            "OGIP memos CAL/GEN/92-002 & 92-002a",
+            "Documents describing the forma",
+        ),
+        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
+        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        ("HDUCLAS1", "RESPONSE", "dataset relates to spectral response"),
+        ("HDUCLAS2", "RSP_MATRIX", "dataset is a spectral response matrix"),
+        ("HDUCLAS3", "REDIST", "dataset represents energy dispersion only"),
+        ("CHANTYPE", "PI ", "Detector Channel Type in use (PHA or PI)"),
+        ("DETCHANS", None, "Number of channels"),
+        ("FILTER", "", "Filter used"),
+        ("TLMIN4", 1, "Minimum legal channel number"),
     ]
 
     def __init__(self, mc_energies, channel_energies, matrix):
@@ -66,21 +75,23 @@ class MATRIX(FITSExtension):
         n_mc_channels = len(mc_energies) - 1
         n_channels = len(channel_energies) - 1
 
-        assert matrix.shape == (n_channels, n_mc_channels), \
-            "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (n_channels, n_mc_channels,
-                                                                           matrix.shape[0], matrix.shape[1])
+        assert matrix.shape == (n_channels, n_mc_channels), (
+            "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
+            % (n_channels, n_mc_channels, matrix.shape[0], matrix.shape[1])
+        )
 
         ones = np.ones(n_mc_channels, np.int16)
 
         # We need to format the matrix as a list of n_mc_channels rows of n_channels length
 
-        data_tuple = (('ENERG_LO', mc_energies[:-1] * u.keV),
-                      ('ENERG_HI', mc_energies[1:] * u.keV),
-                      ('N_GRP', ones),
-                      ('F_CHAN', ones),
-                      ('N_CHAN', np.ones(n_mc_channels, np.int16) * n_channels),
-                      ('MATRIX', matrix.T)
-                      )
+        data_tuple = (
+            ("ENERG_LO", mc_energies[:-1] * u.keV),
+            ("ENERG_HI", mc_energies[1:] * u.keV),
+            ("N_GRP", ones),
+            ("F_CHAN", ones),
+            ("N_CHAN", np.ones(n_mc_channels, np.int16) * n_channels),
+            ("MATRIX", matrix.T),
+        )
 
         super(MATRIX, self).__init__(data_tuple, self._HEADER_KEYWORDS)
 
@@ -113,6 +124,7 @@ class RMF(FITSFile):
     """
     A RMF file, the OGIP format for a matrix representing energy dispersion effects.
     """
+
     def __init__(self, mc_energies, ebounds, matrix, telescope_name, instrument_name):
 
         # Make sure that the provided iterables are of the right type for the FITS format

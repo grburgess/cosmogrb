@@ -26,11 +26,11 @@ def grbsave_to_gbm_fits(file_name, destination="."):
             time=grb[key]["lightcurve"].times + grb[key]["lightcurve"].time_adjustment,
         )
 
-        tte_file.writeto(f"{grb.name}_{self._name}.fits", overwrite=True)
+        tte_file.writeto(f"tte_{grb.name}_{key}.fits", overwrite=True)
 
         rsp = grb[key]["response"]
 
-        file_name = f"{grb.name}_{key}.rsp"
+        file_name = f"{rsp_grb.name}_{key}.rsp"
 
         rsp.to_fits(
             file_name, telescope_name="fermi", instrument_name=key, overwrite=True

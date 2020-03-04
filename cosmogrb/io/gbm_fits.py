@@ -30,7 +30,7 @@ def grbsave_to_gbm_fits(file_name, destination="."):
 
         rsp = grb[key]["response"]
 
-        file_name = f"{rsp_grb.name}_{key}.rsp"
+        file_name = f"rsp_{grb.name}_{key}.rsp"
 
         rsp.to_fits(
             file_name, telescope_name="fermi", instrument_name=key, overwrite=True

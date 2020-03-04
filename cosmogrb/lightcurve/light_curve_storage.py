@@ -182,3 +182,30 @@ class LightCurveStorage(object):
         ax.hist(times, bins=bins, histtype="step", lw=2, ec="r")
 
         return fig
+
+    def display_source(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        tmin = self._times.min()
+        tmax = self._times.max()
+
+        bins = np.arange(tmin, tmax, dt)
+
+        idx = np.ones_like(self._times_source, dtype=bool)
+
+        # filter channels if requested
+
+        idx = self._select_channel(emin, emax, self._pha_source, idx)
+
+        times = self._times_source[idx]
+
+        ax.hist(times, bins=bins, histtype="step", lw=2, ec="b")
+
+        return fig

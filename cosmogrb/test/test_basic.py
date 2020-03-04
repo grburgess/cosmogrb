@@ -27,6 +27,9 @@ def test_basic_gbm():
 
     grb.go(n_cores=1)
 
+
+    grb.save('test.h5')
+    
     files_to_remove = glob("SynthGRB*.rsp")
 
     for f in files_to_remove:

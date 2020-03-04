@@ -7,7 +7,13 @@ logger = logging.getLogger("cosmogrb.lightcurve")
 
 class LightCurve(object):
     def __init__(
-            self, source, background, response, T0=0, name="lightcurve", grb_name="SynthGRB",
+        self,
+        source,
+        background,
+        response,
+        T0=0,
+        name="lightcurve",
+        grb_name="SynthGRB",
     ):
         """
         Lightcurve generator for source and background
@@ -98,6 +104,7 @@ class LightCurve(object):
         self._times = np.append(
             self._initial_bkg_light_curves, self._initial_source_light_curves
         )
+
         self._pha = np.append(self._initial_bkg_channels, self._initial_source_channels)
 
         idx = self._times.argsort()
@@ -132,7 +139,8 @@ class LightCurve(object):
 
         # now create a lightcurve storage
 
-        self._lc_storage = LightCurveStorage(
+        lc_storage = LightCurveStorage(
+            name=self._name,
             pha=self._pha,
             times=self._times,
             pha_source=self._pha_source,
@@ -142,6 +150,11 @@ class LightCurve(object):
             channels=self._response.channels,
             ebounds=self._response.channel_edges,
         )
+
+        return lc_storage
+
+    def set_storage(self, lc_storage):
+        self._lc_storage = lc_storage
 
     def display_energy_dependent_light_curve(
         self, time, energy, ax=None, cmap="viridis", **kwargs
@@ -212,11 +225,12 @@ class LightCurve(object):
     @property
     def lightcurve_storage(self):
         return self._lc_storage
-    
+
 
 class LightCurveStorage(object):
     def __init__(
         self,
+        name,
         pha,
         times,
         pha_source,
@@ -244,6 +258,7 @@ class LightCurveStorage(object):
 
         """
 
+        self._name = name
         self._pha = pha
         self._times = times + T0
 
@@ -257,6 +272,10 @@ class LightCurveStorage(object):
         self._ebounds = ebounds
 
         self._T0 = T0
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def T0(self):

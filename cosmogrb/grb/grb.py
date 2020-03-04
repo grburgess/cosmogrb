@@ -44,8 +44,7 @@ class GRB(object):
         self._backgrounds = collections.OrderedDict()
 
         self._setup()
-        
-        
+
     def _setup(self):
 
         pass
@@ -75,13 +74,49 @@ class GRB(object):
 
         logger.debug(f"Added lightcuve: {lightcurve.name}")
 
+    def display_energy_dependent_light_curve(
+        self, time, energy, ax=None, cmap="viridis", **kwargs
+    ):
+        """FIXME! briefly describe function
+
+        :param time: 
+        :param energy: 
+        :param ax: 
+        :param cmap: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        list(self._lightcurves.values())[0].display_energy_dependent_light_curve(
+            time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
+        )
+
+    def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
+        """FIXME! briefly describe function
+
+        :param time: 
+        :param ax: 
+        :rtype: 
+        :returns: 
+
+        """
+
+        list(self._lightcurves.values())[0].display_energy_integrated_light_curve(
+            time=time, ax=ax, **kwargs
+        )
+
     def go(self, n_cores=8):
 
         pool = mp.Pool(n_cores)
 
-        pool.map(process_lightcurve, self._lightcurves.values())
+        results = pool.map(process_lightcurve, self._lightcurves.values())
         pool.close()
         pool.join()
+
+        for lc in results:
+
+            self._lightcurves[lc.name].set_storage(lc)
 
     def save(self, file_name):
         """
@@ -102,7 +137,7 @@ class GRB(object):
             f.attrs["T0"] = self._T0
             det_group = f.create_group("detectors")
 
-            for lightcurve in self._lightcurves:
+            for _, lightcurve in self._lightcurves.items():
 
                 lc = lightcurve.lightcurve_storage
 
@@ -139,38 +174,6 @@ class GRB(object):
                 )
                 rsp_group.attrs["geometric_area"] = lightcurve.response.geometric_area
 
-    def display_energy_dependent_light_curve(
-        self, time, energy, ax=None, cmap="viridis", **kwargs
-    ):
-        """FIXME! briefly describe function
-
-        :param time: 
-        :param energy: 
-        :param ax: 
-        :param cmap: 
-        :returns: 
-        :rtype: 
-
-        """
-
-        list(self._lightcurves.values())[0].display_energy_dependent_light_curve(
-            time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
-        )
-
-    def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
-        """FIXME! briefly describe function
-
-        :param time: 
-        :param ax: 
-        :returns: 
-        :rtype: 
-
-        """
-
-        list(self._lightcurves.values())[0].display_energy_integrated_light_curve(
-            time=time, ax=ax, **kwargs
-        )
-
 
 def process_lightcurve(lc):
-    lc.process()
+    return lc.process()

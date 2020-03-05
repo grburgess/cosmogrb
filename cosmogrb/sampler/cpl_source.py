@@ -21,11 +21,11 @@ def norris(x, K, t_start, t_rise, t_decay):
 # def krl(x, t_max, f_max, rise, decay, c=0):
 
 
-#     top = 
-    
-#     return 
+#     top =
 
-    
+#     return
+
+
 def ggrb_int_cpl(a, Ec, Emin, Emax):
 
     # Gammaincc does not support quantities
@@ -73,7 +73,7 @@ class CPLSourceFunction(SourceFunction):
         tdecay=2,
         emin=10.0,
         emax=1e4,
-        response=None
+        response=None,
     ):
 
         # attach variables
@@ -86,7 +86,9 @@ class CPLSourceFunction(SourceFunction):
 
         assert alpha < 0.0, "the rejection sampler is slow as fuck if alpha is positive"
 
-        super(CPLSourceFunction, self).__init__(emin=emin, emax=emax, index=alpha, response=response)
+        super(CPLSourceFunction, self).__init__(
+            emin=emin, emax=emax, index=alpha, response=response
+        )
 
     @evolver
     def evolution(self, energy, time):

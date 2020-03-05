@@ -64,7 +64,7 @@ class ConstantCPL(SourceFunction):
         tdecay=2,
         emin=10.0,
         emax=1e4,
-        response=None
+        response=None,
     ):
 
         # attach variables
@@ -77,7 +77,9 @@ class ConstantCPL(SourceFunction):
 
         assert alpha < 0.0, "the rejection sampler is slow as fuck if alpha is positive"
 
-        super(ConstantCPL, self).__init__(emin=emin, emax=emax, index=alpha, response=response)
+        super(ConstantCPL, self).__init__(
+            emin=emin, emax=emax, index=alpha, response=response
+        )
 
     @evolver
     def evolution(self, energy, time):

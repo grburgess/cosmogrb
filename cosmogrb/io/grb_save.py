@@ -150,7 +150,7 @@ class GRBSave(object):
                     pha_background=pha_background,
                     channels=rsp.channels,
                     ebounds=rsp.channel_edges,
-                    T0=T0
+                    T0=T0,
                 )
 
                 lightcurves[lc_name] = lc_container

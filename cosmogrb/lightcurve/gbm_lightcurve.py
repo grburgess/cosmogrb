@@ -32,7 +32,7 @@ class GBMLightCurve(LightCurve):
             name=name,
             grb_name=grb_name,
             tstart=tstart,
-            tstop=tstop
+            tstop=tstop,
         )
 
     def _filter_deadtime(self):

@@ -98,7 +98,6 @@ class GRBSave(object):
             dec = f.attrs["dec"]
             T0 = f.attrs["T0"]
 
-            print(T0)
             det_group = f["detectors"]
 
             for lc_name in det_group.keys():
@@ -151,7 +150,7 @@ class GRBSave(object):
                     pha_background=pha_background,
                     channels=rsp.channels,
                     ebounds=rsp.channel_edges,
-                    T0=T0
+                    T0=T0,
                 )
 
                 lightcurves[lc_name] = lc_container

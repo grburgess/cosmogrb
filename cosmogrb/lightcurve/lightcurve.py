@@ -93,6 +93,11 @@ class LightCurve(object):
         self._initial_source_light_curves = times
         self._initial_source_channels = pha
 
+        idx = self._initial_source_light_curves.argsort()
+
+        self._times_source = self._initial_source_light_curves[idx]
+        self._pha_source = self._initial_source_channels[idx]
+
     def _sample_background(self):
         """
         sample the background
@@ -108,6 +113,11 @@ class LightCurve(object):
         self._initial_bkg_channels = self._background.sample_channel(
             size=len(self._initial_bkg_light_curves)
         )
+
+        idx = self._initial_bkg_light_curves.argsort()
+
+        self._times_background = self._initial_bkg_light_curves[idx]
+        self._pha_background = self._initial_bkg_channels[idx]
 
     def _combine(self):
         """
@@ -135,23 +145,13 @@ class LightCurve(object):
 
         # now sort the background and source times for fun
 
-        idx = self._initial_bkg_light_curves.argsort()
+        # logging.debug(
+        #     f"{self._grb_name} {self._name} has {len(self._pha_background)}  background counts after combining "
+        # )
 
-        self._times_background = self._initial_bkg_light_curves[idx]
-        self._pha_background = self._initial_bkg_channels[idx]
-
-        logging.debug(
-            f"{self._grb_name} {self._name} has {len(self._pha_background)}  background counts after combining "
-        )
-
-        idx = self._initial_source_light_curves.argsort()
-
-        self._times_source = self._initial_source_light_curves[idx]
-        self._pha_source = self._initial_source_channels[idx]
-
-        logging.debug(
-            f"{self._grb_name} {self._name} has {len(self._pha_source)}  source counts after combining "
-        )
+        # logging.debug(
+        #     f"{self._grb_name} {self._name} has {len(self._pha_source)}  source counts after combining "
+        # )
 
     def process(self):
 

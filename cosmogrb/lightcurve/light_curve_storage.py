@@ -1,3 +1,7 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+
 class LightCurveStorage(object):
     def __init__(
         self,
@@ -104,3 +108,104 @@ class LightCurveStorage(object):
     @property
     def time_adjustment(self):
         return self._time_adjustment
+
+    def _select_channel(self, emin, emax, pha, original_idx):
+
+        if emin is not None:
+
+            chan = self._ebounds.searchsorted(emin)
+
+            idx_lo = pha > chan
+
+            original_idx = np.logical_and(orginal_idx, idx_lo)
+
+        if emax is not None:
+
+            chan = self._ebounds.searchsorted(emax)
+
+            idx_hi = pha < chan
+
+            original_idx = np.logical_and(original_idx, idx_hi)
+
+        return original_idx
+
+    def display_lightcurve(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        tmin = self._times.min()
+        tmax = self._times.max()
+
+        bins = np.arange(tmin, tmax, dt)
+
+        idx = np.ones_like(self._times, dtype=bool)
+
+        # filter channels if requested
+
+        idx = self._select_channel(emin, emax, self._pha, idx)
+
+        times = self._times[idx]
+
+        ax.hist(times, bins=bins, histtype="step", lw=2, ec="k")
+
+        return fig
+
+    def display_background(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        tmin = self._times.min()
+        tmax = self._times.max()
+
+        bins = np.arange(tmin, tmax, dt)
+
+        idx = np.ones_like(self._times_background, dtype=bool)
+
+        # filter channels if requested
+
+        idx = self._select_channel(emin, emax, self._pha_background, idx)
+
+        times = self._times_background[idx]
+
+        ax.hist(times, bins=bins, histtype="step", lw=2, ec="r")
+
+        return fig
+
+    def display_source(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        tmin = self._times.min()
+        tmax = self._times.max()
+
+        bins = np.arange(tmin, tmax, dt)
+
+        idx = np.ones_like(self._times_source, dtype=bool)
+
+        # filter channels if requested
+
+        idx = self._select_channel(emin, emax, self._pha_source, idx)
+
+        times = self._times_source[idx]
+
+        ax.hist(times, bins=bins, histtype="step", lw=2, ec="b")
+
+        return fig

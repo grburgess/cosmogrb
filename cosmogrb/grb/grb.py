@@ -108,12 +108,19 @@ class GRB(object):
 
     def go(self, n_cores=8):
 
-        pool = mp.Pool(n_cores)
+        if n_cores > 1: 
+        
+            pool = mp.Pool(n_cores)
 
-        results = pool.map(process_lightcurve, self._lightcurves.values())
-        pool.close()
-        pool.join()
+            results = pool.map(process_lightcurve, self._lightcurves.values())
+            pool.close()
+            pool.join()
 
+        else:
+
+            results = [process_lightcurve(x) for x in  self._lightcurves.values()]
+            
+            
         for lc in results:
 
             self._lightcurves[lc.name].set_storage(lc)

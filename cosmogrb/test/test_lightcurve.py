@@ -30,11 +30,9 @@ def test_lightcurve_plotting():
         lc.display_count_spectrum_background()
         lc.display_count_spectrum_source()
 
-
         lc.display_count_spectrum(tmin=0)
         lc.display_count_spectrum_background(tmin=0)
         lc.display_count_spectrum_source(tmin=0)
-
 
         lc.display_count_spectrum(tmax=10)
         lc.display_count_spectrum_background(tmax=10)

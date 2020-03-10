@@ -18,6 +18,7 @@ def grb():
                      ep=500.0,
                      tau=2.0,
                      trise=0.1,
+                     tdecay=.5,
                      duration=1.0,
                      T0=0.1,
     )

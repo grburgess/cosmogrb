@@ -130,6 +130,7 @@ class GBMGRB_CPL(GBMGRB):
         ep,
         tau,
         trise,
+        tdecay,
         duration,
         T0,
         name="SynthGRB",
@@ -142,7 +143,7 @@ class GBMGRB_CPL(GBMGRB):
         source_params = dict(
             peak_flux=peak_flux,
             trise=trise,
-            tdecay=(duration - trise),
+            tdecay=tdecay,
             ep_tau=tau,
             alpha=alpha,
             ep_start=ep,

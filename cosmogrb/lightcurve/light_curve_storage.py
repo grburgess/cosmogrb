@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from cosmogrb.utils.plotting import step_plot, channel_plot
+
 
 class LightCurveStorage(object):
     def __init__(
@@ -117,7 +119,7 @@ class LightCurveStorage(object):
 
             idx_lo = pha > chan
 
-            original_idx = np.logical_and(orginal_idx, idx_lo)
+            original_idx = np.logical_and(original_idx, idx_lo)
 
         if emax is not None:
 
@@ -129,6 +131,47 @@ class LightCurveStorage(object):
 
         return original_idx
 
+    def _select_time(self, tmin, tmax, times, original_idx):
+
+        if tmin is not None:
+
+            idx_lo = times > tmin
+
+            original_idx = np.logical_and(original_idx, idx_lo)
+
+        if tmax is not None:
+
+            idx_hi = times < tmax
+
+            original_idx = np.logical_and(original_idx, idx_hi)
+
+        return original_idx
+
+    def _prepare_lightcurve(self, dt, emin, emax, times, pha):
+
+        tmin = times.min()
+        tmax = times.max()
+
+        bins = np.arange(tmin, tmax, dt)
+
+        idx = np.ones_like(times, dtype=bool)
+
+        # filter channels if requested
+
+        idx = self._select_channel(emin, emax, pha, idx)
+
+        times = times[idx]
+
+        # histogram the counts and convert to a rate
+
+        counts, edges = np.histogram(times, bins=bins)
+
+        rate = counts / dt
+
+        xbins = np.vstack([edges[:-1], edges[1:]]).T
+
+        return xbins, rate
+
     def display_lightcurve(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
 
         if ax is None:
@@ -139,20 +182,12 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        tmin = self._times.min()
-        tmax = self._times.max()
+        xbins, rate = self._prepare_lightcurve(dt, emin, emax, self._times, self._pha)
 
-        bins = np.arange(tmin, tmax, dt)
+        step_plot(xbins, rate, ax=ax, **kwargs)
 
-        idx = np.ones_like(self._times, dtype=bool)
-
-        # filter channels if requested
-
-        idx = self._select_channel(emin, emax, self._pha, idx)
-
-        times = self._times[idx]
-
-        ax.hist(times, bins=bins, histtype="step", lw=2, ec="k")
+        ax.set_xlabel("time")
+        ax.set_ylabel("rate")
 
         return fig
 
@@ -166,20 +201,14 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        tmin = self._times.min()
-        tmax = self._times.max()
+        xbins, rate = self._prepare_lightcurve(
+            dt, emin, emax, self._times_background, self._pha_background
+        )
 
-        bins = np.arange(tmin, tmax, dt)
+        step_plot(xbins, rate, ax=ax, **kwargs)
 
-        idx = np.ones_like(self._times_background, dtype=bool)
-
-        # filter channels if requested
-
-        idx = self._select_channel(emin, emax, self._pha_background, idx)
-
-        times = self._times_background[idx]
-
-        ax.hist(times, bins=bins, histtype="step", lw=2, ec="r")
+        ax.set_xlabel("time")
+        ax.set_ylabel("rate")
 
         return fig
 
@@ -193,19 +222,124 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        tmin = self._times.min()
-        tmax = self._times.max()
+        xbins, rate = self._prepare_lightcurve(
+            dt, emin, emax, self._times_source, self._pha_source
+        )
 
-        bins = np.arange(tmin, tmax, dt)
+        step_plot(xbins, rate, ax=ax, **kwargs)
 
-        idx = np.ones_like(self._times_source, dtype=bool)
+        ax.set_xlabel("time")
+        ax.set_ylabel("rate")
 
-        # filter channels if requested
+        return fig
 
-        idx = self._select_channel(emin, emax, self._pha_source, idx)
+    def _prepare_spectrum(self, tmin, tmax, times, pha):
 
-        times = self._times_source[idx]
+        idx = np.ones_like(times, dtype=bool)
 
-        ax.hist(times, bins=bins, histtype="step", lw=2, ec="b")
+        # filter times
 
+        idx = self._select_time(tmin, tmax, times, idx)
+
+        # down select the pha
+
+        pha = pha[idx]
+
+        channels = np.append(self._channels, self._channels[-1] + 1)
+
+        
+        counts, _ = np.histogram(pha, bins = channels - 0.5)
+
+        return counts
+
+    def display_count_spectrum(self, tmin=None, tmax=None, ax=None, **kwargs):
+        """FIXME! briefly describe function
+
+        :param tmin: 
+        :param tmax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        emin = self._ebounds[:-1]
+        emax = self._ebounds[1:]
+
+        counts = self._prepare_spectrum(tmin, tmax, self._times, self._pha)
+
+        # plot counts and background for the currently selected data
+
+        channel_plot(ax, emin, emax, counts, **kwargs)
+
+        return fig
+
+
+    def display_count_spectrum_source(self, tmin=None, tmax=None, ax=None, **kwargs):
+        """FIXME! briefly describe function
+
+        :param tmin: 
+        :param tmax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        emin = self._ebounds[:-1]
+        emax = self._ebounds[1:]
+
+        counts = self._prepare_spectrum(tmin, tmax, self._times_source, self._pha_source)
+
+        # plot counts and background for the currently selected data
+
+        channel_plot(ax, emin, emax, counts, **kwargs)
+
+        return fig
+
+    def display_count_spectrum_background(self, tmin=None, tmax=None, ax=None, **kwargs):
+        """FIXME! briefly describe function
+
+        :param tmin: 
+        :param tmax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        emin = self._ebounds[:-1]
+        emax = self._ebounds[1:]
+
+        counts = self._prepare_spectrum(tmin, tmax, self._times_background, self._pha_background)
+
+        # plot counts and background for the currently selected data
+
+        channel_plot(ax, emin, emax, counts, **kwargs)
+
+        
         return fig

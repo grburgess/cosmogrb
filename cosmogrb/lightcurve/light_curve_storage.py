@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from cosmogrb.utils.plotting import step_plot
 
 class LightCurveStorage(object):
     def __init__(
@@ -129,6 +130,34 @@ class LightCurveStorage(object):
 
         return original_idx
 
+
+
+    def _prepare_lightcurve(self, dt, emin, emax, times, pha):
+
+        tmin = times.min()
+        tmax = times.max()
+
+        bins = np.arange(tmin, tmax, dt)
+
+        idx = np.ones_like(times, dtype=bool)
+
+        # filter channels if requested
+
+        idx = self._select_channel(emin, emax, pha, idx)
+
+        times = times[idx]
+
+        # histogram the counts and convert to a rate
+        
+        counts, edges = np.histogram(times, bins=bins)
+
+        rate = counts/dt
+
+        xbins = np.vstack([edges[:-1], edges[1:]]).T
+
+        return xbins, rate
+        
+    
     def display_lightcurve(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
 
         if ax is None:
@@ -139,21 +168,15 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        tmin = self._times.min()
-        tmax = self._times.max()
 
-        bins = np.arange(tmin, tmax, dt)
+        xbins, rate = self._prepare_lightcurve(dt, emin, emax, self._times, self._pha)
+            
+        step_plot(xbins, rate, ax=ax, **kwargs)
 
-        idx = np.ones_like(self._times, dtype=bool)
+        ax.set_xlabel('time')
+        ax.set_ylabel('rate')
 
-        # filter channels if requested
-
-        idx = self._select_channel(emin, emax, self._pha, idx)
-
-        times = self._times[idx]
-
-        ax.hist(times, bins=bins, histtype="step", lw=2, ec="k")
-
+        
         return fig
 
     def display_background(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
@@ -166,21 +189,14 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        tmin = self._times.min()
-        tmax = self._times.max()
+        xbins, rate = self._prepare_lightcurve(dt, emin, emax, self._times_background, self._pha_background)
+            
+        step_plot(xbins, rate, ax=ax, **kwargs)
+        
+        ax.set_xlabel('time')
+        ax.set_ylabel('rate')
 
-        bins = np.arange(tmin, tmax, dt)
-
-        idx = np.ones_like(self._times_background, dtype=bool)
-
-        # filter channels if requested
-
-        idx = self._select_channel(emin, emax, self._pha_background, idx)
-
-        times = self._times_background[idx]
-
-        ax.hist(times, bins=bins, histtype="step", lw=2, ec="r")
-
+        
         return fig
 
     def display_source(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
@@ -193,19 +209,13 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        tmin = self._times.min()
-        tmax = self._times.max()
 
-        bins = np.arange(tmin, tmax, dt)
+        xbins, rate = self._prepare_lightcurve(dt, emin, emax, self._times_source, self._pha_source)
 
-        idx = np.ones_like(self._times_source, dtype=bool)
 
-        # filter channels if requested
-
-        idx = self._select_channel(emin, emax, self._pha_source, idx)
-
-        times = self._times_source[idx]
-
-        ax.hist(times, bins=bins, histtype="step", lw=2, ec="b")
-
+        step_plot(xbins, rate, ax=ax, **kwargs)
+        
+        ax.set_xlabel('time')
+        ax.set_ylabel('rate')
+        
         return fig

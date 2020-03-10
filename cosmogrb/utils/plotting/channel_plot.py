@@ -24,4 +24,4 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
 
     ax.set_xlabel("Channel Energy")
 
-    ax.set_xlabel("cnts/s/energy")
+    ax.set_ylabel("cnts/s/energy")

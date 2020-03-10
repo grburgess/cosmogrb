@@ -18,12 +18,15 @@ After simulation, a realistic background and temporally evolving spectrum are cr
 Cool?
 
 ```python
-
 import matplotlib.pyplot as plt
 %matplotlib inline
+from jupyterthemes import jtplot
 
 import cosmogrb
 ```
+
+    You do not have threeML installed
+
 
 # Demo of Creating a GBM GRB
 
@@ -40,7 +43,8 @@ grb = cosmogrb.GBMGRB_CPL(
     ep=500.0,
     tau=2.0,
     trise=1.0,
-    duration=20.0,
+    tdecay=1.,
+    duration=80.0,
     T0=0.1,
 )
 ```
@@ -49,7 +53,7 @@ grb = cosmogrb.GBMGRB_CPL(
 
 
 ```python
-time = np.linspace(0, 100, 50)
+time = np.linspace(0, 20, 100)
 
 grb.display_energy_integrated_light_curve(time);
 
@@ -94,14 +98,25 @@ grb_reload = cosmogrb.GRBSave.from_file('test_grb.h5')
 
 
 ```python
+fig, axes = plt.subplots(4,4,sharex=True,sharey=False,figsize=(15,15))
+row=0
+col = 0
 for key in grb_reload.keys:
-    fig, ax = plt.subplots()
+    ax = axes[row][col]
     
     lightcurve = grb_reload[key]['lightcurve']
     
-    lightcurve.display_lightcurve(ax=ax)
-    lightcurve.display_source(ax=ax)
-    lightcurve.display_background(ax=ax)
+    lightcurve.display_lightcurve(dt=2, ax=ax,lw=.8)
+    lightcurve.display_source(ax=ax,lw=.8)
+    lightcurve.display_background(ax=ax,lw=.8)
+    
+    if col < 3:
+        col+=1
+    else:
+        row+=1
+        col=0
+    
+    
 ```
 
 
@@ -109,55 +124,29 @@ for key in grb_reload.keys:
 
 
 
-![png](demo_files/demo_13_1.png)
+```python
+fig, axes = plt.subplots(4,4,sharex=False,sharey=False,figsize=(15,15))
+row=0
+col = 0
+
+for key in grb_reload.keys:
+    ax = axes[row][col]
+    
+    lightcurve = grb_reload[key]['lightcurve']
+    
+    lightcurve.display_count_spectrum(tmin=0, tmax=5, ax=ax)
+    lightcurve.display_count_spectrum_source(tmin=0, tmax=5, ax=ax)
+    lightcurve.display_count_spectrum_background(tmin=0, tmax=5, ax=ax)
+
+    if col < 3:
+        col+=1
+    else:
+        row+=1
+        col=0
+```
 
 
-
-![png](demo_files/demo_13_2.png)
-
-
-
-![png](demo_files/demo_13_3.png)
-
-
-
-![png](demo_files/demo_13_4.png)
-
-
-
-![png](demo_files/demo_13_5.png)
-
-
-
-![png](demo_files/demo_13_6.png)
-
-
-
-![png](demo_files/demo_13_7.png)
-
-
-
-![png](demo_files/demo_13_8.png)
-
-
-
-![png](demo_files/demo_13_9.png)
-
-
-
-![png](demo_files/demo_13_10.png)
-
-
-
-![png](demo_files/demo_13_11.png)
-
-
-
-![png](demo_files/demo_13_12.png)
-
-
-
-![png](demo_files/demo_13_13.png)
+![png](demo_files/demo_14_0.png)
 
 
 ## Convert HDF5 to standard FITS files 
@@ -168,20 +157,20 @@ cosmogrb.grbsave_to_gbm_fits("test_grb.h5")
 !ls SynthGRB_*
 ```
 
-    SynthGRB_b0.fits      SynthGRB_n3.fits      SynthGRB_n7rsp_n7.rsp
-    SynthGRB_b0.rsp       SynthGRB_n3.rsp       SynthGRB_n8.fits
-    SynthGRB_b0rsp_b0.rsp SynthGRB_n3rsp_n3.rsp SynthGRB_n8.rsp
-    SynthGRB_b1.rsp       SynthGRB_n4.fits      SynthGRB_n8rsp_n8.rsp
-    SynthGRB_b1rsp_b1.rsp SynthGRB_n4.rsp       SynthGRB_n9.fits
-    SynthGRB_n0.fits      SynthGRB_n4rsp_n4.rsp SynthGRB_n9.rsp
-    SynthGRB_n0.rsp       SynthGRB_n5.fits      SynthGRB_n9rsp_n9.rsp
-    SynthGRB_n0rsp_n0.rsp SynthGRB_n5.rsp       SynthGRB_na.fits
-    SynthGRB_n1.fits      SynthGRB_n5rsp_n5.rsp SynthGRB_na.rsp
-    SynthGRB_n1.rsp       SynthGRB_n6.fits      SynthGRB_narsp_na.rsp
-    SynthGRB_n1rsp_n1.rsp SynthGRB_n6.rsp       SynthGRB_nb.fits
-    SynthGRB_n2.fits      SynthGRB_n6rsp_n6.rsp SynthGRB_nb.rsp
-    SynthGRB_n2.rsp       SynthGRB_n7.fits      SynthGRB_nbrsp_nb.rsp
-    SynthGRB_n2rsp_n2.rsp SynthGRB_n7.rsp
+    SynthGRB_b0.fits      SynthGRB_n3.fits      SynthGRB_n7rsp_n7.rsp
+    SynthGRB_b0.rsp       SynthGRB_n3.rsp       SynthGRB_n8.fits
+    SynthGRB_b0rsp_b0.rsp SynthGRB_n3rsp_n3.rsp SynthGRB_n8.rsp
+    SynthGRB_b1.rsp       SynthGRB_n4.fits      SynthGRB_n8rsp_n8.rsp
+    SynthGRB_b1rsp_b1.rsp SynthGRB_n4.rsp       SynthGRB_n9.fits
+    SynthGRB_n0.fits      SynthGRB_n4rsp_n4.rsp SynthGRB_n9.rsp
+    SynthGRB_n0.rsp       SynthGRB_n5.fits      SynthGRB_n9rsp_n9.rsp
+    SynthGRB_n0rsp_n0.rsp SynthGRB_n5.rsp       SynthGRB_na.fits
+    SynthGRB_n1.fits      SynthGRB_n5rsp_n5.rsp SynthGRB_na.rsp
+    SynthGRB_n1.rsp       SynthGRB_n6.fits      SynthGRB_narsp_na.rsp
+    SynthGRB_n1rsp_n1.rsp SynthGRB_n6.rsp       SynthGRB_nb.fits
+    SynthGRB_n2.fits      SynthGRB_n6rsp_n6.rsp SynthGRB_nb.rsp
+    SynthGRB_n2.rsp       SynthGRB_n7.fits      SynthGRB_nbrsp_nb.rsp
+    SynthGRB_n2rsp_n2.rsp SynthGRB_n7.rsp
 
 
 

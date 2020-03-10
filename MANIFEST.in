@@ -1,0 +1,2 @@
+include versioneer.py
+include cosmogrb/_version.py

@@ -7,7 +7,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/grburgess/cosmogrb?style=for-the-badge)
 
 # cosmogrb
-![alt text](https://raw.githubusercontent.com/grburgess/grbfunk/master/logo.png)
+![alt text](https://raw.githubusercontent.com/grburgess/cosmogrb/master/logo.png)
 ## Idea
 This simulates a cosmological population of **GRBs** in the Universe from a given space and luminosity distribution.
 

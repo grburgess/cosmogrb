@@ -119,7 +119,7 @@ class LightCurveStorage(object):
 
             idx_lo = pha > chan
 
-            original_idx = np.logical_and(orginal_idx, idx_lo)
+            original_idx = np.logical_and(original_idx, idx_lo)
 
         if emax is not None:
 

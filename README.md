@@ -7,7 +7,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/grburgess/cosmogrb?style=for-the-badge)
 
 # cosmogrb
-
+![alt text](https://raw.githubusercontent.com/grburgess/grbfunk/master/logo.png)
 ## Idea
 This simulates a cosmological population of **GRBs** in the Universe from a given space and luminosity distribution.
 
@@ -157,20 +157,34 @@ cosmogrb.grbsave_to_gbm_fits("test_grb.h5")
 !ls SynthGRB_*
 ```
 
-    SynthGRB_b0.fits      SynthGRB_n3.fits      SynthGRB_n7rsp_n7.rsp
-    SynthGRB_b0.rsp       SynthGRB_n3.rsp       SynthGRB_n8.fits
-    SynthGRB_b0rsp_b0.rsp SynthGRB_n3rsp_n3.rsp SynthGRB_n8.rsp
-    SynthGRB_b1.rsp       SynthGRB_n4.fits      SynthGRB_n8rsp_n8.rsp
-    SynthGRB_b1rsp_b1.rsp SynthGRB_n4.rsp       SynthGRB_n9.fits
-    SynthGRB_n0.fits      SynthGRB_n4rsp_n4.rsp SynthGRB_n9.rsp
-    SynthGRB_n0.rsp       SynthGRB_n5.fits      SynthGRB_n9rsp_n9.rsp
-    SynthGRB_n0rsp_n0.rsp SynthGRB_n5.rsp       SynthGRB_na.fits
-    SynthGRB_n1.fits      SynthGRB_n5rsp_n5.rsp SynthGRB_na.rsp
-    SynthGRB_n1.rsp       SynthGRB_n6.fits      SynthGRB_narsp_na.rsp
-    SynthGRB_n1rsp_n1.rsp SynthGRB_n6.rsp       SynthGRB_nb.fits
-    SynthGRB_n2.fits      SynthGRB_n6rsp_n6.rsp SynthGRB_nb.rsp
-    SynthGRB_n2.rsp       SynthGRB_n7.fits      SynthGRB_nbrsp_nb.rsp
-    SynthGRB_n2rsp_n2.rsp SynthGRB_n7.rsp
+    SynthGRB_b0.fits      SynthGRB_n3.fits      SynthGRB_n7rsp_n7.rsp
+
+    SynthGRB_b0.rsp       SynthGRB_n3.rsp       SynthGRB_n8.fits
+
+    SynthGRB_b0rsp_b0.rsp SynthGRB_n3rsp_n3.rsp SynthGRB_n8.rsp
+
+    SynthGRB_b1.rsp       SynthGRB_n4.fits      SynthGRB_n8rsp_n8.rsp
+
+    SynthGRB_b1rsp_b1.rsp SynthGRB_n4.rsp       SynthGRB_n9.fits
+
+    SynthGRB_n0.fits      SynthGRB_n4rsp_n4.rsp SynthGRB_n9.rsp
+
+    SynthGRB_n0.rsp       SynthGRB_n5.fits      SynthGRB_n9rsp_n9.rsp
+
+    SynthGRB_n0rsp_n0.rsp SynthGRB_n5.rsp       SynthGRB_na.fits
+
+    SynthGRB_n1.fits      SynthGRB_n5rsp_n5.rsp SynthGRB_na.rsp
+
+    SynthGRB_n1.rsp       SynthGRB_n6.fits      SynthGRB_narsp_na.rsp
+
+    SynthGRB_n1rsp_n1.rsp SynthGRB_n6.rsp       SynthGRB_nb.fits
+
+    SynthGRB_n2.fits      SynthGRB_n6rsp_n6.rsp SynthGRB_nb.rsp
+
+    SynthGRB_n2.rsp       SynthGRB_n7.fits      SynthGRB_nbrsp_nb.rsp
+
+    SynthGRB_n2rsp_n2.rsp SynthGRB_n7.rsp
+
 
 
 

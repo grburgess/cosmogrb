@@ -1,5 +1,10 @@
 [![Travis CI w/ Logo](https://img.shields.io/travis/grburgess/cosmogrb/master.svg?logo=travis)](https://travis-ci.org/grburgess/cosmogrb)
 [![codecov](https://codecov.io/gh/grburgess/cosmogrb/branch/master/graph/badge.svg)](https://codecov.io/gh/grburgess/cosmogrb)
+## status
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/grburgess/cosmogrb/master?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/grburgess/cosmogrb?style=for-the-badge)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/grburgess/cosmogrb?style=for-the-badge)
+![GitHub contributors](https://img.shields.io/github/contributors/grburgess/cosmogrb?style=for-the-badge)
 
 # cosmogrb
 

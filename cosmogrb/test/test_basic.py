@@ -2,6 +2,8 @@ import os
 import numpy as np
 from glob import glob
 from cosmogrb.grb import GBMGRB, GBMGRB_CPL
+from cosmogrb.grb.gbm_grb import GBMGRB_CPL_Constant
+
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
 
@@ -19,6 +21,22 @@ def grb():
                      tau=2.0,
                      trise=0.1,
                      tdecay=.5,
+                     duration=1.0,
+                     T0=0.1,
+    )
+
+    grb.go(n_cores=8)
+    
+    return grb
+
+@pytest.fixture(scope='session')
+def grb_constant():
+    grb = GBMGRB_CPL_Constant(ra=312.0,
+                     dec=-62.0,
+                     z=1.0,
+                     peak_flux=5e-9,
+                     alpha=-0.66,
+                     ep=500.0,
                      duration=1.0,
                      T0=0.1,
     )
@@ -71,3 +89,7 @@ def test_read_gbm_save():
     lightcurve = grb["n1"]["lightcurve"]
 
     grbsave_to_gbm_fits("test.h5")
+
+def test_constant_grb(grb_constant):
+
+    grb_constant.save('_bad.h5')

@@ -1,0 +1,7 @@
+multiprocess:
+
+  # number of workers per GRB
+  n_grb_workers: 6
+
+  # number of workers in the whole Universe
+  n_universe_workers: 6

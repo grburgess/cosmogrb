@@ -1,0 +1,3 @@
+ignore:
+  - "cosmogrb/tests"
+  - "cosmogrb/_version.py"

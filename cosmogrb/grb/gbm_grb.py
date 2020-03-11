@@ -160,3 +160,36 @@ class GBMGRB_CPL(GBMGRB):
             ra=ra,
             dec=dec,
         )
+
+class GBMGRB_CPL_Constant(GBMGRB):
+    def __init__(
+        self,
+        ra,
+        dec,
+        z,
+        peak_flux,
+        alpha,
+        ep,
+        duration,
+        T0,
+        name="SynthGRB",
+    ):
+
+
+        source_params = dict(
+            peak_flux=peak_flux,
+            alpha=alpha,
+            ep=ep,
+        )
+
+        # pass up
+        super(GBMGRB_CPL_Constant, self).__init__(
+            source_function_class=ConstantCPL,
+            source_params=source_params,
+            name=name,
+            duration=duration,
+            z=z,
+            T0=T0,
+            ra=ra,
+            dec=dec,
+        )

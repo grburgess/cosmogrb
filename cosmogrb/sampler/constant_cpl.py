@@ -5,18 +5,6 @@ from scipy.special import gammaincc, gamma
 from .source import SourceFunction, evolver
 
 
-@nb.njit(fastmath=True)
-def norris(x, K, t_start, t_rise, t_decay):
-    if x > t_start:
-        return (
-            K
-            * np.exp(2 * np.sqrt(t_rise / t_decay))
-            * np.exp(-t_rise / (x - t_start) - (x - t_start) / t_decay)
-        )
-    else:
-        return 0.0
-
-
 def ggrb_int_cpl(a, Ec, Emin, Emax):
 
     # Gammaincc does not support quantities
@@ -57,11 +45,8 @@ class ConstantCPL(SourceFunction):
     def __init__(
         self,
         peak_flux=1e-6,
-        ep_start=300.0,
-        ep_tau=1.0,
+        ep=300.0,
         alpha=-1.0,
-        trise=1.0,
-        tdecay=2,
         emin=10.0,
         emax=1e4,
         response=None,
@@ -69,10 +54,7 @@ class ConstantCPL(SourceFunction):
 
         # attach variables
         self._peak_flux = peak_flux
-        self._ep_start = ep_start
-        self._ep_tau = ep_tau
-        self._trise = trise
-        self._tdecay = tdecay
+        self._ep = ep
         self._alpha = alpha
 
         assert alpha < 0.0, "the rejection sampler is slow as fuck if alpha is positive"
@@ -89,11 +71,8 @@ class ConstantCPL(SourceFunction):
             energy=np.atleast_1d(energy),
             time=np.atleast_1d(time),
             peak_flux=self._peak_flux,
-            ep_start=self._ep_start,
-            ep_tau=self._ep_tau,
+            ep=self._ep,
             alpha=self._alpha,
-            trise=self._trise,
-            tdecay=self._tdecay,
             emin=self._emin,
             emax=self._emax,
         )
@@ -101,7 +80,7 @@ class ConstantCPL(SourceFunction):
 
 @nb.jit(forceobj=True)
 def _cpl_evolution(
-    energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax
+    energy, time, peak_flux, ep, alpha, emin, emax
 ):
     """
     evolution of the CPL function with time
@@ -110,10 +89,6 @@ def _cpl_evolution(
     :param time: 
     :param peak_flux: 
     :param ep_start: 
-    :param ep_tau: 
-    :param alpha: 
-    :param trise: 
-    :param tdecay: 
     :param emin: 
     :param emax: 
     :returns: 
@@ -126,8 +101,6 @@ def _cpl_evolution(
     for i in range(time.shape[0]):
 
         K = peak_flux
-
-        ep = ep_start
 
         out[i, :] = cpl(energy, alpha=alpha, xp=ep, F=K, a=emin, b=emax)
 

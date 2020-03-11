@@ -74,10 +74,6 @@ def test_gbm_save(grb):
 
     grb.save("test.h5")
 
-    files_to_remove = glob("SynthGRB*.rsp")
-
-    for f in files_to_remove:
-        os.remove(f)
 
 
 def test_read_gbm_save():
@@ -88,6 +84,19 @@ def test_read_gbm_save():
 
     grbsave_to_gbm_fits("test.h5")
 
+    files_to_remove = glob("*SynthGRB*.rsp")
+
+    for f in files_to_remove:
+        os.remove(f)
+        
+    files_to_remove = glob("*SynthGRB*.fits")
+
+    for f in files_to_remove:
+        os.remove(f)
+
+    os.remove('test.h5')
+
+    
 def test_constant_grb(grb_constant):
 
     grb_constant.save('_bad.h5')

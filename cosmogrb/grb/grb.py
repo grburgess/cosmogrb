@@ -6,6 +6,9 @@ import coloredlogs, logging
 
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import Background
+
+from cosmogrb import cosmogrb_config
+
 import cosmogrb.utils.logging
 
 logger = logging.getLogger("cosmogrb.grb")
@@ -106,11 +109,16 @@ class GRB(object):
             time=time, ax=ax, **kwargs
         )
 
-    def go(self, n_cores=None):
+    def go(self, n_workers=None):
 
-        if n_cores > 1: 
+        if n_workers is None:
 
-            with futures.ProcessPoolExecutor(max_workers=n_cores) as pool:
+            n_workers = cosmogrb_config['multiprocess']['n_grb_workers']
+
+   
+        if n_workers > 1: 
+
+            with futures.ProcessPoolExecutor(max_workers=n_workers) as pool:
 
 
                 results = pool.map(process_lightcurve, self._lightcurves.values())

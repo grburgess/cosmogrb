@@ -25,7 +25,7 @@ def grb():
                      T0=0.1,
     )
 
-    grb.go(n_cores=8)
+    grb.go()
     
     return grb
 
@@ -41,7 +41,7 @@ def grb_constant():
                      T0=0.1,
     )
 
-    grb.go(n_cores=8)
+    grb.go(n_cores=1)
     
     return grb
 
@@ -71,8 +71,6 @@ def test_gbm_constructor_and_plotting(grb):
 
 
 def test_gbm_save(grb):
-
-    grb.go(n_cores=1)
 
     grb.save("test.h5")
 

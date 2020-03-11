@@ -67,7 +67,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','**.ipynb_checkpoints']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'edx-sphinx-theme'
+html_theme = 'sphinx_rtd_theme'
 #htm_theme_path = [sphinx_pdj_theme.get_html_theme_path()]
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'cosmogrbdoc'

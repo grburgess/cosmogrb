@@ -1,5 +1,5 @@
 import h5py
-import multiprocessing as mp
+import concurrent.futures as futures
 import collections
 import coloredlogs, logging
 
@@ -106,16 +106,15 @@ class GRB(object):
             time=time, ax=ax, **kwargs
         )
 
-    def go(self, n_cores=8):
+    def go(self, n_cores=None):
 
         if n_cores > 1: 
-        
-            pool = mp.Pool(n_cores)
 
-            results = pool.map(process_lightcurve, self._lightcurves.values())
-            pool.close()
-            pool.join()
+            with futures.ProcessPoolExecutor(max_workers=n_cores) as pool:
 
+
+                results = pool.map(process_lightcurve, self._lightcurves.values())
+            
         else:
 
             results = [process_lightcurve(x) for x in  self._lightcurves.values()]

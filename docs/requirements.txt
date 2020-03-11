@@ -1,0 +1,14 @@
+sphinx>=1.4
+nbsphinx
+ipykernel
+jupyterthemes
+PSphinxTheme
+popsynth
+numpy
+scipy
+ipython
+matplotlib
+h5py
+pandas
+astropy
+numba

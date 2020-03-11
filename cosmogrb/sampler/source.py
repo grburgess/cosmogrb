@@ -59,7 +59,7 @@ def evolution_sampler(times, N, function, grid, emin, emax):
     return out
 
 
-@nb.jit()
+@nb.jit(forceobj=True)
 def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
     """
     specialized sample for power law like functions for 

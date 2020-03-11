@@ -53,9 +53,13 @@ class Universe(object):
 
         self._dec, self._ra = sample_theta_phi(self._n_grbs)
 
-    def go(self, n_cores=8):
+    def go(self, n_workers=None):
 
-        with futures.ProcessPoolExecutor(max_workers=n_cores,) as executor:
+        if n_workers is None:
+
+            n_workers = cosmogrb_config['multiprocess']['n_universe_workers']
+
+        with futures.ProcessPoolExecutor(max_workers=n_workers,) as executor:
             executor.map(blow_up_grb, self._grbs)
 
 

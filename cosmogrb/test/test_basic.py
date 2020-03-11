@@ -41,7 +41,7 @@ def grb_constant():
                      T0=0.1,
     )
 
-    grb.go(n_cores=1)
+    grb.go(n_workers=1)
     
     return grb
 

@@ -57,14 +57,49 @@ class Universe(object):
 
         if n_workers is None:
 
-            n_workers = cosmogrb_config['multiprocess']['n_universe_workers']
+            n_workers = cosmogrb_config["multiprocess"]["n_universe_workers"]
 
-        with futures.ProcessPoolExecutor(max_workers=n_workers,) as executor:
-            executor.map(blow_up_grb, self._grbs)
+        with futures.ProcessPoolExecutor(max_workers=n_workers) as executor:
+            results = executor.map(self._grb_wrapper, self._parameter_servers)
+
+    def _grb_wrapper(self):
+
+        NotImplementedError()
 
 
-def blow_up_grb(grb):
+class ParameterServer(object):
+    def __init__(self, name, ra, dec, z, duration, T0, **kwargs):
 
-    grb.go(n_cores=cosmogrb_config["multiprocess"]["n_grb_workers"])
+        self._parameters = dict(
+            name=name, ra=ra, dec=dec, z=z, duration=duration, T0=T0
+        )
 
-    return grb
+        for k, v in kwargs.items():
+
+            self._parameters[k] = v
+
+        self._file_path = None
+
+    @property
+    def parameters(self):
+        return self._parameters
+
+    def set_file_path(self, file_path):
+
+        self._file_path = file_path
+
+    @property
+    def file_path(self):
+        return self._file_path
+
+
+class GRBWrapper(object):
+    def __init__(self, parameter_server):
+
+        grb = self._grb_type(**parameter_server.parameters)
+        grb.go(n_workers=cosmogrb_config["multiprocess"]["n_grb_workers"])
+        grb.save(parameter_server.save_file_path)
+
+    def _grb_type(self):
+
+        raise NotImplementedError()

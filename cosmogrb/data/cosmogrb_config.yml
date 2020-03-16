@@ -1,3 +1,9 @@
+
+logging:
+
+  level: "INFO"
+
+
 multiprocess:
 
   # number of workers per GRB

@@ -1,11 +1,15 @@
 import h5py
-import multiprocessing as mp
+#import concurrent.futures as futures
 import collections
+
+
+from dask.distributed import worker_client
+
+#from cosmogrb import cosmogrb_client
+
+
 import coloredlogs, logging
-
-
-from cosmogrb.sampler.source import Source
-from cosmogrb.sampler.background import Background
+from cosmogrb import cosmogrb_config
 import cosmogrb.utils.logging
 
 logger = logging.getLogger("cosmogrb.grb")
@@ -106,26 +110,40 @@ class GRB(object):
             time=time, ax=ax, **kwargs
         )
 
-    def go(self, n_cores=8):
+    def go(self, client=None, serial=False):
 
-        if n_cores > 1: 
-        
-            pool = mp.Pool(n_cores)
 
-            results = pool.map(process_lightcurve, self._lightcurves.values())
-            pool.close()
-            pool.join()
+#        with worker_client() as client:
+
+        if not serial:
+
+            if client is not None:
+
+                futures = client.map(process_lightcurve, self._lightcurves.values())
+
+                results = client.gather(futures)
+
+            else:
+
+                with worker_client() as client:
+
+                    futures = client.map(process_lightcurve, self._lightcurves.values())
+
+                    results = client.gather(futures)
+
+            del futures
 
         else:
 
-            results = [process_lightcurve(x) for x in  self._lightcurves.values()]
-            
+            results = [process_lightcurve(lc) for lc in self._lightcurves.values()]
             
         for lc in results:
 
+#            lc = future.result()
+            
             self._lightcurves[lc.name].set_storage(lc)
 
-    def save(self, file_name):
+    def save(self, file_name, clean_up=False):
         """
         save the grb to an HDF5 file
 
@@ -187,6 +205,11 @@ class GRB(object):
                 )
                 rsp_group.attrs["geometric_area"] = lightcurve.response.geometric_area
 
+            if clean_up:
+
+                self._lightcurves.clear()
+                
+                
 
 def process_lightcurve(lc):
     return lc.process()

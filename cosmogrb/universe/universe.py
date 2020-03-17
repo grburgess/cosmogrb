@@ -1,3 +1,4 @@
+import abc
 import numpy as np
 import concurrent.futures as futures
 
@@ -7,7 +8,6 @@ import coloredlogs, logging
 import cosmogrb.utils.logging
 
 from cosmogrb import cosmogrb_config
-
 
 logger = logging.getLogger("cosmogrb.universe")
 
@@ -28,30 +28,78 @@ def sample_theta_phi(size):
     return theta, phi
 
 
-class Universe(object):
+class Universe(object, metaclass=abc.ABCMeta):
     """Documentation for Universe
 
     """
 
-    def __init__(self, population):
+    def __init__(self, population, grb_base_name="SynthGRB"):
 
         assert isinstance(population, popsynth.Population)
 
         self._population = population
 
+        self._grb_base_name = grb_base_name
+
         assert sum(self._population.selection) == len(
-            self.population.selection
+            self._population.selection
         ), "The population seems to have had a prior selection on it. This is not good"
 
         # assign the number of GRBs
 
-        self._n_grbs = len(self.selection)
+        self._n_grbs = len(self._population.selection)
+
+        # build the GRBs
+
+        self._name = [f"{self._grb_base_name}_{i}" for i in range(self._n_grbs)]
 
         logger.debug(f"The Universe contains {self._n_grbs} GRBs")
 
-    def _process_populations(self):
+        self._local_parameters = {}
 
+        self._parameter_servers = []
+
+        self._process_populations()
+        self._contstruct_parameter_servers()
+
+    def _get_sky_coord(self):
         self._dec, self._ra = sample_theta_phi(self._n_grbs)
+
+    def _get_redshift(self):
+        self._z = self._population.distances
+
+    def _get_duration(self):
+        try:
+            self._duration = self._population.duration
+
+        except:
+
+            raise RuntimeError("The population must contain a duration value")
+
+    def _contstruct_parameter_servers(self):
+
+        for i in range(self._n_grbs):
+            param_dict = {}
+
+            param_dict["z"] = self._z[i]
+            param_dict["ra"] = self._ra[i]
+            param_dict["dec"] = self._dec[i]
+            param_dict["name"] = self._name[i]
+            param_dict["duration"] = self._duration[i]
+
+            # this is temporary
+            param_dict["T0"] = 0.0
+
+            for k, v in self._local_parameters.items():
+
+                param_dict[k] = v[i]
+
+            self._parameter_servers.append(self._parameter_server_type(**param_dict))
+
+    def _process_populations(self):
+        self._get_sky_coord()
+        self._get_redshift()
+        self._get_duration()
 
     def go(self, n_workers=None):
 
@@ -59,16 +107,38 @@ class Universe(object):
 
             n_workers = cosmogrb_config["multiprocess"]["n_universe_workers"]
 
+        logger.debug(f"Launching {n_workers} workers for {self._n_grbs} GRBs")
+        
         with futures.ProcessPoolExecutor(max_workers=n_workers) as executor:
             results = executor.map(self._grb_wrapper, self._parameter_servers)
 
-    def _grb_wrapper(self):
+        _ = [x for x in results]
+
+    @abc.abstractmethod
+    def _grb_wrapper(self, parameter_server):
+
+        NotImplementedError()
+
+    @abc.abstractmethod
+    def _parameter_server_type(self):
 
         NotImplementedError()
 
 
 class ParameterServer(object):
     def __init__(self, name, ra, dec, z, duration, T0, **kwargs):
+        """FIXME! briefly describe function
+
+        :param name: 
+        :param ra: 
+        :param dec: 
+        :param z: 
+        :param duration: 
+        :param T0: 
+        :returns: 
+        :rtype: 
+
+        """
 
         self._parameters = dict(
             name=name, ra=ra, dec=dec, z=z, duration=duration, T0=T0
@@ -92,14 +162,23 @@ class ParameterServer(object):
     def file_path(self):
         return self._file_path
 
+    def __repr__(self):
 
-class GRBWrapper(object):
+        sep = "\n"
+
+        return sep.join([f"{k}: {v}" for k, v in self._parameters.items()])
+
+
+class GRBWrapper(object, metaclass=abc.ABCMeta):
     def __init__(self, parameter_server):
 
+        print(parameter_server)
+        
         grb = self._grb_type(**parameter_server.parameters)
         grb.go(n_workers=cosmogrb_config["multiprocess"]["n_grb_workers"])
         grb.save(parameter_server.save_file_path)
 
-    def _grb_type(self):
+    @abc.abstractmethod
+    def _grb_type(self, **kwargs):
 
         raise NotImplementedError()

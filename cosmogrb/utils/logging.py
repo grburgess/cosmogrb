@@ -1,8 +1,10 @@
 import coloredlogs, logging
 
+from cosmogrb import cosmogrb_config
+
 
 coloredlogs.install(
-    level="INFO",
+    level=cosmogrb_config['logging']['level'],
     #                    fmt="%(levelname)s:%(message)s"
 )
 

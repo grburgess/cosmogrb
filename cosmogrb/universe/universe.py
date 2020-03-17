@@ -1,4 +1,5 @@
 import abc
+import os
 import numpy as np
 import concurrent.futures as futures
 
@@ -33,7 +34,7 @@ class Universe(object, metaclass=abc.ABCMeta):
 
     """
 
-    def __init__(self, population, grb_base_name="SynthGRB"):
+    def __init__(self, population, grb_base_name="SynthGRB", save_path='.'):
 
         assert isinstance(population, popsynth.Population)
 
@@ -41,6 +42,9 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         self._grb_base_name = grb_base_name
 
+        self._save_path = save_path
+
+        
         assert sum(self._population.selection) == len(
             self._population.selection
         ), "The population seems to have had a prior selection on it. This is not good"
@@ -94,26 +98,32 @@ class Universe(object, metaclass=abc.ABCMeta):
 
                 param_dict[k] = v[i]
 
-            self._parameter_servers.append(self._parameter_server_type(**param_dict))
 
+            param_server = self._parameter_server_type(**param_dict)
+
+            file_name = os.path.join(self._save_path, f"{self._name[i]}_store.h5")
+            
+            param_server.set_file_path(file_name)
+                
+            self._parameter_servers.append(param_server)
+
+        
+
+            
     def _process_populations(self):
         self._get_sky_coord()
         self._get_redshift()
         self._get_duration()
 
-    def go(self, n_workers=None):
+    def go(self, client):
 
-        if n_workers is None:
+                
+        futures = client.map(self._grb_wrapper, self._parameter_servers)
+        _ = client.gather(futures)
 
-            n_workers = cosmogrb_config["multiprocess"]["n_universe_workers"]
+        del futures
 
-        logger.debug(f"Launching {n_workers} workers for {self._n_grbs} GRBs")
         
-        with futures.ProcessPoolExecutor(max_workers=n_workers) as executor:
-            results = executor.map(self._grb_wrapper, self._parameter_servers)
-
-        _ = [x for x in results]
-
     @abc.abstractmethod
     def _grb_wrapper(self, parameter_server):
 
@@ -172,12 +182,13 @@ class ParameterServer(object):
 class GRBWrapper(object, metaclass=abc.ABCMeta):
     def __init__(self, parameter_server):
 
-        print(parameter_server)
-        
         grb = self._grb_type(**parameter_server.parameters)
-        grb.go(n_workers=cosmogrb_config["multiprocess"]["n_grb_workers"])
-        grb.save(parameter_server.save_file_path)
+        grb.go()
+        grb.save(parameter_server.file_path, clean_up=True)
 
+        del grb
+
+        
     @abc.abstractmethod
     def _grb_type(self, **kwargs):
 

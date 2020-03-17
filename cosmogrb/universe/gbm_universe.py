@@ -38,8 +38,8 @@ class GBM_CPL_Wrapper(GRBWrapper):
 
     """
 
-    def __init__(self, parameter_server):
-        super(GBM_CPL_Wrapper, self).__init__(parameter_server)
+    def __init__(self, parameter_server, serial=False):
+        super(GBM_CPL_Wrapper, self).__init__(parameter_server=parameter_server, serial=serial)
         
 
     def _grb_type(self,**kwargs):

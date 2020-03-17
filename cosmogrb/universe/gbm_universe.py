@@ -12,8 +12,8 @@ class GBM_CPL_Universe(Universe):
 
         super(GBM_CPL_Universe, self).__init__(population)
 
-    def _grb_wrapper(self, parameter_server):
-        return GBM_CPL_Wrapper(parameter_server)
+    def _grb_wrapper(self, parameter_server, serial=False):
+        return GBM_CPL_Wrapper(parameter_server, serial=serial)
 
     def _process_populations(self):
 

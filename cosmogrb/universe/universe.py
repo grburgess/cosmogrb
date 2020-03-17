@@ -125,7 +125,7 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         else:
             
-            res = [self._grb_wrapper(ps) for ps in self._parameter_servers ]
+            res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers ]
         
     @abc.abstractmethod
     def _grb_wrapper(self, parameter_server, serial=False):

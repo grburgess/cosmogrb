@@ -8,8 +8,6 @@ import popsynth
 import coloredlogs, logging
 import cosmogrb.utils.logging
 
-from cosmogrb import cosmogrb_config
-
 logger = logging.getLogger("cosmogrb.universe")
 
 

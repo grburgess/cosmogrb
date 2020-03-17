@@ -7,6 +7,8 @@ from cosmogrb.grb.gbm_grb import GBMGRB_CPL_Constant
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
 
+from dask.distributed import Client, LocalCluster
+
 
 import pytest
 
@@ -25,7 +27,10 @@ def grb():
                      T0=0.1,
     )
 
-    grb.go()
+    cluster = LocalCluster(n_workers=2)
+    client = Client(cluster)
+    
+    grb.go(client=client)
     
     return grb
 
@@ -41,7 +46,14 @@ def grb_constant():
                      T0=0.1,
     )
 
-    grb.go(n_workers=1)
+
+    cluster = LocalCluster(n_workers=2)
+    client = Client(cluster)
+    
+    grb.go(client=client)
+
+    
+    
     
     return grb
 

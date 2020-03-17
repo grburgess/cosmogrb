@@ -14,7 +14,7 @@ env:
   NUMBA_DISABLE_JIT=1
 
 before_install:
-  - sudo apt-get install gfortran
+  - sudo apt-get install gfortran libgsl-dev
 install:
   - pip install --upgrade cython numpy scipy pytest-cov codecov
   - pip install git+https://github.com/grburgess/gbm_drm_gen

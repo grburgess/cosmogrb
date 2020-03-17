@@ -1,3 +1,5 @@
+from cosmogrb.config import cosmogrb_config
+
 from cosmogrb.grb import GRB, GBMGRB, GBMGRB_CPL
 from cosmogrb.io import GRBSave, grbsave_to_gbm_fits
 

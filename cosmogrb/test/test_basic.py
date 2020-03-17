@@ -7,6 +7,8 @@ from cosmogrb.grb.gbm_grb import GBMGRB_CPL_Constant
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
 
+from dask.distributed import Client, LocalCluster
+
 
 import pytest
 
@@ -25,7 +27,10 @@ def grb():
                      T0=0.1,
     )
 
-    grb.go(n_cores=8)
+    cluster = LocalCluster(n_workers=2)
+    client = Client(cluster)
+    
+    grb.go(client=client)
     
     return grb
 
@@ -41,7 +46,14 @@ def grb_constant():
                      T0=0.1,
     )
 
-    grb.go(n_cores=8)
+
+    cluster = LocalCluster(n_workers=2)
+    client = Client(cluster)
+    
+    grb.go(client=client)
+
+    
+    
     
     return grb
 
@@ -72,14 +84,8 @@ def test_gbm_constructor_and_plotting(grb):
 
 def test_gbm_save(grb):
 
-    grb.go(n_cores=1)
-
     grb.save("test.h5")
 
-    files_to_remove = glob("SynthGRB*.rsp")
-
-    for f in files_to_remove:
-        os.remove(f)
 
 
 def test_read_gbm_save():
@@ -90,6 +96,19 @@ def test_read_gbm_save():
 
     grbsave_to_gbm_fits("test.h5")
 
+    files_to_remove = glob("*SynthGRB*.rsp")
+
+    for f in files_to_remove:
+        os.remove(f)
+        
+    files_to_remove = glob("*SynthGRB*.fits")
+
+    for f in files_to_remove:
+        os.remove(f)
+
+    os.remove('test.h5')
+
+    
 def test_constant_grb(grb_constant):
 
     grb_constant.save('_bad.h5')

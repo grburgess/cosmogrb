@@ -94,7 +94,7 @@ class GBMGRB(GRB):
                 logger.debug(f"creating BGO reponse for {det} via grb {self._name}")
 
                 rsp = BGOResponse(
-                    det, self._ra, self._dec, self._T0, save=True, name=self._name
+                    det, self._ra, self._dec, self._T0, save=False, name=self._name
                 )
 
             else:
@@ -102,7 +102,7 @@ class GBMGRB(GRB):
                 logger.debug(f"creating NAI reponse for {det} via GRB {self._name}")
 
                 rsp = NaIResponse(
-                    det, self._ra, self._dec, self._T0, save=True, name=self._name
+                    det, self._ra, self._dec, self._T0, save=False, name=self._name
                 )
 
             self._add_response(det, rsp)

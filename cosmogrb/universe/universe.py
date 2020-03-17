@@ -113,17 +113,22 @@ class Universe(object, metaclass=abc.ABCMeta):
         self._get_redshift()
         self._get_duration()
 
-    def go(self, client):
+    def go(self, client=None):
 
+        if client is not None:
                 
-        futures = client.map(self._grb_wrapper, self._parameter_servers)
-        _ = client.gather(futures)
+            futures = client.map(self._grb_wrapper, self._parameter_servers)
+            res = client.gather(futures)
 
-        del futures
+            del futures
+            del res
 
+        else:
+            
+            res = [self._grb_wrapper(ps) for ps in self._parameter_servers ]
         
     @abc.abstractmethod
-    def _grb_wrapper(self, parameter_server):
+    def _grb_wrapper(self, parameter_server, serial=False):
 
         NotImplementedError()
 
@@ -178,10 +183,16 @@ class ParameterServer(object):
 
 
 class GRBWrapper(object, metaclass=abc.ABCMeta):
-    def __init__(self, parameter_server):
+    def __init__(self, parameter_server, serial=False):
 
         grb = self._grb_type(**parameter_server.parameters)
-        grb.go()
+        if not serial:
+            grb.go()
+
+        else:
+
+            grb.go(serial=serial)
+            
         grb.save(parameter_server.file_path, clean_up=True)
 
         del grb

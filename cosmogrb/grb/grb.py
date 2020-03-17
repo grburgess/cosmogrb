@@ -110,27 +110,33 @@ class GRB(object):
             time=time, ax=ax, **kwargs
         )
 
-    def go(self, client=None):
+    def go(self, client=None, serial=False):
 
 
 #        with worker_client() as client:
 
-        if client is not None:
-        
-            futures = client.map(process_lightcurve, self._lightcurves.values())
-        
-            results = client.gather(futures)
+        if not serial:
+
+            if client is not None:
+
+                futures = client.map(process_lightcurve, self._lightcurves.values())
+
+                results = client.gather(futures)
+
+            else:
+
+                with worker_client() as client:
+
+                    futures = client.map(process_lightcurve, self._lightcurves.values())
+
+                    results = client.gather(futures)
+
+            del futures
 
         else:
 
-            with worker_client() as client:
-
-                futures = client.map(process_lightcurve, self._lightcurves.values())
-        
-                results = client.gather(futures)
-
-        del futures
-        
+            results = [process_lightcurve(lc) for lc in self._lightcurves.values()]
+            
         for lc in results:
 
 #            lc = future.result()

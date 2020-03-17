@@ -1,8 +1,7 @@
 import coloredlogs, logging
 
-
 coloredlogs.install(
-    level="INFO",
+    level="INFO"
     #                    fmt="%(levelname)s:%(message)s"
 )
 

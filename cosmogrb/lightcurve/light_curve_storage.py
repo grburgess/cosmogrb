@@ -252,6 +252,11 @@ class LightCurveStorage(object):
 
         return counts
 
+    def _compute_rates(self, threshold=5, background_accumulation_time=17, time_scale=1, emin=None, emax=None):
+
+        pass
+
+    
     def display_count_spectrum(self, tmin=None, tmax=None, ax=None, **kwargs):
         """FIXME! briefly describe function
 

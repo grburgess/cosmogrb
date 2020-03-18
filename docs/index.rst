@@ -1,5 +1,5 @@
 .. cosmogrb documentation master file, created by
-gg   sphinx-quickstart on Mon Aug 19 11:40:04 2019.
+   sphinx-quickstart on Mon Aug 19 11:40:04 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 

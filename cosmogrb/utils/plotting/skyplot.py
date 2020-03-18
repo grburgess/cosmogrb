@@ -1,7 +1,6 @@
-from ligo.skymap.plot.allsky import *
 from astropy.coordinates import SkyCoord
 import matplotlib.pyplot as plt
-
+from cosmogrb.utils.plotting.projections import *
 
 
 def skyplot(ax = None, projection="astro degrees mollweide",center=None, radius=10.):

@@ -1,8 +1,7 @@
 import os
 import numpy as np
 from glob import glob
-from cosmogrb.grb import GBMGRB, GBMGRB_CPL
-from cosmogrb.grb.gbm_grb import GBMGRB_CPL_Constant
+from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB, GBMGRB_CPL
 
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits

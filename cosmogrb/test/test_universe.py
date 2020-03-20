@@ -1,4 +1,4 @@
-from cosmogrb.universe.gbm_universe import GBM_CPL_Universe
+from cosmogrb.instruments.gbm.gbm_universe import GBM_CPL_Universe
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 from dask.distributed import Client, LocalCluster

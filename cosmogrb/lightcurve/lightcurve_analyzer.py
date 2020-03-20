@@ -1,9 +1,13 @@
 import abc
-
+from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 
 class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
-    def __init__(self):
+    def __init__(self, lightcurve):
 
+        assert isinstance(lightcurve, LightCurveStorage)
+
+    
+        
         self._is_detected = False
 
     @abc.abstractmethod

@@ -1,4 +1,4 @@
-from cosmogrb.instruments.gbm import GBMBackground
+from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 
 
 allowed_dets = (

@@ -1,5 +1,5 @@
 from cosmogrb.sampler.background import Background, BackgroundSpectrumTemplate
-from cosmogrb.utils.file_utils import get_path_of_data_file
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 import os
 

@@ -1,6 +1,6 @@
 import numpy as np
 from cosmogrb.universe.universe import Universe, GRBWrapper, ParameterServer
-from cosmogrb.grb import GBMGRB_CPL
+from cosmogrb.instruments.gbm.gbm_grb import GBMGRB_CPL
 
 
 class GBM_CPL_Universe(Universe):

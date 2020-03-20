@@ -43,13 +43,7 @@ def cpl(x, alpha, xp, F, a, b):
 
 class ConstantCPL(SourceFunction):
     def __init__(
-        self,
-        peak_flux=1e-6,
-        ep=300.0,
-        alpha=-1.0,
-        emin=10.0,
-        emax=1e4,
-        response=None,
+        self, peak_flux=1e-6, ep=300.0, alpha=-1.0, emin=10.0, emax=1e4, response=None,
     ):
 
         # attach variables
@@ -79,9 +73,7 @@ class ConstantCPL(SourceFunction):
 
 
 @nb.jit(forceobj=True)
-def _cpl_evolution(
-    energy, time, peak_flux, ep, alpha, emin, emax
-):
+def _cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax):
     """
     evolution of the CPL function with time
 

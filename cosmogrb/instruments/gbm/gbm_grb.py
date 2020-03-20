@@ -1,10 +1,11 @@
-from cosmogrb.lightcurve import GBMLightCurve
+from cosmogrb.instruments.gbm import GBMLightCurve
+from cosmogrb.instruments.gbm import NaIResponse, BGOResponse
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.background import GBMBackground
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.constant_cpl import ConstantCPL
 from cosmogrb.sampler.source import SourceFunction
-from cosmogrb.response import NaIResponse, BGOResponse
+
 from cosmogrb.grb import GRB
 
 import coloredlogs, logging

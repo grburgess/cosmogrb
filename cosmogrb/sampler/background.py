@@ -158,4 +158,3 @@ class Background(Sampler):
         else:
 
             raise NotImplementedError()
-

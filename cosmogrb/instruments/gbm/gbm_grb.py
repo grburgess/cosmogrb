@@ -1,4 +1,4 @@
-from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve,
+from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve
 from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 from cosmogrb.instruments.gbm.gbm_response import NaIResponse, BGOResponse
 from cosmogrb.sampler.source import Source
@@ -162,26 +162,13 @@ class GBMGRB_CPL(GBMGRB):
             dec=dec,
         )
 
+
 class GBMGRB_CPL_Constant(GBMGRB):
     def __init__(
-        self,
-        ra,
-        dec,
-        z,
-        peak_flux,
-        alpha,
-        ep,
-        duration,
-        T0,
-        name="SynthGRB",
+        self, ra, dec, z, peak_flux, alpha, ep, duration, T0, name="SynthGRB",
     ):
 
-
-        source_params = dict(
-            peak_flux=peak_flux,
-            alpha=alpha,
-            ep=ep,
-        )
+        source_params = dict(peak_flux=peak_flux, alpha=alpha, ep=ep,)
 
         # pass up
         super(GBMGRB_CPL_Constant, self).__init__(

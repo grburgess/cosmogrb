@@ -1,11 +1,12 @@
 import h5py
-#import concurrent.futures as futures
+
+# import concurrent.futures as futures
 import collections
 
 
 from dask.distributed import worker_client
 
-#from cosmogrb import cosmogrb_client
+# from cosmogrb import cosmogrb_client
 
 
 import coloredlogs, logging
@@ -112,8 +113,7 @@ class GRB(object):
 
     def go(self, client=None, serial=False):
 
-
-#        with worker_client() as client:
+        #        with worker_client() as client:
 
         if not serial:
 
@@ -136,11 +136,11 @@ class GRB(object):
         else:
 
             results = [process_lightcurve(lc) for lc in self._lightcurves.values()]
-            
+
         for lc in results:
 
-#            lc = future.result()
-            
+            #            lc = future.result()
+
             self._lightcurves[lc.name].set_storage(lc)
 
     def save(self, file_name, clean_up=False):
@@ -208,8 +208,7 @@ class GRB(object):
             if clean_up:
 
                 self._lightcurves.clear()
-                
-                
+
 
 def process_lightcurve(lc):
     return lc.process()

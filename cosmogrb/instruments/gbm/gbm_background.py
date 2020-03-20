@@ -4,7 +4,6 @@ from cosmogrb.utils.file_utils import get_path_of_data_file
 import os
 
 
-
 _allowed_gbm_detectors = (
     "n0",
     "n1",

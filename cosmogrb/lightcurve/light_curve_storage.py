@@ -247,16 +247,21 @@ class LightCurveStorage(object):
 
         channels = np.append(self._channels, self._channels[-1] + 1)
 
-        
-        counts, _ = np.histogram(pha, bins = channels - 0.5)
+        counts, _ = np.histogram(pha, bins=channels - 0.5)
 
         return counts
 
-    def _compute_rates(self, threshold=5, background_accumulation_time=17, time_scale=1, emin=None, emax=None):
+    def _compute_rates(
+        self,
+        threshold=5,
+        background_accumulation_time=17,
+        time_scale=1,
+        emin=None,
+        emax=None,
+    ):
 
         pass
 
-    
     def display_count_spectrum(self, tmin=None, tmax=None, ax=None, **kwargs):
         """FIXME! briefly describe function
 
@@ -287,7 +292,6 @@ class LightCurveStorage(object):
 
         return fig
 
-
     def display_count_spectrum_source(self, tmin=None, tmax=None, ax=None, **kwargs):
         """FIXME! briefly describe function
 
@@ -310,7 +314,9 @@ class LightCurveStorage(object):
         emin = self._ebounds[:-1]
         emax = self._ebounds[1:]
 
-        counts = self._prepare_spectrum(tmin, tmax, self._times_source, self._pha_source)
+        counts = self._prepare_spectrum(
+            tmin, tmax, self._times_source, self._pha_source
+        )
 
         # plot counts and background for the currently selected data
 
@@ -318,7 +324,9 @@ class LightCurveStorage(object):
 
         return fig
 
-    def display_count_spectrum_background(self, tmin=None, tmax=None, ax=None, **kwargs):
+    def display_count_spectrum_background(
+        self, tmin=None, tmax=None, ax=None, **kwargs
+    ):
         """FIXME! briefly describe function
 
         :param tmin: 
@@ -340,11 +348,12 @@ class LightCurveStorage(object):
         emin = self._ebounds[:-1]
         emax = self._ebounds[1:]
 
-        counts = self._prepare_spectrum(tmin, tmax, self._times_background, self._pha_background)
+        counts = self._prepare_spectrum(
+            tmin, tmax, self._times_background, self._pha_background
+        )
 
         # plot counts and background for the currently selected data
 
         channel_plot(ax, emin, emax, counts, **kwargs)
 
-        
         return fig

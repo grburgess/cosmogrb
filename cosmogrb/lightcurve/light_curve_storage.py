@@ -44,7 +44,7 @@ class LightCurveStorage(object):
         self._tstop = tstop
         self._time_adjustment = time_adjustment
 
-        self._pha = pha
+        self._pha = pha.astype(int)
 
         self._times = times
 

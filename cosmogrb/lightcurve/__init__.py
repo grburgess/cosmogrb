@@ -1,4 +1,6 @@
 from cosmogrb.lightcurve.lightcurve import LightCurve
-from cosmogrb.lightcurve.gbm_lightcurve import GBMLightCurve
+from cosmogrb.lightcurve.lightcurve_analyzer import LightCurveAnalyzer
 
-__all__ = ["LightCurve", "GBMLightCurve"]
+
+
+__all__ = ["LightCurve", "LightCurveAnalyzer"]

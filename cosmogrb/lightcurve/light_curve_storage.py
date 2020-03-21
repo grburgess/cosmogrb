@@ -111,7 +111,22 @@ class LightCurveStorage(object):
     def time_adjustment(self):
         return self._time_adjustment
 
-    def _select_channel(self, emin, emax, pha, original_idx):
+    def _select_channel(self, emin, emax, pha, original_idx=None):
+        """
+        return the idx of events between certain channels
+
+        :param emin: 
+        :param emax: 
+        :param pha: 
+        :param original_idx: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if original_idx is None:
+
+            original_idx = np.ones_like(pha, dtype=bool)
 
         if emin is not None:
 
@@ -131,7 +146,22 @@ class LightCurveStorage(object):
 
         return original_idx
 
-    def _select_time(self, tmin, tmax, times, original_idx):
+    def _select_time(self, tmin, tmax, times, original_idx=None):
+        """
+        return the idx of event between certain times
+
+        :param tmin: 
+        :param tmax: 
+        :param times: 
+        :param original_idx: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if original_idx is None:
+
+            original_idx = np.ones_like(times, dtype=bool)
 
         if tmin is not None:
 
@@ -147,10 +177,30 @@ class LightCurveStorage(object):
 
         return original_idx
 
-    def _prepare_lightcurve(self, dt, emin, emax, times, pha):
+    def _bin_lightcurve(self, dt, emin, emax, times, pha, tmin=None, tmax=None):
+        """
+        
+        bin the light curve for plotting
 
-        tmin = times.min()
-        tmax = times.max()
+        :param dt: 
+        :param emin: 
+        :param emax: 
+        :param times: 
+        :param pha: 
+        :param tmin: 
+        :param tmax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if tmax is None:
+            tmin = times.min()
+
+        if tmin is None:
+            tmax = times.max()
+
+        assert tmin < tmax, "the specified tmin and tmax are out of order"
 
         bins = np.arange(tmin, tmax, dt)
 
@@ -172,7 +222,18 @@ class LightCurveStorage(object):
 
         return xbins, rate
 
-    def display_lightcurve(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+    def _display_lightcurve(
+        self,
+        times,
+        pha,
+        dt=1,
+        tmin=None,
+        tmax=None,
+        emin=None,
+        emax=None,
+        ax=None,
+        **kwargs
+    ):
 
         if ax is None:
 
@@ -182,7 +243,7 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        xbins, rate = self._prepare_lightcurve(dt, emin, emax, self._times, self._pha)
+        xbins, rate = self._bin_lightcurve(dt, emin, emax, times, pha, tmin, tmax)
 
         step_plot(xbins, rate, ax=ax, **kwargs)
 
@@ -191,49 +252,108 @@ class LightCurveStorage(object):
 
         return fig
 
-    def display_background(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+    def display_lightcurve(
+        self, dt=1, tmin=None, tmax=None, emin=None, emax=None, ax=None, **kwargs
+    ):
+        """FIXME! briefly describe function
 
-        if ax is None:
+        :param dt: 
+        :param tmin: 
+        :param tmax: 
+        :param emin: 
+        :param emax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
 
-            fig, ax = plt.subplots()
+        """
 
-        else:
-
-            fig = ax.get_figure()
-
-        xbins, rate = self._prepare_lightcurve(
-            dt, emin, emax, self._times_background, self._pha_background
+        fig = self._display_lightcurve(
+            times=self._times,
+            pha=self._pha,
+            dt=dt,
+            tmin=tmin,
+            tmax=tmax,
+            emin=emin,
+            emax=emax,
+            ax=ax,
+            **kwargs
         )
 
-        step_plot(xbins, rate, ax=ax, **kwargs)
-
-        ax.set_xlabel("time")
-        ax.set_ylabel("rate")
-
         return fig
 
-    def display_source(self, dt=1, emin=None, emax=None, ax=None, **kwargs):
+    def display_background(
+        self, dt=1, tmin=None, tmax=None, emin=None, emax=None, ax=None, **kwargs
+    ):
+        """
+        display the background light curve
 
-        if ax is None:
+        :param dt: 
+        :param tmin: 
+        :param tmax: 
+        :param emin: 
+        :param emax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
 
-            fig, ax = plt.subplots()
-
-        else:
-
-            fig = ax.get_figure()
-
-        xbins, rate = self._prepare_lightcurve(
-            dt, emin, emax, self._times_source, self._pha_source
+        """
+        fig = self._display_lightcurve(
+            times=self._times_background,
+            pha=self._pha_background,
+            dt=dt,
+            tmin=tmin,
+            tmax=tmax,
+            emin=emin,
+            emax=emax,
+            ax=ax,
+            **kwargs
         )
 
-        step_plot(xbins, rate, ax=ax, **kwargs)
+        return fig
 
-        ax.set_xlabel("time")
-        ax.set_ylabel("rate")
+    def display_source(
+        self, dt=1, tmin=None, tmax=None, emin=None, emax=None, ax=None, **kwargs
+    ):
+        """
+        display the source only light curve
+
+        :param dt: 
+        :param tmin: 
+        :param tmax: 
+        :param emin: 
+        :param emax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+        fig = self._display_lightcurve(
+            times=self._times_source,
+            pha=self._pha_source,
+            dt=dt,
+            tmin=tmin,
+            tmax=tmax,
+            emin=emin,
+            emax=emax,
+            ax=ax,
+            **kwargs
+        )
 
         return fig
 
-    def _prepare_spectrum(self, tmin, tmax, times, pha):
+    def _bin_spectrum(self, tmin, tmax, times, pha):
+        """
+        bin the spectrum into counts
+
+        :param tmin: 
+        :param tmax: 
+        :param times: 
+        :param pha: 
+        :returns: 
+        :rtype: 
+
+        """
 
         idx = np.ones_like(times, dtype=bool)
 
@@ -251,20 +371,15 @@ class LightCurveStorage(object):
 
         return counts
 
-    def _compute_rates(
-        self,
-        threshold=5,
-        background_accumulation_time=17,
-        time_scale=1,
-        emin=None,
-        emax=None,
+    def _display_count_spectrum(
+        self, times, pha, tmin=None, tmax=None, ax=None, **kwargs
     ):
+        """
 
-        pass
+        generic count spectrum plotter
 
-    def display_count_spectrum(self, tmin=None, tmax=None, ax=None, **kwargs):
-        """FIXME! briefly describe function
-
+        :param times: 
+        :param pha: 
         :param tmin: 
         :param tmax: 
         :param ax: 
@@ -284,7 +399,7 @@ class LightCurveStorage(object):
         emin = self._ebounds[:-1]
         emax = self._ebounds[1:]
 
-        counts = self._prepare_spectrum(tmin, tmax, self._times, self._pha)
+        counts = self._bin_spectrum(tmin, tmax, times, pha)
 
         # plot counts and background for the currently selected data
 
@@ -292,8 +407,9 @@ class LightCurveStorage(object):
 
         return fig
 
-    def display_count_spectrum_source(self, tmin=None, tmax=None, ax=None, **kwargs):
-        """FIXME! briefly describe function
+    def display_count_spectrum(self, tmin=None, tmax=None, ax=None, **kwargs):
+        """
+        display the total count spectrum
 
         :param tmin: 
         :param tmax: 
@@ -303,31 +419,35 @@ class LightCurveStorage(object):
 
         """
 
-        if ax is None:
-
-            fig, ax = plt.subplots()
-
-        else:
-
-            fig = ax.get_figure()
-
-        emin = self._ebounds[:-1]
-        emax = self._ebounds[1:]
-
-        counts = self._prepare_spectrum(
-            tmin, tmax, self._times_source, self._pha_source
+        fig = self._display_count_spectrum(
+            self._times, self._pha, tmin, tmax, ax, **kwargs
         )
 
-        # plot counts and background for the currently selected data
+        return fig
 
-        channel_plot(ax, emin, emax, counts, **kwargs)
+    def display_count_spectrum_source(self, tmin=None, tmax=None, ax=None, **kwargs):
+        """
+        display the source count spectrum
+
+        :param tmin: 
+        :param tmax: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        fig = self._display_count_spectrum(
+            self._times_source, self._pha_source, tmin, tmax, ax, **kwargs
+        )
 
         return fig
 
     def display_count_spectrum_background(
         self, tmin=None, tmax=None, ax=None, **kwargs
     ):
-        """FIXME! briefly describe function
+        """
+        display the background count spectrum
 
         :param tmin: 
         :param tmax: 
@@ -337,23 +457,8 @@ class LightCurveStorage(object):
 
         """
 
-        if ax is None:
-
-            fig, ax = plt.subplots()
-
-        else:
-
-            fig = ax.get_figure()
-
-        emin = self._ebounds[:-1]
-        emax = self._ebounds[1:]
-
-        counts = self._prepare_spectrum(
-            tmin, tmax, self._times_background, self._pha_background
+        fig = self._display_count_spectrum(
+            self._times_background, self._pha_background, tmin, tmax, ax, **kwargs
         )
-
-        # plot counts and background for the currently selected data
-
-        channel_plot(ax, emin, emax, counts, **kwargs)
 
         return fig

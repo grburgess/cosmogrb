@@ -148,6 +148,8 @@ def test_time_interval_constructor_set():
 
     ts = TimeIntervalSet([t1, t2])
 
+    ts.plot_intervals()
+    
     ts.counts
 
     ts.rates

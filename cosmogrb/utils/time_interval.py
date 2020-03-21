@@ -42,6 +42,26 @@ class TimeInterval(object):
                     "Got tstart = %s and tstop = %s" % (start, stop)
                 )
 
+    def __add__(self, number):
+        """
+        Return a new time interval equal to the original time interval shifted to the right by number
+
+        :param number: a float
+        :return: a new TimeInterval instance
+        """
+
+        return TimeInterval(self._start + number, self._stop + number)
+
+    def __sub__(self, number):
+        """
+        Return a new time interval equal to the original time interval shifted to the left by number
+
+        :param number: a float
+        :return: a new TimeInterval instance
+        """
+
+        return TimeInterval(self._start - number, self._stop - number)
+
     @property
     def start(self):
         return self._start
@@ -79,11 +99,7 @@ class TimeInterval(object):
 
     def __repr__(self):
 
-        return " interval %s - %s (width: %s)" % (
-            self.start,
-            self.stop,
-            self._get_width(),
-        )
+        return " interval %s - %s (width: %s)" % (self.start, self.stop, self.width,)
 
     def intersect(self, interval):
         """
@@ -103,7 +119,7 @@ class TimeInterval(object):
         new_start = max(self._start, interval.start)
         new_stop = min(self._stop, interval.stop)
 
-        return self.new(new_start, new_stop)
+        return TimeInterval(new_start, new_stop)
 
     def merge(self, interval):
         """
@@ -199,7 +215,6 @@ class TimeIntervalSet(object):
     def __init__(self, list_of_intervals=()):
 
         self._intervals = list(list_of_intervals)
-
 
     @classmethod
     def from_starts_and_stops(cls, starts, stops, counts=None, dead_time=None):
@@ -393,7 +408,9 @@ class TimeIntervalSet(object):
 
         else:
 
-            return self.new(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
+            return TimeIntervalSet(
+                np.atleast_1d(itemgetter(*self.argsort())(self._intervals))
+            )
 
     def argsort(self):
         """
@@ -484,7 +501,7 @@ class TimeIntervalSet(object):
 
         else:
 
-            return self.new(np.asarray(self._intervals)[condition])
+            return TimeIntervalSet(np.asarray(self._intervals)[condition])
 
     @property
     def starts(self):
@@ -505,6 +522,16 @@ class TimeIntervalSet(object):
         """
 
         return [interval.stop for interval in self._intervals]
+
+    @property
+    def counts(self):
+
+        return [interval.counts for interval in self._intervals]
+
+    @property
+    def rates(self):
+
+        return [interval.rate for interval in self._intervals]
 
     @property
     def mid_points(self):
@@ -583,3 +610,30 @@ class TimeIntervalSet(object):
         """
 
         return np.vstack((self.starts, self.stops)).T
+
+    def __add__(self, number):
+        """
+        Shift all time intervals to the right by number
+
+        :param number: a float
+        :return: new TimeIntervalSet instance
+        """
+
+        new_set = TimeIntervalSet()
+        new_set.extend([time_interval + number for time_interval in self._intervals])
+
+        return new_set
+
+    def __sub__(self, number):
+        """
+        Shift all time intervals to the left by number (in place)
+
+        :param number: a float
+        :return: new TimeIntervalSet instance
+        """
+
+        new_set = TimeIntervalSet(
+            [time_interval - number for time_interval in self._intervals]
+        )
+
+        return new_set

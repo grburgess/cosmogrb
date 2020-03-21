@@ -1,10 +1,11 @@
 # from 3ML
 
-
-import re
+import matplotlib.pyplot as plt
 import copy
 from operator import itemgetter, attrgetter
 import numpy as np
+
+from cosmogrb.utils.plotting import step_plot
 
 
 class IntervalsDoNotOverlap(RuntimeError):
@@ -637,3 +638,42 @@ class TimeIntervalSet(object):
         )
 
         return new_set
+
+    def plot_intervals(self, as_rates=True, ax=None, **kwargs):
+        """
+        plot the intervals as rates or counts
+
+        :param as_rates: 
+        :param ax: 
+        :returns: 
+        :rtype: 
+
+        """
+        
+        
+        if ax is None:
+
+            fig, ax = plt.subplots()
+
+        else:
+
+            fig = ax.get_figure()
+
+        xbins = self.bin_stack
+
+        if as_rates:
+
+            y = self.rates
+            y_label = "rate (cnts/s)"
+
+        else:
+
+            y = self.counts
+            y_label = "cnts"
+
+        step_plot(xbins, y, ax=ax, **kwargs)
+
+        ax.set_xlabel("time")
+        ax.set_ylabel(y_label)
+
+        return fig

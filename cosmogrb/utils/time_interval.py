@@ -534,13 +534,11 @@ class TimeIntervalSet(object):
 
         return np.array([interval.rate for interval in self._intervals])
 
-
     @property
     def exposures(self):
 
         return np.array([interval.exposure for interval in self._intervals])
 
-    
     @property
     def mid_points(self):
 
@@ -656,8 +654,7 @@ class TimeIntervalSet(object):
         :rtype: 
 
         """
-        
-        
+
         if ax is None:
 
             fig, ax = plt.subplots()

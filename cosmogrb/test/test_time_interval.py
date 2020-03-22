@@ -15,8 +15,8 @@ def test_time_interval_constructor():
     assert t.width == 20.0
     assert t.mid_point == 0.0
     assert t.dead_time == 0.0
-    assert t.exposure == 20.
-    
+    assert t.exposure == 20.0
+
     with pytest.raises(RuntimeError):
 
         _ = TimeInterval(10.0, -10.0, swap_if_inverted=False)
@@ -29,20 +29,17 @@ def test_time_interval_constructor():
     assert t2.stop == 10.0
     assert t2.width == 20.0
     assert t2.mid_point == 0.0
-    assert t2.rate == 1.
+    assert t2.rate == 1.0
 
-    t2 = TimeInterval(-10.0, 10.0, counts=20, dead_time= 10.)
+    t2 = TimeInterval(-10.0, 10.0, counts=20, dead_time=10.0)
 
     assert t2.start == -10.0
     assert t2.stop == 10.0
     assert t2.width == 20.0
     assert t2.mid_point == 0.0
-    assert t2.rate == 2.
-    assert t2.exposure == 10.
+    assert t2.rate == 2.0
+    assert t2.exposure == 10.0
 
-    
-
-    
 
 def test_time_interval_repr():
 
@@ -99,18 +96,14 @@ def test_time_interval_merge():
 
         _ = t1.merge(t2)
 
-
-    t1 = TimeInterval(-10.0, 1.0, counts = 10.)
-    t2 = TimeInterval(0.0, 10.0, counts = 10.)
+    t1 = TimeInterval(-10.0, 1.0, counts=10.0)
+    t2 = TimeInterval(0.0, 10.0, counts=10.0)
 
     t3 = t1.merge(t2)
 
     # i think this is incorrect
-    assert t3.counts == 20.
+    assert t3.counts == 20.0
 
-    
-
-        
 
 def test_time_interval_add():
 
@@ -142,20 +135,16 @@ def test_time_interval_constructor_set():
     assert ts[0] == t1
     assert ts[1] == t2
 
-
     t1 = TimeInterval(-10.0, 20.0, counts=1)
     t2 = TimeInterval(10.0, 30.0, counts=1)
 
     ts = TimeIntervalSet([t1, t2])
 
     ts.plot_intervals()
-    
+
     ts.counts
 
     ts.rates
-
-    
-    
 
     # Use start and stops
     ts5 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1, 2])
@@ -174,6 +163,7 @@ def test_time_interval_constructor_set():
         ts6 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1])
 
     # test display
+
 
 #    ts5.display()
 

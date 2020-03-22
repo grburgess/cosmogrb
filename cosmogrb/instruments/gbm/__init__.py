@@ -6,5 +6,4 @@ from cosmogrb.instruments.gbm.gbm_universe import GBM_CPL_Universe
 
 
 
-
 #__all__ = ["GBMGRB_CPL"]

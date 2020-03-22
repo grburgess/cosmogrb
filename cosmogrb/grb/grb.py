@@ -1,4 +1,5 @@
 import h5py
+import abc
 
 # import concurrent.futures as futures
 import collections
@@ -9,14 +10,16 @@ from dask.distributed import worker_client
 # from cosmogrb import cosmogrb_client
 
 from cosmogrb.sampler.source import SourceFunction
+from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 import coloredlogs, logging
-from cosmogrb import cosmogrb_config
 import cosmogrb.utils.logging
+from cosmogrb import cosmogrb_config
+
 
 logger = logging.getLogger("cosmogrb.grb")
 
 
-class GRB(object):
+class GRB(object, metaclass=abc.ABCMeta):
     def __init__(
         self,
         name="SynthGRB",
@@ -64,8 +67,13 @@ class GRB(object):
         self._source_function = source_function_class
         self._source_params = source_params
 
+        # this stores extra information
+        # about the GRB that can be used later
+        self._extra_info = {}
+
         self._setup()
 
+    @abc.abstractmethod
     def _setup(self):
 
         pass
@@ -129,8 +137,6 @@ class GRB(object):
 
     def go(self, client=None, serial=False):
 
-        #        with worker_client() as client:
-
         if not serial:
 
             if client is not None:
@@ -180,7 +186,20 @@ class GRB(object):
             f.attrs["ra"] = self._ra
             f.attrs["dec"] = self._dec
 
-            source_group = f.create_group("source")
+            # store the source function parameters
+
+            recursively_save_dict_contents_to_group(f, "source", self._source_params)
+
+            # now save everything from the detectors
+
+            # store any extra info if there is
+            # some.
+
+            if self._extra_info:
+
+                recursively_save_dict_contents_to_group(
+                    f, "extra_info", self._extra_info
+                )
 
             det_group = f.create_group("detectors")
 
@@ -199,27 +218,41 @@ class GRB(object):
 
                 total_group = lc_group.create_group("total_signal")
 
-                total_group.create_dataset("pha", data=lc.pha)
-                total_group.create_dataset("times", data=lc.times)
+                total_group.create_dataset("pha", data=lc.pha, compression="lzf")
+                total_group.create_dataset("times", data=lc.times, compression="lzf")
 
                 source_group = lc_group.create_group("source_signal")
 
-                source_group.create_dataset("pha", data=lc.pha_source)
-                source_group.create_dataset("times", data=lc.times_source)
+                source_group.create_dataset(
+                    "pha", data=lc.pha_source, compression="lzf"
+                )
+                source_group.create_dataset(
+                    "times", data=lc.times_source, compression="lzf"
+                )
 
                 source_group = lc_group.create_group("background_signal")
 
-                source_group.create_dataset("pha", data=lc.pha_background)
-                source_group.create_dataset("times", data=lc.times_background)
+                source_group.create_dataset(
+                    "pha", data=lc.pha_background, compression="lzf"
+                )
+                source_group.create_dataset(
+                    "times", data=lc.times_background, compression="lzf"
+                )
 
                 rsp_group = lc_group.create_group("response")
 
-                rsp_group.create_dataset("matrix", data=lightcurve.response.matrix)
                 rsp_group.create_dataset(
-                    "energy_edges", data=lightcurve.response.energy_edges
+                    "matrix", data=lightcurve.response.matrix, compression="lzf"
                 )
                 rsp_group.create_dataset(
-                    "channel_edges", data=lightcurve.response.channel_edges
+                    "energy_edges",
+                    data=lightcurve.response.energy_edges,
+                    compression="lzf",
+                )
+                rsp_group.create_dataset(
+                    "channel_edges",
+                    data=lightcurve.response.channel_edges,
+                    compression="lzf",
                 )
                 rsp_group.attrs["geometric_area"] = lightcurve.response.geometric_area
 

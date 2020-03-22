@@ -8,9 +8,9 @@ class GBM_CPL_Universe(Universe):
 
     """
 
-    def __init__(self, population):
+    def __init__(self, population, save_path='.'):
 
-        super(GBM_CPL_Universe, self).__init__(population)
+        super(GBM_CPL_Universe, self).__init__(population, save_path=save_path)
 
     def _grb_wrapper(self, parameter_server, serial=False):
         return GBM_CPL_Wrapper(parameter_server, serial=serial)

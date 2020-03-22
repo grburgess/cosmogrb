@@ -83,7 +83,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
                     stops,
                     counts,
                     ts.exposures,
-                    self._threshold
+                    self._threshold,
                 )
 
                 # if there is a detection we can stop

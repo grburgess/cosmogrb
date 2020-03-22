@@ -1,60 +1,14 @@
 import os
+
 import numpy as np
 from glob import glob
-from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB, GBMGRB_CPL
+#from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB, GBMGRB_CPL
 
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
-
-from dask.distributed import Client, LocalCluster
-
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 import pytest
-
-
-@pytest.fixture(scope="session")
-def grb():
-    grb = GBMGRB_CPL(
-        ra=312.0,
-        dec=-62.0,
-        z=1.0,
-        peak_flux=5e-9,
-        alpha=-0.66,
-        ep=500.0,
-        tau=2.0,
-        trise=0.1,
-        tdecay=0.5,
-        duration=1.0,
-        T0=0.1,
-    )
-
-    cluster = LocalCluster(n_workers=2)
-    client = Client(cluster)
-
-    grb.go(client=client)
-
-    return grb
-
-
-@pytest.fixture(scope="session")
-def grb_constant():
-    grb = GBMGRB_CPL_Constant(
-        ra=312.0,
-        dec=-62.0,
-        z=1.0,
-        peak_flux=5e-9,
-        alpha=-0.66,
-        ep=500.0,
-        duration=1.0,
-        T0=0.1,
-    )
-
-    cluster = LocalCluster(n_workers=2)
-    client = Client(cluster)
-
-    grb.go(client=client)
-
-    return grb
 
 
 def test_gbm_constructor_and_plotting(grb):
@@ -66,27 +20,24 @@ def test_gbm_constructor_and_plotting(grb):
     grb.display_energy_integrated_light_curve(time)
 
 
-# def test_gbm_process(grb):
-
-
-#     files_to_remove = glob("SynthGRB*.rsp")
-
-#     for f in files_to_remove:
-#         os.remove(f)
-
-
 def test_gbm_save(grb):
 
-    grb.save("test.h5")
+    file_name = "test.h5"
+
+    grb.save(file_name)
+
+    os.remove(file_name)
 
 
 def test_read_gbm_save():
 
-    grb = GRBSave.from_file("test.h5")
+    path = get_path_of_data_file("SynthGRB_0_store.h5")
+
+    grb = GRBSave.from_file(path)
 
     lightcurve = grb["n1"]["lightcurve"]
 
-    grbsave_to_gbm_fits("test.h5")
+    grbsave_to_gbm_fits(path)
 
     files_to_remove = glob("*SynthGRB*.rsp")
 
@@ -98,9 +49,11 @@ def test_read_gbm_save():
     for f in files_to_remove:
         os.remove(f)
 
-    os.remove("test.h5")
-
 
 def test_constant_grb(grb_constant):
 
-    grb_constant.save("_bad.h5")
+    file_name = "_cpl_const.h5"
+
+    grb_constant.save(file_name)
+
+    os.remove(file_name)

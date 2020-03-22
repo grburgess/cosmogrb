@@ -214,7 +214,9 @@ class LightCurveStorage(object):
         if tmax is None:
             tmax = times.max()
 
-        assert tmin < tmax, "the specified tmin and tmax are out of order"
+        assert (
+            tmin < tmax
+        ), f"the specified tmin and tmax are out of order ({tmin} > {tmax})"
 
         bins = np.arange(tmin, tmax, dt)
 
@@ -271,7 +273,7 @@ class LightCurveStorage(object):
         emin=None,
         emax=None,
         ax=None,
-        **kwargs
+        **kwargs,
     ):
 
         if ax is None:
@@ -282,7 +284,16 @@ class LightCurveStorage(object):
 
             fig = ax.get_figure()
 
-        xbins, rate = self._bin_lightcurve(dt, emin, emax, times, pha, tmin, tmax)
+        # do not try to plot one photon
+
+        if len(times) <= 1:
+
+            #            logging.warn('there were no')
+            return fig
+
+        xbins, rate = self._bin_lightcurve(
+            dt=dt, emin=emin, emax=emax, times=times, pha=pha, tmin=tmin, tmax=tmax
+        )
 
         step_plot(xbins, rate, ax=ax, **kwargs)
 
@@ -316,7 +327,7 @@ class LightCurveStorage(object):
             emin=emin,
             emax=emax,
             ax=ax,
-            **kwargs
+            **kwargs,
         )
 
         return fig
@@ -346,7 +357,7 @@ class LightCurveStorage(object):
             emin=emin,
             emax=emax,
             ax=ax,
-            **kwargs
+            **kwargs,
         )
 
         return fig
@@ -376,7 +387,7 @@ class LightCurveStorage(object):
             emin=emin,
             emax=emax,
             ax=ax,
-            **kwargs
+            **kwargs,
         )
 
         return fig

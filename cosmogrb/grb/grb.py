@@ -8,7 +8,7 @@ from dask.distributed import worker_client
 
 # from cosmogrb import cosmogrb_client
 
-
+from cosmogrb.sampler.source import SourceFunction
 import coloredlogs, logging
 from cosmogrb import cosmogrb_config
 import cosmogrb.utils.logging
@@ -17,7 +17,17 @@ logger = logging.getLogger("cosmogrb.grb")
 
 
 class GRB(object):
-    def __init__(self, name="SynthGRB", duration=1, z=1, T0=0, ra=0, dec=0):
+    def __init__(
+        self,
+        name="SynthGRB",
+        duration=1,
+        z=1,
+        T0=0,
+        ra=0,
+        dec=0,
+        source_function_class=None,
+        **source_params,
+    ):
         """
         A basic GRB
 
@@ -47,6 +57,12 @@ class GRB(object):
         self._lightcurves = collections.OrderedDict()
         self._responses = collections.OrderedDict()
         self._backgrounds = collections.OrderedDict()
+
+        assert issubclass(source_function_class, SourceFunction)
+        assert isinstance(source_params, dict)
+
+        self._source_function = source_function_class
+        self._source_params = source_params
 
         self._setup()
 
@@ -163,6 +179,8 @@ class GRB(object):
 
             f.attrs["ra"] = self._ra
             f.attrs["dec"] = self._dec
+
+            source_group = f.create_group("source")
 
             det_group = f.create_group("detectors")
 

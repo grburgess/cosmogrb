@@ -4,7 +4,7 @@ from cosmogrb.instruments.gbm.gbm_response import NaIResponse, BGOResponse
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.constant_cpl import ConstantCPL
-from cosmogrb.sampler.source import SourceFunction
+
 
 from cosmogrb.grb import GRB
 
@@ -38,24 +38,26 @@ class GBMGRB(GRB):
     def __init__(
         self,
         source_function_class,
-        source_params,
         name="SynthGRB",
         duration=1,
         z=1,
         T0=0,
         ra=0,
         dec=0,
+        **source_params
     ):
 
-        assert issubclass(source_function_class, SourceFunction)
-        assert isinstance(source_params, dict)
-
-        self._source_function = source_function_class
-        self._source_params = source_params
+        
         self._use_plaw_sample = True
+
+
+        
+
+
         # pass up
         super(GBMGRB, self).__init__(
-            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec
+            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec,
+            source_function_class=source_function_class, **source_params
         )
 
     def _setup_source(self):
@@ -153,13 +155,13 @@ class GBMGRB_CPL(GBMGRB):
         # pass up
         super(GBMGRB_CPL, self).__init__(
             source_function_class=CPLSourceFunction,
-            source_params=source_params,
             name=name,
             duration=duration,
             z=z,
             T0=T0,
             ra=ra,
             dec=dec,
+            **source_params
         )
 
 
@@ -173,11 +175,11 @@ class GBMGRB_CPL_Constant(GBMGRB):
         # pass up
         super(GBMGRB_CPL_Constant, self).__init__(
             source_function_class=ConstantCPL,
-            source_params=source_params,
             name=name,
             duration=duration,
             z=z,
             T0=T0,
             ra=ra,
             dec=dec,
+            **source_params
         )

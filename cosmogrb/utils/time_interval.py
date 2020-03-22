@@ -512,7 +512,7 @@ class TimeIntervalSet(object):
         :return: list of start times
         """
 
-        return [interval.start for interval in self._intervals]
+        return np.array([interval.start for interval in self._intervals])
 
     @property
     def stops(self):
@@ -522,18 +522,25 @@ class TimeIntervalSet(object):
         :return:
         """
 
-        return [interval.stop for interval in self._intervals]
+        return np.array([interval.stop for interval in self._intervals])
 
     @property
     def counts(self):
 
-        return [interval.counts for interval in self._intervals]
+        return np.array([interval.counts for interval in self._intervals])
 
     @property
     def rates(self):
 
-        return [interval.rate for interval in self._intervals]
+        return np.array([interval.rate for interval in self._intervals])
 
+
+    @property
+    def exposures(self):
+
+        return np.array([interval.exposure for interval in self._intervals])
+
+    
     @property
     def mid_points(self):
 

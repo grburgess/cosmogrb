@@ -177,6 +177,20 @@ class LightCurveStorage(object):
 
         return original_idx
 
+    def get_idx_over_interval(self, tmin, tmax):
+        """
+        returns the selection over an interval of the 
+        full light curve
+
+        :param tmin: 
+        :param tmax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        return self._select_time(tmin, tmax, self._times)
+
     def _bin_lightcurve(self, dt, emin, emax, times, pha, tmin=None, tmax=None):
         """
         
@@ -194,13 +208,18 @@ class LightCurveStorage(object):
 
         """
 
-        if tmax is None:
+        if tmin is None:
             tmin = times.min()
 
-        if tmin is None:
+            
+            
+        if tmax is None:
             tmax = times.max()
 
+
+            
         assert tmin < tmax, "the specified tmin and tmax are out of order"
+        
 
         bins = np.arange(tmin, tmax, dt)
 
@@ -221,6 +240,29 @@ class LightCurveStorage(object):
         xbins = np.vstack([edges[:-1], edges[1:]]).T
 
         return xbins, rate
+
+    def binned_counts(self, dt, emin, emax, tmin=None, tmax=None):
+        """
+
+        get the time bins and counts for a given selection
+
+        :param dt: 
+        :param emin: 
+        :param emax: 
+        :param times: 
+        :param pha: 
+        :param tmin: 
+        :param tmax: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        bins, rate = self._bin_lightcurve(dt, emin, emax, self._times, self._pha, tmin, tmax)
+
+        counts = (rate * dt).astype(int)
+
+        return bins, counts
 
     def _display_lightcurve(
         self,

@@ -180,10 +180,18 @@ class ParameterServer(object):
 class GRBWrapper(object, metaclass=abc.ABCMeta):
     def __init__(self, parameter_server, serial=False):
 
+        # construct the grb
+        
         grb = self._grb_type(**parameter_server.parameters)
-        if not serial:
-            grb.go()
 
+        # if we are running this parallel
+        
+        if not serial:
+
+            grb.go(client=None,serial=serial)
+
+        # otherwise let the GRB know
+            
         else:
 
             grb.go(serial=serial)

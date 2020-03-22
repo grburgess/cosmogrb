@@ -5,5 +5,4 @@ from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 from cosmogrb.instruments.gbm.gbm_universe import GBM_CPL_Universe
 
 
-
-#__all__ = ["GBMGRB_CPL"]
+# __all__ = ["GBMGRB_CPL"]

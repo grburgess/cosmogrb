@@ -1,14 +1,14 @@
 import abc
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 
+
 class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
     def __init__(self, lightcurve):
 
         assert isinstance(lightcurve, LightCurveStorage)
 
-
         self._lightcurve = lightcurve
-        
+
         self._is_detected = False
 
         self._process_dead_time()
@@ -30,7 +30,6 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
     def dead_time_of_interval(self, tmax, tmin):
 
         pass
-
 
     def exposure_of_interval(self, tmin, tmax):
         """

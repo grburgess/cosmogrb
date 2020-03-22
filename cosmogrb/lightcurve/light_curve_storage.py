@@ -211,15 +211,10 @@ class LightCurveStorage(object):
         if tmin is None:
             tmin = times.min()
 
-            
-            
         if tmax is None:
             tmax = times.max()
 
-
-            
         assert tmin < tmax, "the specified tmin and tmax are out of order"
-        
 
         bins = np.arange(tmin, tmax, dt)
 
@@ -258,7 +253,9 @@ class LightCurveStorage(object):
 
         """
 
-        bins, rate = self._bin_lightcurve(dt, emin, emax, self._times, self._pha, tmin, tmax)
+        bins, rate = self._bin_lightcurve(
+            dt, emin, emax, self._times, self._pha, tmin, tmax
+        )
 
         counts = (rate * dt).astype(int)
 

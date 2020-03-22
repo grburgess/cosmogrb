@@ -101,6 +101,11 @@ class GBMResponse(Response):
             self._detector_center.separation(coord).value
         )
 
+
+    @property
+    def separation_angle(self):
+        return np.rad2deg(self._separation_angle)
+        
     def _compute_geometric_area(self):
         """
         compute the geometric area of the detector

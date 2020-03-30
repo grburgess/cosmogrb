@@ -16,9 +16,10 @@ class GBMTrigger(object):
         self._simul_trigger_window = simul_trigger_window
 
         self._is_detected = False
-        self._trigger_times = []
+        self._triggered_times = []
         self._triggered_detectors = []
-
+        self._triggered_time_scales = []
+        
         # sort the detectors by their distance to the
         # grb
         self._setup_order_by_distance()
@@ -42,6 +43,8 @@ class GBMTrigger(object):
 
                 angular_distances.append(lc.extra_info["angle"])
 
+                logger.debug(f"adding {name} with and {lc.extra_info['angle']}")
+                
         angular_distances = np.array(angular_distances)
         lc_names = np.array(lc_names)
 
@@ -57,8 +60,13 @@ class GBMTrigger(object):
 
     @property
     def triggered_times(self):
-        return self._trigger_times
+        return self._triggered_times
 
+    @property
+    def triggered_time_scales(self):
+        return self._triggered_time_scales
+    
+    
     @property
     def is_detected(self):
         return self._is_detected
@@ -70,7 +78,7 @@ class GBMTrigger(object):
 
         detected = False
 
-        for other_time in self._trigger_times:
+        for other_time in self._triggered_times:
 
             if (time >= (other_time - self._simul_trigger_window)) and (
                 time <= (other_time + self._simul_trigger_window)
@@ -108,6 +116,7 @@ class GBMTrigger(object):
 
             if lc_analyzer.is_detected:
 
+                logger.debug(f"{self._lc_names[n_tested]} triggered!")
                 # we saw something!
                 # add the name and the time
 
@@ -119,11 +128,14 @@ class GBMTrigger(object):
                     if self._check_simultaneous_triggers(lc_analyzer.detection_time):
 
                         # ok, we found at least two triggers nearly the same time
+
                         self._is_detected = True
-
+                        logger.debug(f"{self._lc_names[n_tested]} is simultaneous with another detector")
+                        
                 self._triggered_detectors.append(self._lc_names[n_tested])
-                self._trigger_times.append(lc_analyzer.detection_time)
-
+                self._triggered_times.append(lc_analyzer.detection_time)
+                self._triggered_time_scales.append(lc_analyzer.detection_time_scale)
+                
                 n_triggered += 1
 
             n_tested += 1

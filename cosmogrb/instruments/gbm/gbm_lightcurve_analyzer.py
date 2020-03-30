@@ -5,6 +5,11 @@ import numpy as np
 from cosmogrb.lightcurve import LightCurveAnalyzer
 from cosmogrb.utils.time_interval import TimeIntervalSet
 
+import coloredlogs, logging
+import cosmogrb.utils.logging
+
+logger = logging.getLogger("cosmogrb.gbm.trigger")
+
 
 class GBMLightCurveAnalyzer(LightCurveAnalyzer):
     """Documentation for GBMLightCurveAnalyzer
@@ -63,6 +68,8 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
         for k, (emin, emax) in trigger_energy_ranges.items():
 
+            logger.debug(f"checking energy rage {emin}-{emax}")
+            
             _, counts = self._lightcurve.binned_counts(
                 self._base_timescale, emin, emax, tmin=None, tmax=None
             )
@@ -76,10 +83,15 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
             # now check each of the GBM trigger time scales
 
             if counts.sum() ==0:
+
+                logger.debug("zero counts in light curve... skipping")
+                
                 continue
             
             for time_scale in trigger_time_scales[k]:
 
+                logger.debug(f"checking time scale {time_scale}")
+                
                 n_bins_src = int(np.floor(time_scale / self._base_timescale))
 
                 detected, time = _run_trigger(
@@ -98,6 +110,8 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
                 # for more
 
                 if detected:
+
+                    logger.debug(f"found detection for energy range {emin}-{emax} at timescale {time_scale}")
 
                     self._is_detected = True
                     self._detection_time = time

@@ -13,9 +13,6 @@ from dask.distributed import Client, LocalCluster
 import popsynth
 
 
-
-
-
 @pytest.fixture(scope="session")
 def client():
 
@@ -86,6 +83,16 @@ def universe():
 
 @pytest.fixture(scope="session")
 def gbm_trigger():
-    gbm_trigger = GBMTrigger(get_path_of_data_file('test_grb.h5'))
+
+    gbm_trigger = GBMTrigger(get_path_of_data_file("test_grb.h5"))
 
     return gbm_trigger
+
+
+@pytest.fixture(scope="session")
+def weak_gbm_trigger():
+
+    # a weak GRB that should not trigger a detection
+    weak_gbm_trigger = GBMTrigger(get_path_of_data_file("weak_grb.h5"))
+
+    return weak_gbm_trigger

@@ -58,7 +58,7 @@ class ResponseGenerator(object):
                 time=1,
                 T0=T0,
                 cspecfile=get_path_of_data_file(
-                    os.path.join("gbm_cspec", f"{detector_name}.pha")
+                    os.path.join("gbm_cspec", f"{k}.pha")
                 ),
                 poshist=get_path_of_data_file("posthist.fit"),
                 mat_type=2,
@@ -101,7 +101,7 @@ class ResponseGenerator(object):
         
         self._detectors[det_name].set_time(time)
 
-    def set_location(self, ra, dec det_name):
+    def set_location(self, ra, dec, det_name):
         """
 
         set the location of the specific reponse generator
@@ -117,7 +117,7 @@ class ResponseGenerator(object):
 
         logger.debug(f"setting location of {det_name} to {ra}, {dec}")
         
-        self._detectors[det_name].set_location(time)
+        self._detectors[det_name].set_location(ra, dec)
 
         return self._detectors[det_name].matrix.T
         

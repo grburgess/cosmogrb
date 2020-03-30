@@ -27,7 +27,7 @@ class GBMOrbit(object):
 
         logger.debug("Setting up the GBM orbit")
         
-        self._interpolator = PositionInterpolator.from_posthist_hdf5(
+        self._interpolator = PositionInterpolator.from_poshist_hdf5(
             get_path_of_data_file("posthist.h5"), T0=self._T0
         )
 
@@ -47,8 +47,8 @@ class GBMOrbit(object):
     def T0(self):
         return self._T0
 
-    @property
     def met(self, time):
+
         return self._interpolator.met(time)
 
 

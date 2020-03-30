@@ -25,3 +25,12 @@ def test_gbm_trigger_process(gbm_trigger):
     assert gbm_trigger.triggered_detectors[0] == 'n1'
     assert gbm_trigger.triggered_detectors[1] == 'n0'
     
+
+def test_weak_gbm_trigger(weak_gbm_trigger):
+
+    # make sure we do not trigger on weak
+    # GRBs
+    
+    weak_gbm_trigger.process_triggers()
+
+    assert not weak_gbm_trigger.is_detected

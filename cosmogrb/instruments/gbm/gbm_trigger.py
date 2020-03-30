@@ -6,6 +6,7 @@ import cosmogrb.utils.logging
 
 logger = logging.getLogger("cosmogrb.gbm.trigger")
 
+
 class GBMTrigger(object):
     def __init__(self, grb_save, threshold=4.5, simul_trigger_window=0.5):
 
@@ -18,11 +19,9 @@ class GBMTrigger(object):
         self._trigger_times = []
         self._triggered_detectors = []
 
-        
         # sort the detectors by their distance to the
         # grb
         self._setup_order_by_distance()
-
 
     def _setup_order_by_distance(self):
 
@@ -30,10 +29,10 @@ class GBMTrigger(object):
         # collect
 
         logger.debug(f"{self._grb_save.name} is having its detectors ordered ")
-        
+
         angular_distances = []
         lc_names = []
-        
+
         for name in self._grb_save.keys:
 
             if name.startswith("n"):
@@ -99,12 +98,9 @@ class GBMTrigger(object):
 
         n_tested = 0
 
- 
         while (n_tested < len(self._lc_names)) and (not self._is_detected):
 
             lc = self._grb_save[self._lc_names[n_tested]]["lightcurve"]
-
-            print(n_tested)
 
             lc_analyzer = GBMLightCurveAnalyzer(
                 lightcurve=lc, threshold=self._threshold
@@ -115,8 +111,6 @@ class GBMTrigger(object):
                 # we saw something!
                 # add the name and the time
 
-                
-
                 if n_triggered != 0:
 
                     # check the other trigger times to
@@ -126,13 +120,9 @@ class GBMTrigger(object):
 
                         # ok, we found at least two triggers nearly the same time
                         self._is_detected = True
-                         
-
-                    
 
                 self._triggered_detectors.append(self._lc_names[n_tested])
                 self._trigger_times.append(lc_analyzer.detection_time)
-                
 
                 n_triggered += 1
 

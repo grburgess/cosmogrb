@@ -108,6 +108,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','**.ipynb_checkpoints']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+#html_theme = 'lsst_dd_rtd_theme'
 #htm_theme_path = [sphinx_pdj_theme.get_html_theme_path()]
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'cosmogrbdoc'

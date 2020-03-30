@@ -1,4 +1,6 @@
 
+from glob import glob
+
 import popsynth
 import pytest
 

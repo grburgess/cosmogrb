@@ -1,6 +1,7 @@
 from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve
 from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 from cosmogrb.instruments.gbm.gbm_response import NaIResponse, BGOResponse
+from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
 from cosmogrb.sampler.source import Source
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.constant_cpl import ConstantCPL

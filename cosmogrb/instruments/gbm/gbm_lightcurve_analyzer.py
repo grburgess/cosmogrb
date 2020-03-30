@@ -26,6 +26,10 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         )
         self._n_bins_pre = int(np.floor(self._pre_window / self._base_timescale))
 
+
+        self._detection_time = None
+        self._detection_time_scale = None
+        
         super(GBMLightCurveAnalyzer, self).__init__(lightcurve)
 
     def _compute_detection(self):
@@ -71,11 +75,14 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
             # now check each of the GBM trigger time scales
 
+            if counts.sum() ==0:
+                continue
+            
             for time_scale in trigger_time_scales[k]:
 
                 n_bins_src = int(np.floor(time_scale / self._base_timescale))
 
-                detected = _run_trigger(
+                detected, time = _run_trigger(
                     self._n_bins_background,
                     self._n_bins_pre,
                     n_bins_src,
@@ -93,10 +100,8 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
                 if detected:
 
                     self._is_detected = True
-
-                    # print(
-                    #     f"There was a detection with range ({emin},{emax}) and time scale {time_scale}"
-                    # )
+                    self._detection_time = time
+                    self._detection_time_scale = time_scale
 
                     break
 
@@ -112,6 +117,15 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
         #     print("NO DETECTION")
 
+    @property
+    def detection_time_scale(self):
+        return self._detection_time_scale
+
+    @property
+    def detection_time(self):
+        return self._detection_time
+    
+    
     def _process_dead_time(self):
 
         dead_time_per_event = _calculate_dead_time_per_event(
@@ -177,13 +191,13 @@ def _run_trigger(
             # print(f"sig: {sig}")
             if (sig >= threshold) and (starts[src_idx] > 0.0):
 
-                return True
+                return True, starts[src_idx]
 
                 # return sig, starts[src_idx + n_bins_source]
 
         else:
 
-            return False
+            return False, 0
 
 
 @nb.njit(fastmath=True)

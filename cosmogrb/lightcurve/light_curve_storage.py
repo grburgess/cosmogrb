@@ -20,6 +20,7 @@ class LightCurveStorage(object):
         channels,
         ebounds,
         T0,
+        extra_info
     ):
         """
         Container class for light curve objects
@@ -59,6 +60,8 @@ class LightCurveStorage(object):
 
         self._T0 = T0
 
+        self._extra_info = extra_info
+        
     @property
     def name(self):
         return self._name
@@ -111,6 +114,11 @@ class LightCurveStorage(object):
     def time_adjustment(self):
         return self._time_adjustment
 
+    @property
+    def extra_info(self):
+        return self._extra_info
+
+    
     def _select_channel(self, emin, emax, pha, original_idx=None):
         """
         return the idx of events between certain channels

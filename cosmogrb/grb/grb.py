@@ -207,12 +207,19 @@ class GRB(object, metaclass=abc.ABCMeta):
 
                 lc = lightcurve.lightcurve_storage
 
+            
+
+                
                 lc_group = det_group.create_group(f"{lc.name}")
                 lc_group.attrs["tstart"] = lc.tstart
                 lc_group.attrs["tstop"] = lc.tstop
                 lc_group.attrs["time_adjustment"] = lc.time_adjustment
-                lc_group.create_dataset("channels", data=lc.channels)
 
+                if lc.extra_info:
+                    recursively_save_dict_contents_to_group(f, f"{lc.name}/extra_info", lc.extra_info )
+
+                lc_group.create_dataset("channels", data=lc.channels)
+                
                 # now create groups for the total, source and bkg
                 # counts
 

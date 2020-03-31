@@ -1,3 +1,6 @@
+import pandas as pd
+from IPython.display import display
+import collections
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -46,15 +49,20 @@ class LightCurveStorage(object):
         self._time_adjustment = time_adjustment
 
         self._pha = pha.astype(int)
-
         self._times = times
 
+        self._n_counts = self._times.shape[0]
+        
         self._pha_source = pha_source
         self._times_source = times_source
 
+        self._n_counts_source = self._times_source.shape[0]
+        
         self._pha_background = pha_background
         self._times_background = times_background
 
+        self._n_counts_background = self._times_background.shape[0]
+        
         self._channels = channels
         self._ebounds = ebounds
 
@@ -69,11 +77,24 @@ class LightCurveStorage(object):
     @property
     def tstart(self):
         return self._tstart
-
+    
     @property
     def tstop(self):
         return self._tstop
 
+
+    @property
+    def n_counts(self):
+        return self._n_counts
+
+    @property
+    def n_counts_source(self):
+        return self._n_counts_source
+
+    @property
+    def n_counts_background(self):
+        return self._n_counts_background
+    
     @property
     def T0(self):
         return self._T0
@@ -520,3 +541,45 @@ class LightCurveStorage(object):
         )
 
         return fig
+    def __repr__(self):
+
+        return self._output().to_string()
+
+    def info(self):
+
+        self._output(as_display=True)
+
+    def _output(self, as_display=False):
+
+        std_dict = collections.OrderedDict()
+
+        std_dict["name"] = self._name
+        std_dict["tstart"] = self._tstart
+        std_dict["tstop"] = self._tstop
+        std_dict["time adjustment"] = self._time_adjustment
+        std_dict["T0"] = self._T0
+        std_dict["n_counts"] = self._n_counts
+        std_dict["n_counts_source"] = self._n_counts_source
+        std_dict["n_counts_background"] = self._n_counts_background
+
+        if as_display:
+
+            std_df = pd.Series(data=std_dict, index=std_dict.keys())
+
+            display(std_df.to_frame())
+
+            if self._extra_info:
+
+                extra_df = pd.Series(
+                    data=self._extra_info, index=self._extra_info.keys()
+                )
+
+                display(extra_df.to_frame())
+
+        else:
+
+            if self._extra_info:
+                for k, v in self._extra_info.items():
+                    std_dict[k] = v
+
+        return pd.Series(data=std_dict, index=std_dict.keys())

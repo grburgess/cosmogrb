@@ -261,7 +261,7 @@ class GRBSave(object):
 
             display(source_df.to_frame())
 
-            if self._extra_info is not None:
+            if self._extra_info:
 
                 extra_df = pd.Series(
                     data=self._extra_info, index=self._extra_info.keys()
@@ -274,7 +274,7 @@ class GRBSave(object):
             for k, v in self._source_params.items():
                 std_dict[k] = v
 
-            if self._extra_info is not None:
+            if self._extra_info:
                 for k, v in self._extra_info.items():
                     std_dict[k] = v
 

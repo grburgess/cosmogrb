@@ -1,6 +1,7 @@
 import h5py
 import abc
-
+import pandas as pd
+from IPython.display import display
 # import concurrent.futures as futures
 import collections
 
@@ -268,6 +269,59 @@ class GRB(object, metaclass=abc.ABCMeta):
 
                 self._lightcurves.clear()
 
+
+
+    def __repr__(self):
+
+        return self._output().to_string()
+
+    def info(self):
+
+        self._output(as_display=True)
+
+    def _output(self, as_display=False):
+
+        std_dict = collections.OrderedDict()
+
+        std_dict["name"] = self._name
+        std_dict["z"] = self._z
+        std_dict["ra"] = self._ra
+        std_dict["dec"] = self._dec
+        std_dict["duration"] = self._duration
+        std_dict["T0"] = self._T0
+
+        if as_display:
+
+            std_df = pd.Series(data=std_dict, index=std_dict.keys())
+
+            display(std_df.to_frame())
+
+            source_df = pd.Series(
+                data=self._source_params, index=self._source_params.keys()
+            )
+
+            display(source_df.to_frame())
+
+            if self._extra_info is not None:
+
+                extra_df = pd.Series(
+                    data=self._extra_info, index=self._extra_info.keys()
+                )
+
+                display(extra_df.to_frame())
+
+        else:
+
+            for k, v in self._source_params.items():
+                std_dict[k] = v
+
+            if self._extra_info is not None:
+                for k, v in self._extra_info.items():
+                    std_dict[k] = v
+
+        return pd.Series(data=std_dict, index=std_dict.keys())
+
+                
 
 def process_lightcurve(lc):
     return lc.process()

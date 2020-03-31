@@ -1,4 +1,7 @@
 import h5py
+import collections
+import pandas as pd
+from IPython.display import display
 from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 from cosmogrb.response.response import Response
@@ -75,7 +78,7 @@ class GRBSave(object):
         self._dec = dec
         self._z = z
         self._duration = duration
-        
+
     def __getitem__(self, key):
 
         if key in self._internal_storage:
@@ -102,10 +105,10 @@ class GRBSave(object):
     def z(self):
         return self._z
 
-       @property
+    @property
     def duration(self):
         return self._duration
-    
+
     @property
     def T0(self):
         return self._T0
@@ -135,8 +138,8 @@ class GRBSave(object):
             ra = f.attrs["ra"]
             dec = f.attrs["dec"]
             T0 = f.attrs["T0"]
-            z = f.attrs['z']
-            duration = f.attrs['duration']
+            z = f.attrs["z"]
+            duration = f.attrs["duration"]
 
             source_params = recursively_load_dict_contents_from_group(f, "source")
 
@@ -226,3 +229,53 @@ class GRBSave(object):
             source_params=source_params,
             extra_info=extra_info,
         )
+
+    def __repr__(self):
+
+        return self._output().to_string()
+
+    def info(self):
+
+        self._output(as_display=True)
+
+    def _output(self, as_display=False):
+
+        std_dict = collections.OrderedDict()
+
+        std_dict["name"] = self._name
+        std_dict["z"] = self._z
+        std_dict["ra"] = self._ra
+        std_dict["dec"] = self._dec
+        std_dict["duration"] = self._duration
+        std_dict["T0"] = self._T0
+
+        if as_display:
+
+            std_df = pd.Series(data=std_dict, index=std_dict.keys())
+
+            display(std_df.to_frame())
+
+            source_df = pd.Series(
+                data=self._source_params, index=self._source_params.keys()
+            )
+
+            display(source_df.to_frame())
+
+            if self._extra_info is not None:
+
+                extra_df = pd.Series(
+                    data=self._extra_info, index=self._extra_info.keys()
+                )
+
+                display(extra_df.to_frame())
+
+        else:
+
+            for k, v in self._source_params.items():
+                std_dict[k] = v
+
+            if self._extra_info is not None:
+                for k, v in self._extra_info.items():
+                    std_dict[k] = v
+
+        return pd.Series(data=std_dict, index=std_dict.keys())

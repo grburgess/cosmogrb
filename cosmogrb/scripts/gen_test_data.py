@@ -85,7 +85,7 @@ class DurationSampler(popsynth.AuxiliarySampler):
         self._true_values = 1.5 * t90
 
 
-r0_true = .17
+r0_true = .13
 rise_true = 0.1
 decay_true = 4.0
 peak_true = 1.5

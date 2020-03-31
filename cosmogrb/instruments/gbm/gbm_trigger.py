@@ -8,13 +8,14 @@ logger = logging.getLogger("cosmogrb.gbm.trigger")
 
 
 class GBMTrigger(object):
-    def __init__(self, grb_save, threshold=4.5, simul_trigger_window=0.5):
+    def __init__(self, grb_save, threshold=4.5, simul_trigger_window=0.5, max_n_dets=12):
 
         self._grb_save = GRBSave.from_file(grb_save)
 
         self._threshold = threshold
         self._simul_trigger_window = simul_trigger_window
-
+        self._max_n_dets = max_n_dets
+        
         self._is_detected = False
         self._triggered_times = []
         self._triggered_detectors = []
@@ -106,7 +107,7 @@ class GBMTrigger(object):
 
         n_tested = 0
 
-        while (n_tested < len(self._lc_names)) and (not self._is_detected):
+        while (n_tested < len(self._lc_names)) and (not self._is_detected) and (n_tested < self._max_n_dets):
 
             lc = self._grb_save[self._lc_names[n_tested]]["lightcurve"]
 

@@ -11,6 +11,8 @@ class GRBSave(object):
         T0,
         ra,
         dec,
+        duration,
+        z,
         lightcurves,
         responses,
         source_params,
@@ -71,7 +73,9 @@ class GRBSave(object):
         self._T0 = T0
         self._ra = ra
         self._dec = dec
-
+        self._z = z
+        self._duration = duration
+        
     def __getitem__(self, key):
 
         if key in self._internal_storage:
@@ -94,6 +98,14 @@ class GRBSave(object):
     def dec(self):
         return self._dec
 
+    @property
+    def z(self):
+        return self._z
+
+       @property
+    def duration(self):
+        return self._duration
+    
     @property
     def T0(self):
         return self._T0
@@ -123,6 +135,8 @@ class GRBSave(object):
             ra = f.attrs["ra"]
             dec = f.attrs["dec"]
             T0 = f.attrs["T0"]
+            z = f.attrs['z']
+            duration = f.attrs['duration']
 
             source_params = recursively_load_dict_contents_from_group(f, "source")
 
@@ -205,6 +219,8 @@ class GRBSave(object):
             T0=T0,
             ra=ra,
             dec=dec,
+            z=z,
+            duration=duration,
             lightcurves=lightcurves,
             responses=responses,
             source_params=source_params,

@@ -182,7 +182,8 @@ class GRB(object, metaclass=abc.ABCMeta):
             f.attrs["grb_name"] = self._name
             f.attrs["n_lightcurves"] = len(self._lightcurves)
             f.attrs["T0"] = self._T0
-
+            f.attrs['z'] = self._z
+            f.attrs['duration'] = self._duration
             f.attrs["ra"] = self._ra
             f.attrs["dec"] = self._dec
 

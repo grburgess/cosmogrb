@@ -8,9 +8,24 @@ logger = logging.getLogger("cosmogrb.gbm.trigger")
 
 
 class GBMTrigger(object):
-    def __init__(self, grb_save, threshold=4.5, simul_trigger_window=0.5, max_n_dets=12):
+    def __init__(self, grb_save_file_name, threshold=4.5, simul_trigger_window=0.5, max_n_dets=12):
+        """
 
-        self._grb_save = GRBSave.from_file(grb_save)
+        Run the GBM trigger and the specified GRB. The will first order the GBM detectors
+        by their angular distance to the GRB and then run through each to check for a detection
+        in one of the GBM energy ranges and time scales. If a detection is found, a second detector with 
+        detection is searched for requiring that its trigger exist in a window +/- the width specified
+
+        :param grb_save_file_name: the file to run the trigger on
+        :param threshold: the trigger threshold to use
+        :param simul_trigger_window: the +/- window for simultaneous triggers
+        :param max_n_dets: the maximum number of detectors to test
+        :returns: 
+        :rtype: 
+
+        """
+
+        self._grb_save = GRBSave.from_file(grb_save_file_name)
 
         self._threshold = threshold
         self._simul_trigger_window = simul_trigger_window

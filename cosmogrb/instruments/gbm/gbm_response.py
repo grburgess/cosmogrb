@@ -1,24 +1,18 @@
 import numpy as np
 import os
-from gbmgeometry import PositionInterpolator, GBM
-from gbm_drm_gen import DRMGenTTE
+from gbmgeometry import PositionInterpolator, gbm_detector_list
+
 
 from astropy.coordinates import SkyCoord
 
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 from cosmogrb.response.response import Response
-
+from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
+from cosmogrb.instruments.gbm.response_generator import gbm_response_generator
 
 # These are just here for the position interpolator we used
 
-_T0 = 576201540.940077
-
-_Tmax = 576288060.940076
-
-_pos_interp = PositionInterpolator(
-    poshist=get_path_of_data_file("posthist.fit"), T0=_T0
-)
 
 _det_translate = dict(
     n0="NAI_00",
@@ -48,7 +42,9 @@ class GBMResponse(Response):
 
         self._setup_gbm_geometry(detector_name, ra, dec, time)
 
-        assert time + _T0 < _Tmax, "the time specified is out of bounds for the poshist"
+        tmin, tmax = gbm_orbit.position_interpolator.minmax_time()
+
+        assert time < tmax, "the time specified is out of bounds for the poshist"
 
         self._ra = ra
         self._dec = dec
@@ -57,7 +53,7 @@ class GBMResponse(Response):
         self._detector_name = detector_name
 
         # compute the trigger time
-        self._trigger_time = time + _T0
+        self._trigger_time = gbm_orbit.met(time)
 
         if save:
             assert name is not None, "if you want to save, you must have a name"
@@ -83,12 +79,11 @@ class GBMResponse(Response):
 
     def _setup_gbm_geometry(self, detector_name, ra, dec, time):
 
-        # create a gbm for this time
-
-        gbm = GBM(_pos_interp.quaternion(time), _pos_interp.sc_pos(time))
-
         # get the detector
-        detector = gbm.detectors[detector_name]
+        detector = gbm_detector_list[detector_name](
+            sc_pos=gbm_orbit.position_interpolator.sc_pos(time),
+            quaternion=gbm_orbit.position_interpolator.quaternion(time),
+        )
 
         # make a scky coordinate
         coord = SkyCoord(ra, dec, unit="deg", frame="icrs")
@@ -100,6 +95,10 @@ class GBMResponse(Response):
         self._separation_angle = np.deg2rad(
             self._detector_center.separation(coord).value
         )
+
+    @property
+    def separation_angle(self):
+        return np.rad2deg(self._separation_angle)
 
     def _compute_geometric_area(self):
         """
@@ -129,20 +128,17 @@ class GBMResponse(Response):
 
         """
 
-        drm_gen = DRMGenTTE(
-            det_name=_det_translate[detector_name],
-            time=time,
-            T0=_T0,
-            cspecfile=get_path_of_data_file(
-                os.path.join("gbm_cspec", f"{detector_name}.pha")
-            ),
-            poshist=get_path_of_data_file("posthist.fit"),
-            mat_type=2,
+        # since this is now done with a singleton it
+        # may cause some race conditions
+
+        gbm_response_generator.set_time(time, detector_name)
+        matrix = gbm_response_generator.set_location(ra, dec, detector_name)
+
+        return (
+            matrix,
+            gbm_response_generator.mc_energies[detector_name],
+            gbm_response_generator.ebounds[detector_name],
         )
-
-        drm_gen.set_location(ra, dec)
-
-        return drm_gen.matrix.T, drm_gen.monte_carlo_energies, drm_gen.ebounds
 
     @property
     def ra(self):
@@ -162,7 +158,7 @@ class GBMResponse(Response):
 
     @property
     def T0(self):
-        return _T0
+        return gbm_orbit.T0
 
     @property
     def detector_name(self):

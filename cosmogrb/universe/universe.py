@@ -32,7 +32,7 @@ class Universe(object, metaclass=abc.ABCMeta):
 
     """
 
-    def __init__(self, population, grb_base_name="SynthGRB", save_path='.'):
+    def __init__(self, population, grb_base_name="SynthGRB", save_path="."):
 
         assert isinstance(population, popsynth.Population)
 
@@ -42,7 +42,6 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         self._save_path = save_path
 
-        
         assert sum(self._population.selection) == len(
             self._population.selection
         ), "The population seems to have had a prior selection on it. This is not good"
@@ -96,18 +95,14 @@ class Universe(object, metaclass=abc.ABCMeta):
 
                 param_dict[k] = v[i]
 
-
             param_server = self._parameter_server_type(**param_dict)
 
             file_name = os.path.join(self._save_path, f"{self._name[i]}_store.h5")
-            
+
             param_server.set_file_path(file_name)
-                
+
             self._parameter_servers.append(param_server)
 
-        
-
-            
     def _process_populations(self):
         self._get_sky_coord()
         self._get_redshift()
@@ -116,7 +111,7 @@ class Universe(object, metaclass=abc.ABCMeta):
     def go(self, client=None):
 
         if client is not None:
-                
+
             futures = client.map(self._grb_wrapper, self._parameter_servers)
             res = client.gather(futures)
 
@@ -124,9 +119,9 @@ class Universe(object, metaclass=abc.ABCMeta):
             del res
 
         else:
-            
-            res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers ]
-        
+
+            res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers]
+
     @abc.abstractmethod
     def _grb_wrapper(self, parameter_server, serial=False):
 
@@ -185,19 +180,26 @@ class ParameterServer(object):
 class GRBWrapper(object, metaclass=abc.ABCMeta):
     def __init__(self, parameter_server, serial=False):
 
+        # construct the grb
+        
         grb = self._grb_type(**parameter_server.parameters)
-        if not serial:
-            grb.go()
 
+        # if we are running this parallel
+        
+        if not serial:
+
+            grb.go(client=None,serial=serial)
+
+        # otherwise let the GRB know
+            
         else:
 
             grb.go(serial=serial)
-            
+
         grb.save(parameter_server.file_path, clean_up=True)
 
         del grb
 
-        
     @abc.abstractmethod
     def _grb_type(self, **kwargs):
 

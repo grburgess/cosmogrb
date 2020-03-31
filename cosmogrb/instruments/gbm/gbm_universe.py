@@ -1,6 +1,6 @@
 import numpy as np
 from cosmogrb.universe.universe import Universe, GRBWrapper, ParameterServer
-from cosmogrb.grb import GBMGRB_CPL
+from cosmogrb.instruments.gbm.gbm_grb import GBMGRB_CPL
 
 
 class GBM_CPL_Universe(Universe):
@@ -8,9 +8,9 @@ class GBM_CPL_Universe(Universe):
 
     """
 
-    def __init__(self, population):
+    def __init__(self, population, save_path='.'):
 
-        super(GBM_CPL_Universe, self).__init__(population)
+        super(GBM_CPL_Universe, self).__init__(population, save_path=save_path)
 
     def _grb_wrapper(self, parameter_server, serial=False):
         return GBM_CPL_Wrapper(parameter_server, serial=serial)
@@ -27,7 +27,6 @@ class GBM_CPL_Universe(Universe):
         self._local_parameters["tdecay"] = self._population.tdecay
         self._local_parameters["tau"] = self._population.tau
 
-        
     def _parameter_server_type(self, **kwargs):
 
         return GBM_CPL_ParameterServer(**kwargs)
@@ -39,10 +38,11 @@ class GBM_CPL_Wrapper(GRBWrapper):
     """
 
     def __init__(self, parameter_server, serial=False):
-        super(GBM_CPL_Wrapper, self).__init__(parameter_server=parameter_server, serial=serial)
-        
+        super(GBM_CPL_Wrapper, self).__init__(
+            parameter_server=parameter_server, serial=serial
+        )
 
-    def _grb_type(self,**kwargs):
+    def _grb_type(self, **kwargs):
         return GBMGRB_CPL(**kwargs)
 
 

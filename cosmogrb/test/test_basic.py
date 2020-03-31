@@ -19,7 +19,10 @@ def test_gbm_constructor_and_plotting(grb):
     grb.display_energy_dependent_light_curve(time, energy)
     grb.display_energy_integrated_light_curve(time)
 
+    print(grb)
+    grb.info()
 
+    
 def test_gbm_save(grb):
 
     file_name = "test.h5"
@@ -35,7 +38,13 @@ def test_read_gbm_save():
 
     grb = GRBSave.from_file(path)
 
+    print(grb)
+    grb.info()
+    
     lightcurve = grb["n1"]["lightcurve"]
+
+    print(lightcurve)
+    lightcurve.info()
 
     grbsave_to_gbm_fits(path)
 

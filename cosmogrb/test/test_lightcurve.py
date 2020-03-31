@@ -4,7 +4,7 @@ from cosmogrb.io.grb_save import GRBSave
 
 def test_lightcurve_plotting():
 
-    grb = GRBSave.from_file(get_path_of_data_file("grb.h5"))
+    grb = GRBSave.from_file(get_path_of_data_file("test_grb.h5"))
 
     for key in grb.keys:
 

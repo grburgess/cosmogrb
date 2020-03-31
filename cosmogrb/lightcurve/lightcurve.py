@@ -61,6 +61,11 @@ class LightCurve(object):
         self._grb_name = grb_name
         self._T0 = T0
 
+        # for holding information (numbers/str)
+        # for special types
+
+        self._extra_info = {}
+
     def set_time_adjustment(self, t):
         self._time_adjustment = t
 
@@ -182,6 +187,7 @@ class LightCurve(object):
             channels=self._response.channels,
             ebounds=self._response.channel_edges,
             T0=self._T0,
+            extra_info=self._extra_info,
         )
 
         return lc_storage
@@ -258,6 +264,10 @@ class LightCurve(object):
     @property
     def response(self):
         return self._response
+
+    @property
+    def extra_info(self):
+        return self._extra_info
 
     @property
     def lightcurve_storage(self):

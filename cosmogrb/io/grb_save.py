@@ -1,10 +1,21 @@
 import h5py
+from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 from cosmogrb.response.response import Response
 
 
 class GRBSave(object):
-    def __init__(self, grb_name, T0, ra, dec, lightcurves, responses):
+    def __init__(
+        self,
+        grb_name,
+        T0,
+        ra,
+        dec,
+        lightcurves,
+        responses,
+        source_params,
+        extra_info=None,
+    ):
         """
 
         :param grb_name: 
@@ -49,6 +60,13 @@ class GRBSave(object):
                 lightcurve=lightcurves[key], response=responses[key]
             )
 
+        assert isinstance(source_params, dict)
+        self._source_params = source_params
+
+        if extra_info is not None:
+            assert isinstance(extra_info, dict)
+        self._extra_info = extra_info
+
         self._name = grb_name
         self._T0 = T0
         self._ra = ra
@@ -84,6 +102,14 @@ class GRBSave(object):
     def keys(self):
         return self._internal_storage.keys()
 
+    @property
+    def extra_info(self):
+        return self._extra_info
+
+    @property
+    def source_params(self):
+        return self._source_params
+
     @classmethod
     def from_file(cls, file_name):
 
@@ -98,6 +124,16 @@ class GRBSave(object):
             dec = f.attrs["dec"]
             T0 = f.attrs["T0"]
 
+            source_params = recursively_load_dict_contents_from_group(f, "source")
+
+            try:
+
+                extra_info = recursively_load_dict_contents_from_group(f, "extra_info")
+
+            except:
+
+                extra_info = None
+
             det_group = f["detectors"]
 
             for lc_name in det_group.keys():
@@ -107,6 +143,14 @@ class GRBSave(object):
                 tstart = lc_group.attrs["tstart"]
                 tstop = lc_group.attrs["tstop"]
                 time_adjustment = lc_group.attrs["time_adjustment"]
+
+                try:
+                    lc_extra_info = recursively_load_dict_contents_from_group(
+                        f, f"{lc_name}/extra_info"
+                    )
+
+                except:
+                    lc_extra_info = {}
 
                 channels = lc_group["channels"]
 
@@ -151,6 +195,7 @@ class GRBSave(object):
                     channels=rsp.channels,
                     ebounds=rsp.channel_edges,
                     T0=T0,
+                    extra_info=lc_extra_info,
                 )
 
                 lightcurves[lc_name] = lc_container
@@ -162,4 +207,6 @@ class GRBSave(object):
             dec=dec,
             lightcurves=lightcurves,
             responses=responses,
+            source_params=source_params,
+            extra_info=extra_info,
         )

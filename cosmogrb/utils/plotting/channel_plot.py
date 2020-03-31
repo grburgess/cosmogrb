@@ -14,7 +14,7 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     :rtype: 
 
     """
-    
+
     chans = np.vstack([chan_min, chan_max]).T
     width = chan_max - chan_min
 

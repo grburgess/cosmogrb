@@ -93,6 +93,6 @@ def gbm_trigger():
 def weak_gbm_trigger():
 
     # a weak GRB that should not trigger a detection
-    weak_gbm_trigger = GBMTrigger(get_path_of_data_file("weak_grb.h5"))
+    weak_gbm_trigger = GBMTrigger(get_path_of_data_file("weak_grb.h5"), max_n_dets=4)
 
     return weak_gbm_trigger

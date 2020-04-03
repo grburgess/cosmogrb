@@ -27,7 +27,7 @@ def test_gbm_trigger_constructor(gbm_trigger):
 
 def test_gbm_trigger_process(gbm_trigger):
 
-    gbm_trigger.process_triggers()
+    gbm_trigger.process()
 
     assert gbm_trigger.is_detected
     assert len(gbm_trigger.triggered_times) == 2
@@ -42,6 +42,6 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
     # make sure we do not trigger on weak
     # GRBs
 
-    weak_gbm_trigger.process_triggers()
+    weak_gbm_trigger.process()
 
     assert not weak_gbm_trigger.is_detected

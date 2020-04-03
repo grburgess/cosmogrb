@@ -1,13 +1,15 @@
 import numpy as np
+
 from cosmogrb.instruments.gbm.gbm_lightcurve_analyzer import GBMLightCurveAnalyzer
-from cosmogrb import GRBSave
+from cosmogrb.grb.grb_detector import GRBDetector
+
 import coloredlogs, logging
 import cosmogrb.utils.logging
 
 logger = logging.getLogger("cosmogrb.gbm.trigger")
 
 
-class GBMTrigger(object):
+class GBMTrigger(GRBDetector):
     def __init__(
         self, grb_save_file_name, threshold=4.5, simul_trigger_window=0.5, max_n_dets=12
     ):
@@ -27,13 +29,12 @@ class GBMTrigger(object):
 
         """
 
-        self._grb_save = GRBSave.from_file(grb_save_file_name)
+        super(GBMTrigger, self).__init__(grb_save_file_name)
 
         self._threshold = threshold
         self._simul_trigger_window = simul_trigger_window
         self._max_n_dets = max_n_dets
 
-        self._is_detected = False
         self._triggered_times = []
         self._triggered_detectors = []
         self._triggered_time_scales = []
@@ -84,10 +85,6 @@ class GBMTrigger(object):
     def triggered_time_scales(self):
         return self._triggered_time_scales
 
-    @property
-    def is_detected(self):
-        return self._is_detected
-
     def _check_simultaneous_triggers(self, time):
 
         # go thru all the other trigger times and see
@@ -109,7 +106,7 @@ class GBMTrigger(object):
 
         return detected
 
-    def process_triggers(self):
+    def process(self):
         """
         Process the GBM detectors to find
         two simultaneous triggers
@@ -162,3 +159,8 @@ class GBMTrigger(object):
                 n_triggered += 1
 
             n_tested += 1
+
+        self._extra_info['triggered_detectors'] = self._triggered_detectors
+        self._extra_info['triggered_times'] = self._triggered_times
+        self._extra_info['triggered_time_scales'] = self._triggered_time_scales
+        

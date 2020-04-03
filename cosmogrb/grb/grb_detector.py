@@ -1,9 +1,10 @@
 import h5py
+import abc
 from cosmogrb import GRBSave
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 
 
-class GRBDetector(object):
+class GRBDetector(object, metaclass=abc.ABCMeta):
     def __init__(self, grb_save_file_name):
         """
 
@@ -29,6 +30,13 @@ class GRBDetector(object):
     def is_detected(self):
         return self._is_detected
 
+    @abc.abstractmethod
+    def process(self):
+
+        # the method to process the detection
+        
+        pass
+    
     def save(self):
 
         with h5py.File(self._out_file_name, "w") as f:

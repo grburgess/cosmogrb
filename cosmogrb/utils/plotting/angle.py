@@ -17,8 +17,12 @@
 """Angle utilities."""
 import numpy as np
 
-__all__ = ('reference_angle', 'reference_angle_deg',
-           'wrapped_angle', 'wrapped_angle_deg')
+__all__ = (
+    "reference_angle",
+    "reference_angle_deg",
+    "wrapped_angle",
+    "wrapped_angle_deg",
+)
 
 
 def reference_angle(a):

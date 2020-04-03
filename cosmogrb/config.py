@@ -4,6 +4,7 @@ structure = {}
 structure["logging"] = dict(level="INFO")
 structure["multiprocess"] = dict(n_grb_workers=6, n_universe_workers=6)
 
+
 class CosmogrbConfig(YAMLConfig):
     def __init__(self):
 

@@ -21,7 +21,7 @@ def sample_theta_phi(size):
 
     """
 
-    theta = 90-  np.rad2deg(np.arccos(1 - 2 * np.random.uniform(0.0, 1.0, size=size)))
+    theta = 90 - np.rad2deg(np.arccos(1 - 2 * np.random.uniform(0.0, 1.0, size=size)))
     phi = np.rad2deg(np.random.uniform(0, 2 * np.pi, size=size))
 
     return theta, phi
@@ -181,17 +181,17 @@ class GRBWrapper(object, metaclass=abc.ABCMeta):
     def __init__(self, parameter_server, serial=False):
 
         # construct the grb
-        
+
         grb = self._grb_type(**parameter_server.parameters)
 
         # if we are running this parallel
-        
+
         if not serial:
 
-            grb.go(client=None,serial=serial)
+            grb.go(client=None, serial=serial)
 
         # otherwise let the GRB know
-            
+
         else:
 
             grb.go(serial=serial)

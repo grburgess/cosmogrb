@@ -1,14 +1,8 @@
-
 from glob import glob
 
 import popsynth
 import pytest
 
-
-
-
-    
-    
 
 def test_gbm_universe(universe, client):
 

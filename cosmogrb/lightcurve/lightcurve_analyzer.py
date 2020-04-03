@@ -14,7 +14,7 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
         self._process_dead_time()
 
         self._compute_detection()
-        
+
     @abc.abstractmethod
     def _compute_detection(self):
 

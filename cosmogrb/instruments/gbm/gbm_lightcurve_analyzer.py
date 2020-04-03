@@ -31,10 +31,9 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         )
         self._n_bins_pre = int(np.floor(self._pre_window / self._base_timescale))
 
-
         self._detection_time = None
         self._detection_time_scale = None
-        
+
         super(GBMLightCurveAnalyzer, self).__init__(lightcurve)
 
     def _compute_detection(self):
@@ -69,7 +68,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         for k, (emin, emax) in trigger_energy_ranges.items():
 
             logger.debug(f"checking energy rage {emin}-{emax}")
-            
+
             _, counts = self._lightcurve.binned_counts(
                 self._base_timescale, emin, emax, tmin=None, tmax=None
             )
@@ -82,16 +81,16 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
             # now check each of the GBM trigger time scales
 
-            if counts.sum() ==0:
+            if counts.sum() == 0:
 
                 logger.debug("zero counts in light curve... skipping")
-                
+
                 continue
-            
+
             for time_scale in trigger_time_scales[k]:
 
                 logger.debug(f"checking time scale {time_scale}")
-                
+
                 n_bins_src = int(np.floor(time_scale / self._base_timescale))
 
                 detected, time = _run_trigger(
@@ -111,7 +110,9 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
                 if detected:
 
-                    logger.debug(f"found detection for energy range {emin}-{emax} at timescale {time_scale}")
+                    logger.debug(
+                        f"found detection for energy range {emin}-{emax} at timescale {time_scale}"
+                    )
 
                     self._is_detected = True
                     self._detection_time = time
@@ -138,8 +139,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
     @property
     def detection_time(self):
         return self._detection_time
-    
-    
+
     def _process_dead_time(self):
 
         dead_time_per_event = _calculate_dead_time_per_event(

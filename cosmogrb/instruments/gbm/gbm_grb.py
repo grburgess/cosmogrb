@@ -45,20 +45,21 @@ class GBMGRB(GRB):
         T0=0,
         ra=0,
         dec=0,
-        **source_params
+        **source_params,
     ):
 
-        
         self._use_plaw_sample = True
-
-
-        
-
 
         # pass up
         super(GBMGRB, self).__init__(
-            name=name, duration=duration, z=z, T0=T0, ra=ra, dec=dec,
-            source_function_class=source_function_class, **source_params
+            name=name,
+            duration=duration,
+            z=z,
+            T0=T0,
+            ra=ra,
+            dec=dec,
+            source_function_class=source_function_class,
+            **source_params,
         )
 
     def _setup_source(self):
@@ -162,7 +163,7 @@ class GBMGRB_CPL(GBMGRB):
             T0=T0,
             ra=ra,
             dec=dec,
-            **source_params
+            **source_params,
         )
 
 
@@ -182,5 +183,5 @@ class GBMGRB_CPL_Constant(GBMGRB):
             T0=T0,
             ra=ra,
             dec=dec,
-            **source_params
+            **source_params,
         )

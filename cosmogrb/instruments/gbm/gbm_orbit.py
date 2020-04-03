@@ -20,13 +20,12 @@ class GBMOrbit(object):
             # Put any initialization here.
         return cls._instance
 
-
     def __init__(self):
 
         self._T0 = 576201540.940077
 
         logger.debug("Setting up the GBM orbit")
-        
+
         self._interpolator = PositionInterpolator.from_poshist_hdf5(
             get_path_of_data_file("posthist.h5"), T0=self._T0
         )
@@ -38,7 +37,7 @@ class GBMOrbit(object):
     @property
     def random_orbit_time(self):
         return np.random.uniform(self._tmin, self._tmax)
-        
+
     @property
     def position_interpolator(self):
         return self._interpolator
@@ -50,11 +49,6 @@ class GBMOrbit(object):
     def met(self, time):
 
         return self._interpolator.met(time)
-
-
-
-
-
 
 
 gbm_orbit = GBMOrbit()

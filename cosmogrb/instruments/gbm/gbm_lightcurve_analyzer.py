@@ -8,15 +8,30 @@ from cosmogrb.utils.time_interval import TimeIntervalSet
 import coloredlogs, logging
 import cosmogrb.utils.logging
 
-logger = logging.getLogger("cosmogrb.gbm.trigger")
+logger = logging.getLogger("cosmogrb.gbm.lc_analyzer")
+
+
+_base_timescale = 0.016
+
+_trigger_energy_ranges = {
+    "a": (50.0, 300.0),
+    "b": (25.0, 50.0),
+    "c": (100.0, None),
+    "d": (300.0, None),
+}
+
+_trigger_time_scales = {
+    "a": [_base_timescale * (2 ** i) for i in range(10)],
+    "b": [_base_timescale * (2 ** i) for i in range(10)],
+    "c": [_base_timescale * (2 ** i) for i in range(9)],
+    "d": [_base_timescale * (2 ** i) for i in range(4)],
+}
 
 
 class GBMLightCurveAnalyzer(LightCurveAnalyzer):
     """Documentation for GBMLightCurveAnalyzer
 
     """
-
-    _base_timescale = 0.016
 
     def __init__(
         self, lightcurve, threshold=4.5, background_duration=17, pre_window=4.0
@@ -25,6 +40,10 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         self._threshold = threshold
         self._background_duration = background_duration
         self._pre_window = pre_window
+
+        self._base_timescale = _base_timescale
+        self._trigger_time_scales = _trigger_time_scales
+        self._trigger_energy_ranges = _trigger_energy_ranges
 
         self._n_bins_background = int(
             np.floor(self._background_duration / self._base_timescale)
@@ -38,20 +57,6 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
     def _compute_detection(self):
 
-        trigger_energy_ranges = {
-            "a": (50.0, 300.0),
-            "b": (25.0, 50.0),
-            "c": (100.0, None),
-            "d": (300.0, None),
-        }
-
-        trigger_time_scales = {
-            "a": [self._base_timescale * (2 ** i) for i in range(10)],
-            "b": [self._base_timescale * (2 ** i) for i in range(10)],
-            "c": [self._base_timescale * (2 ** i) for i in range(9)],
-            "d": [self._base_timescale * (2 ** i) for i in range(4)],
-        }
-
         # first we just need to compute the dead_time per intervals
 
         bins, counts = self._lightcurve.binned_counts(
@@ -63,9 +68,9 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
         dead_time_per_interval = [self.dead_time_of_interval(x, y) for x, y in bins]
 
-        # go thru each energy range and look for a detectopm
+        # go thru each energy range and look for a detection
 
-        for k, (emin, emax) in trigger_energy_ranges.items():
+        for k, (emin, emax) in self._trigger_energy_ranges.items():
 
             logger.debug(f"checking energy rage {emin}-{emax}")
 
@@ -81,13 +86,15 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
             # now check each of the GBM trigger time scales
 
-            if counts.sum() == 0:
+            if sum(counts) == 0:
+
+                # in this energy range we found no counts
 
                 logger.debug("zero counts in light curve... skipping")
 
                 continue
 
-            for time_scale in trigger_time_scales[k]:
+            for time_scale in self._trigger_time_scales[k]:
 
                 logger.debug(f"checking time scale {time_scale}")
 
@@ -165,7 +172,20 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
         dead_time = self._dead_time_per_event[idx].sum()
 
+        #        dead_time = _sum_dead_time(self._dead_time_per_event[idx], len(idx))
+
         return dead_time
+
+
+@nb.njit(fastmath=True, parallel=False)
+def _sum_dead_time(dead_time_per_event, N):
+
+    dead_time = 0.0
+    for i in nb.prange(N):
+
+        dead_time += dead_time_per_event[i]
+
+    return dead_time
 
 
 @nb.njit(fastmath=True)

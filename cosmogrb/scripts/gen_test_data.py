@@ -15,7 +15,6 @@ import numpy as np
 # pytest. it is meant to be run from the top of the pacakge
 
 
-
 grb = GBMGRB_CPL(
     ra=312.0,
     dec=-62.0,
@@ -85,7 +84,7 @@ class DurationSampler(popsynth.AuxiliarySampler):
         self._true_values = 1.5 * t90
 
 
-r0_true = .13
+r0_true = 0.13
 rise_true = 0.1
 decay_true = 4.0
 peak_true = 1.5
@@ -140,4 +139,3 @@ pop = pop_gen.draw_survey(no_selection=True, boundary=1e-2)
 
 
 pop.writeto("cosmogrb/data/test_grb_pop.h5")
-

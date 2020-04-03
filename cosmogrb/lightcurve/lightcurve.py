@@ -272,4 +272,3 @@ class LightCurve(object):
     @property
     def lightcurve_storage(self):
         return self._lc_storage
-

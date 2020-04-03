@@ -23,7 +23,7 @@ class LightCurveStorage(object):
         channels,
         ebounds,
         T0,
-        extra_info
+        extra_info,
     ):
         """
         Container class for light curve objects
@@ -52,24 +52,24 @@ class LightCurveStorage(object):
         self._times = times
 
         self._n_counts = self._times.shape[0]
-        
+
         self._pha_source = pha_source
         self._times_source = times_source
 
         self._n_counts_source = self._times_source.shape[0]
-        
+
         self._pha_background = pha_background
         self._times_background = times_background
 
         self._n_counts_background = self._times_background.shape[0]
-        
+
         self._channels = channels
         self._ebounds = ebounds
 
         self._T0 = T0
 
         self._extra_info = extra_info
-        
+
     @property
     def name(self):
         return self._name
@@ -77,11 +77,10 @@ class LightCurveStorage(object):
     @property
     def tstart(self):
         return self._tstart
-    
+
     @property
     def tstop(self):
         return self._tstop
-
 
     @property
     def n_counts(self):
@@ -94,7 +93,7 @@ class LightCurveStorage(object):
     @property
     def n_counts_background(self):
         return self._n_counts_background
-    
+
     @property
     def T0(self):
         return self._T0
@@ -139,7 +138,6 @@ class LightCurveStorage(object):
     def extra_info(self):
         return self._extra_info
 
-    
     def _select_channel(self, emin, emax, pha, original_idx=None):
         """
         return the idx of events between certain channels
@@ -541,6 +539,7 @@ class LightCurveStorage(object):
         )
 
         return fig
+
     def __repr__(self):
 
         return self._output().to_string()

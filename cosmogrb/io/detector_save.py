@@ -58,6 +58,10 @@ class DetectorSave(object):
 
             return cls(name, is_detected, extra_info)
 
+
+    def __repr__(self):
+        return self._output(as_display=False).to_string()
+        
     def info(self):
 
         self._output(as_display=True)

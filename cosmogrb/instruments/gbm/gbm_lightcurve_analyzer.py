@@ -7,6 +7,7 @@ from cosmogrb.utils.time_interval import TimeIntervalSet
 
 import coloredlogs, logging
 import cosmogrb.utils.logging
+import dask
 
 logger = logging.getLogger("cosmogrb.gbm.lc_analyzer")
 
@@ -66,7 +67,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         starts = bins[:, 0]
         stops = bins[:, 1]
 
-        dead_time_per_interval = [self.dead_time_of_interval(x, y) for x, y in bins]
+        dead_time_per_interval = [self._dead_time_per_event(x,y) for x,y in bins]
 
         # go thru each energy range and look for a detection
 

@@ -13,6 +13,7 @@ def process_gbm_universe(*grb_save_files, client=None, threshold=4.5, serial=Fal
         args.append([grb_file, threshold])
     
     futures = client.map(_submit, args)
+    client.gather(futures)
     
 
 def _submit(args):

@@ -1,3 +1,11 @@
+import os
+from glob import glob
+
+from cosmogrb.instruments.gbm.process_gbm_universe import process_gbm_universe
+from cosmogrb.utils.file_utils import get_path_of_data_dir
+
+
+
 def test_gbm_trigger_constructor(gbm_trigger):
 
     assert not gbm_trigger.is_detected
@@ -45,3 +53,23 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
     weak_gbm_trigger.process()
 
     assert not weak_gbm_trigger.is_detected
+
+
+def test_process_universe(client):
+
+    files = glob(os.path.join(get_path_of_data_dir(), "SynthGRB*store.h5"))
+
+    process_gbm_universe(*files, client=client)
+
+    info_files = glob(
+        os.path.join(get_path_of_data_dir(), "SynthGRB*store_detection_info.h5")
+    )
+
+    assert len(files) == len(info_files)
+
+    for x, y in zip(files, info_files):
+
+        assert x.split("store")[0] == y.split("store")[0]
+
+        os.remove(y)
+    

@@ -57,7 +57,7 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
     assert not weak_gbm_trigger.is_detected
 
 
-def test_process_universe(client):
+def test_process_universe(client, universe):
 
     # load the universe
 

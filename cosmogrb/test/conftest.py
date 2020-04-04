@@ -69,9 +69,9 @@ def grb_constant(client):
 def universe():
     population_file = get_path_of_data_file("test_grb_pop.h5")
 
-    pop = popsynth.Population.from_file(population_file)
 
-    universe = GBM_CPL_Universe(pop)
+
+    universe = GBM_CPL_Universe(population_file)
 
     yield universe
 

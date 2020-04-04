@@ -2,7 +2,7 @@ import os
 from glob import glob
 
 from cosmogrb.instruments.gbm.process_gbm_universe import process_gbm_universe
-from cosmogrb.utils.file_utils import get_path_of_data_dir
+from cosmogrb.utils.package_utils import get_path_of_data_dir
 
 
 

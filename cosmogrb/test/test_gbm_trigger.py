@@ -60,8 +60,8 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
 def test_process_universe(client):
 
     # load the universe
-    
-    uni_info = UniverseInfo.from_file(get_path_of_data_file("universe.h5"))
+
+    uni_info = UniverseInfo.from_file("universe.h5")
 
     # it should not be processed
     assert not uni_info.is_processed

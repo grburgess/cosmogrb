@@ -160,7 +160,10 @@ class GBMTrigger(GRBDetector):
 
             n_tested += 1
 
-        self._extra_info['triggered_detectors'] = self._triggered_detectors
-        self._extra_info['triggered_times'] = self._triggered_times
-        self._extra_info['triggered_time_scales'] = self._triggered_time_scales
-        
+        self._extra_info["triggered_detectors"] = np.array(
+            self._triggered_detectors, dtype="S10"
+        )
+        self._extra_info["triggered_times"] = np.array(self._triggered_times)
+        self._extra_info["triggered_time_scales"] = np.array(
+            self._triggered_time_scales
+        )

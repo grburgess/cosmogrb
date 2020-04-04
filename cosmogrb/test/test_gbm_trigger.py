@@ -3,8 +3,9 @@ from glob import glob
 from natsort import natsorted
 
 from cosmogrb.instruments.gbm.process_gbm_universe import process_gbm_universe
-from cosmogrb.utils.package_utils import get_path_of_data_dir
-
+from cosmogrb.utils.package_utils import get_path_of_data_dir, get_path_of_data_file
+from cosmogrb.universe.universe_info import UniverseInfo
+from cosmogrb.instruments.gbm.gbm_trigger import GBMTrigger
 
 
 def test_gbm_trigger_constructor(gbm_trigger):
@@ -58,9 +59,28 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
 
 def test_process_universe(client):
 
-    files = glob(os.path.join(get_path_of_data_dir(), "SynthGRB*store.h5"))
+    # load the universe
+    
+    uni_info = UniverseInfo.from_file(get_path_of_data_file("universe.h5"))
 
-    process_gbm_universe(*files, client=client)
+    # it should not be processed
+    assert not uni_info.is_processed
+
+    uni_info.process(GBMTrigger, client=client)
+
+    # now it should be processed
+    assert uni_info.is_processed
+
+    # save it
+    uni_info.write("new_universe.h5")
+
+    # see if we can load it
+    uni_info2 = UniverseInfo.from_file("new_universe.h5")
+
+    # make  sure the loaded one is now processed
+    assert uni_info2.is_processed
+
+    files = glob(os.path.join(get_path_of_data_dir(), "SynthGRB*store.h5"))
 
     info_files = glob(
         os.path.join(get_path_of_data_dir(), "SynthGRB*store_detection_info.h5")
@@ -73,4 +93,5 @@ def test_process_universe(client):
         assert x.split("store")[0] == y.split("store")[0]
 
         os.remove(y)
-    
+
+    os.remove("new_universe.h5")

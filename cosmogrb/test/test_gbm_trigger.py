@@ -1,5 +1,6 @@
 import os
 from glob import glob
+from natsort import natsorted
 
 from cosmogrb.instruments.gbm.process_gbm_universe import process_gbm_universe
 from cosmogrb.utils.package_utils import get_path_of_data_dir
@@ -67,7 +68,7 @@ def test_process_universe(client):
 
     assert len(files) == len(info_files)
 
-    for x, y in zip(files, info_files):
+    for x, y in zip(natsorted(files), natsorted(info_files)):
 
         assert x.split("store")[0] == y.split("store")[0]
 

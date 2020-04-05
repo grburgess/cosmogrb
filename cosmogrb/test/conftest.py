@@ -13,9 +13,6 @@ from dask.distributed import Client, LocalCluster
 import popsynth
 
 
-
-
-
 @pytest.fixture(scope="session")
 def client():
 
@@ -72,13 +69,11 @@ def grb_constant(client):
 def universe(client):
     population_file = get_path_of_data_file("test_grb_pop.h5")
 
-
-
     universe = GBM_CPL_Universe(population_file)
 
     universe.go(client)
-    universe.save('universe.h5')
-    
+    universe.save("universe.h5")
+
     yield universe
 
     files_to_remove = glob("SynthGRB*store.h5")
@@ -87,17 +82,14 @@ def universe(client):
         os.remove(f)
 
     os.remove("universe.h5")
-        
 
 
-    
 @pytest.fixture(scope="session")
 def gbm_trigger():
 
     gbm_trigger = GBMTrigger(get_path_of_data_file("test_grb.h5"))
 
     return gbm_trigger
-
 
 
 @pytest.fixture(scope="session")

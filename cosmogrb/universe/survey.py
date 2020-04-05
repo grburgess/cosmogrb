@@ -100,8 +100,7 @@ class Survey(object):
         :rtype: 
 
         """
-        
-        
+
         assert issubclass(detector_type, GRBDetector), "Not a valid GRB detector"
 
         if not serial:
@@ -127,11 +126,11 @@ class Survey(object):
         # the survey has now had its triggers run
         # so lets flip its status and make sure that when
         # when we save it, we record the new status
-                
+
         self._is_processed = True
 
         self._grb_detector_files = []
-        
+
         for file_name in self._grb_save_files:
 
             file_name_head = ".".join(file_name.split(".")[:-1])
@@ -139,8 +138,7 @@ class Survey(object):
             out_file_name = f"{file_name_head}_detection_info.h5"
 
             self._grb_detector_files.append(out_file_name)
-        
-        
+
     @property
     def is_processed(self):
 
@@ -186,8 +184,7 @@ class Survey(object):
         :rtype: 
 
         """
-        
-        
+
         with h5py.File(file_name, "r") as f:
 
             n_grbs = f.attrs["n_grbs"]

@@ -4,6 +4,7 @@ from natsort import natsorted
 
 from cosmogrb.instruments.gbm.process_gbm_universe import process_gbm_universe
 from cosmogrb.utils.package_utils import get_path_of_data_dir, get_path_of_data_file
+from cosmogrb.utils.file_utils import file_existing_and_readable
 from cosmogrb.universe.survey import Survey
 from cosmogrb.instruments.gbm.gbm_trigger import GBMTrigger
 
@@ -80,16 +81,18 @@ def test_process_universe(client, universe):
     # make  sure the loaded one is now processed
     assert survey2.is_processed
 
-    files = glob(os.path.join(get_path_of_data_dir(), "SynthGRB*store.h5"))
+    files = glob("SynthGRB*store.h5")
 
-    info_files = glob(
-        os.path.join(get_path_of_data_dir(), "SynthGRB*store_detection_info.h5")
-    )
+    info_files = glob("SynthGRB*store_detection_info.h5")
+    
 
     assert len(files) == len(info_files)
 
     for x, y in zip(natsorted(files), natsorted(info_files)):
 
+        assert file_existing_and_readable(x)
+        assert file_existing_and_readable(y)
+        
         assert x.split("store")[0] == y.split("store")[0]
 
         os.remove(y)

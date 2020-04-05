@@ -47,6 +47,7 @@ extensions = ['nbsphinx',
               'sphinx.ext.autodoc',
               'sphinx.ext.githubpages',
               'sphinx.ext.napoleon'
+              'sphinx_gallery.load_style',
 ]
 
 napoleon_google_docstring = True
@@ -88,7 +89,7 @@ html_theme_options = {
  #   'canonical_url': 'https://johannesbuchner.github.io/UltraNest/',
     'style_external_links': True,
     # 'vcs_pageview_mode': 'edit',
-    'style_nav_header_background': '#2A2828',
+    'style_nav_header_background': '#5B7C7A',
     #'only_logo': False,
 }
 

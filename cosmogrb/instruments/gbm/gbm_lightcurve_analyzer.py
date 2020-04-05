@@ -67,9 +67,9 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         starts = bins[:, 0]
         stops = bins[:, 1]
 
-        dead_time_per_interval = [self.dead_time_of_interval(x,y) for x,y in bins]
+        dead_time_per_interval = [self.dead_time_of_interval(x, y) for x, y in bins]
 
-#        self._dead_time_per_interval = dask.compute(*dead_time_per_interval)
+        #        self._dead_time_per_interval = dask.compute(*dead_time_per_interval)
         # go thru each energy range and look for a detection
 
         for k, (emin, emax) in self._trigger_energy_ranges.items():

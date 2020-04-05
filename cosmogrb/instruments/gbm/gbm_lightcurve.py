@@ -33,7 +33,7 @@ class GBMLightCurve(LightCurve):
             grb_name=grb_name,
             tstart=tstart,
             tstop=tstop,
-            instrument="GBM"
+            instrument="GBM",
         )
 
         # let us keep track of the seperation angle

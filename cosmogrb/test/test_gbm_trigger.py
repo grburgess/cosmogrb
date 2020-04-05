@@ -58,15 +58,24 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
     assert not weak_gbm_trigger.is_detected
 
 
-def test_process_universe(client, universe):
+def test_process_survey(client, universe):
 
     # load the universe
 
     survey = Survey.from_file("universe.h5")
 
+
+    for k,v in survey.items():
+
+        v.grb.name == k
+
+        assert v.detector_info is None
+
     # it should not be processed
     assert not survey.is_processed
 
+    survey.info()
+    
     survey.process(GBMTrigger, client=client)
 
     # now it should be processed
@@ -78,6 +87,16 @@ def test_process_universe(client, universe):
     # see if we can load it
     survey2 = Survey.from_file("new_universe.h5")
 
+    survey2.info()
+    
+    for k,v in survey2.items():
+            
+        v.grb.name == k
+
+        v.detector_info.name == k
+
+
+    
     # make  sure the loaded one is now processed
     assert survey2.is_processed
 

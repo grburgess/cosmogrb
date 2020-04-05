@@ -5,6 +5,7 @@ import pandas as pd
 from IPython.display import display
 import collections
 import warnings
+from natsort import natsorted
 
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.detector_save import DetectorSave
@@ -12,21 +13,60 @@ from cosmogrb.grb.grb_detector import GRBDetector
 from cosmogrb.utils.file_utils import file_existing_and_readable
 
 
-class Survey(object):
-    def __init__(self, grb_save_files, population_file, grb_detector_files=None):
+class Observation(object):
+    def __init__(
+        self, grb_save_file, grb_detector_file=None, population=None, idx=None
+    ):
         """
-        Holds the information from 
+        A small container class to access observations
 
-        :param grb_save_files: 
-        :param population_file: 
-        :param grb_detector_files: 
+        :param grb_save_file: 
+        :param grb_detector_file: 
+        :param population: 
+        :param idx: 
         :returns: 
         :rtype: 
 
         """
 
+        self._grb = grb_save_file
+
+        self._detector = grb_detector_file
+
+    @property
+    def grb(self):
+        return GRBSave.from_file(self._grb)
+
+    @property
+    def detector_info(self):
+        if self._detector is None:
+
+            return None
+        
+        else:
+
+            return DetectorSave.from_file(self._detector)
+
+
+class Survey(collections.OrderedDict):
+    def __init__(self, grb_save_files, population_file, grb_detector_files=None):
+        """
+        A container for a survey of observed GRBs. Holds file locations 
+        for all the GRBs created in the Universe. It also allows you to process
+        the observations with a GRBDetector class.
+
+        :param grb_save_files: the file locations for the survey
+        :param population_file: the population file used to generate the population
+        :param grb_detector_files: the generated detector files
+        :returns: 
+        :rtype: 
+        """
+
+        super(Survey, self).__init__()
+
         self._n_grbs = len(grb_save_files)
         self._grb_save_files = grb_save_files
+        self._names = []
 
         # build  a population from the file
 
@@ -42,7 +82,12 @@ class Survey(object):
 
             warnings.warn(f"{population_file} does not exist. Perhaps you moved it?")
 
-        self._grb_detector_files = grb_detector_files
+
+        for f in self._grb_save_files:
+
+            with h5py.File(f, "r") as f:
+
+                self._names.append(f.attrs["grb_name"])
 
         # we start off with not being processed unless
         # we find that there are some detector files
@@ -51,20 +96,47 @@ class Survey(object):
 
         self._detected = np.zeros(len(grb_save_files), dtype=bool)
 
+        self._grb_detector_files = None
+
+
+        # lets see if we have detector files
+        
+        
         if grb_detector_files is not None:
 
             self._is_processed = True
+
+            self._grb_detector_files = natsorted(grb_detector_files)
+
 
             assert len(grb_detector_files) == len(grb_save_files)
 
             # fill in the detected ones
 
-            for i, f in enumerate(grb_detector_files):
+            for i, f in enumerate(self._grb_detector_files):
 
                 tmp = DetectorSave.from_file(f)
                 if tmp.is_detected:
 
                     self._detected[i] = True
+
+            # now fill the dict
+
+            for name, grb_save_file, grb_detector_file in zip(
+                self._names, self._grb_save_files, self._grb_detector_files
+            ):
+
+                self[name] = Observation(
+                    grb_save_file=grb_save_file, grb_detector_file=grb_detector_file
+                )
+
+        else:
+
+            for name, grb_save_file in zip(self._names, self._grb_save_files):
+
+                self[name] = Observation(
+                    grb_save_file=grb_save_file, grb_detector_file=None
+                )
 
     @property
     def population(self):
@@ -79,6 +151,13 @@ class Survey(object):
         return self._n_grbs
 
     def info(self):
+        """
+        display the information about the survey
+
+        :returns: 
+        :rtype: 
+
+        """
 
         generic_info = collections.OrderedDict()
 
@@ -88,14 +167,18 @@ class Survey(object):
 
             generic_info["n_detected"] = self.n_detected
 
+        df = pd.Series(data=generic_info, index=generic_info.keys())
+
+        display(df.to_frame())
+
     def process(self, detector_type, client=None, serial=False, **kwargs):
         """
         Process the triggers or detectors in the survey. This runs the provided
         GRBDetector type on each of the GRBs and prepares the information 
 
-        :param detector_type: 
-        :param client: 
-        :param serial: 
+        :param detector_type: a **class** of GRBDetector type 
+        :param client: the dask client
+        :param serial: True/False for if the survey is processed without dask
         :returns: 
         :rtype: 
 

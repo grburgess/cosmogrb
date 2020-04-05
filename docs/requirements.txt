@@ -3,8 +3,10 @@ sphinx-gallery
 nbsphinx
 ipykernel
 jupyterthemes
-gpopsynth
+popsynth
+gbmgeometry
 numpy
+ipyvolume
 scipy
 ipython
 matplotlib

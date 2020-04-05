@@ -29,7 +29,7 @@ class GBMTrigger(GRBDetector):
 
         """
 
-        super(GBMTrigger, self).__init__(grb_save_file_name)
+        super(GBMTrigger, self).__init__(grb_save_file_name, instrumemt="GBM")
 
         self._threshold = threshold
         self._simul_trigger_window = simul_trigger_window

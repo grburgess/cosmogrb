@@ -3,8 +3,7 @@ sphinx-gallery
 nbsphinx
 ipykernel
 jupyterthemes
-PSphinxTheme
-popsynth
+gpopsynth
 numpy
 scipy
 ipython

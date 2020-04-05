@@ -7,7 +7,7 @@ from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 from cosmogrb.response.response import Response
 
 
-class GRBSave(object):
+class GRBSave(collections.UserDict):
     def __init__(
         self,
         grb_name,
@@ -57,13 +57,20 @@ class GRBSave(object):
 
         # ok, now lets build the objects
 
-        self._internal_storage = dict()
+        # this allows us to set the dict
+        self._lock_dict = False
+
+        data = {}
 
         for key in lightcurves.keys():
 
-            self._internal_storage[key] = dict(
-                lightcurve=lightcurves[key], response=responses[key]
-            )
+            data[key] = dict(lightcurve=lightcurves[key], response=responses[key])
+
+        #
+
+        super(GRBSave, self).__init__(data)
+
+        self._lock_dict = True
 
         assert isinstance(source_params, dict)
         self._source_params = source_params
@@ -79,15 +86,24 @@ class GRBSave(object):
         self._z = z
         self._duration = duration
 
-    def __getitem__(self, key):
+    def __setitem__(self, key, value):
 
-        if key in self._internal_storage:
-
-            return self._internal_storage[key]
+        if self._lock_dict:
+            raise RuntimeWarning("Cannot modify the internal data!")
 
         else:
 
-            raise ValueError(f"{key} is not in th GRB")
+            super(GRBSave, self).__setitem__(key, value)
+
+    def __delitem__(self, key):
+
+        if self._lock_dict:
+
+            raise RuntimeWarning("Cannot modify the internal data!")
+
+        else:
+
+            super(GRBSave, self).__delitem__(key)
 
     @property
     def name(self):
@@ -112,10 +128,6 @@ class GRBSave(object):
     @property
     def T0(self):
         return self._T0
-
-    @property
-    def keys(self):
-        return self._internal_storage.keys()
 
     @property
     def extra_info(self):
@@ -160,6 +172,7 @@ class GRBSave(object):
                 tstart = lc_group.attrs["tstart"]
                 tstop = lc_group.attrs["tstop"]
                 time_adjustment = lc_group.attrs["time_adjustment"]
+                instrument = lc_group.attrs["instrument"]
 
                 try:
                     lc_extra_info = recursively_load_dict_contents_from_group(
@@ -212,6 +225,7 @@ class GRBSave(object):
                     channels=rsp.channels,
                     ebounds=rsp.channel_edges,
                     T0=T0,
+                    instrument=instrument,
                     extra_info=lc_extra_info,
                 )
 

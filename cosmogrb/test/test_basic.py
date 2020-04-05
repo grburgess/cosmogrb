@@ -2,7 +2,8 @@ import os
 
 import numpy as np
 from glob import glob
-#from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB, GBMGRB_CPL
+
+# from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB, GBMGRB_CPL
 
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.gbm_fits import grbsave_to_gbm_fits
@@ -22,7 +23,7 @@ def test_gbm_constructor_and_plotting(grb):
     print(grb)
     grb.info()
 
-    
+
 def test_gbm_save(grb):
 
     file_name = "test.h5"
@@ -40,7 +41,7 @@ def test_read_gbm_save():
 
     print(grb)
     grb.info()
-    
+
     lightcurve = grb["n1"]["lightcurve"]
 
     print(lightcurve)

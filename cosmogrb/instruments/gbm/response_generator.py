@@ -48,7 +48,7 @@ class ResponseGenerator(object):
         self._detectors = {}
         self._mc_energies = {}
         self._ebounds = {}
-        
+
         logger.debug("creating response generators")
 
         for k, v in _det_translate.items():
@@ -57,9 +57,7 @@ class ResponseGenerator(object):
                 det_name=_det_translate[k],
                 time=1,
                 T0=T0,
-                cspecfile=get_path_of_data_file(
-                    os.path.join("gbm_cspec", f"{k}.pha")
-                ),
+                cspecfile=get_path_of_data_file(os.path.join("gbm_cspec", f"{k}.pha")),
                 poshist=get_path_of_data_file("posthist.fit"),
                 mat_type=2,
                 occult=False,
@@ -81,8 +79,6 @@ class ResponseGenerator(object):
     @property
     def ebounds(self):
         return self._ebounds
-    
-    
 
     def set_time(self, time, det_name):
         """
@@ -96,9 +92,9 @@ class ResponseGenerator(object):
         """
 
         assert det_name in self._detectors
-        
+
         logger.debug(f"setting time of {det_name} to {time}")
-        
+
         self._detectors[det_name].set_time(time)
 
     def set_location(self, ra, dec, det_name):
@@ -116,9 +112,10 @@ class ResponseGenerator(object):
         assert det_name in self._detectors
 
         logger.debug(f"setting location of {det_name} to {ra}, {dec}")
-        
+
         self._detectors[det_name].set_location(ra, dec)
 
         return self._detectors[det_name].matrix.T
-        
+
+
 gbm_response_generator = ResponseGenerator()

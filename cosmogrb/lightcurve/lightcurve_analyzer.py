@@ -1,20 +1,33 @@
 import abc
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 
+import coloredlogs, logging
+import cosmogrb.utils.logging
+
+logger = logging.getLogger("cosmogrb.lightcurve.lc_analyzer")
+
 
 class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
-    def __init__(self, lightcurve):
+    def __init__(self, lightcurve, instrument):
 
         assert isinstance(lightcurve, LightCurveStorage)
+
+        assert (
+            lightcurve.instrument == instrument
+        ), f"The lightcurve was not created for {instrument} but for {lightcurve.instrument}"
 
         self._lightcurve = lightcurve
 
         self._is_detected = False
 
-        self._process_dead_time()
+        if self._lightcurve.n_counts_source > 0:
 
-        self._compute_detection()
-        
+            logger.debug(f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
+
+            self._process_dead_time()
+
+            self._compute_detection()
+
     @abc.abstractmethod
     def _compute_detection(self):
 

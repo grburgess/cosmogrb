@@ -33,12 +33,12 @@ class GBMLightCurve(LightCurve):
             grb_name=grb_name,
             tstart=tstart,
             tstop=tstop,
+            instrument="GBM",
         )
 
         # let us keep track of the seperation angle
-        self._extra_info['angle'] = self._response.separation_angle
-        
-        
+        self._extra_info["angle"] = self._response.separation_angle
+
     def _filter_deadtime(self):
 
         n_intervals = len(self._times)

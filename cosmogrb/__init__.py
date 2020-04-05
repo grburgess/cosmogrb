@@ -1,7 +1,8 @@
 from cosmogrb.config import cosmogrb_config
 
-import cosmogrb.instruments.gbm as gbm
 from cosmogrb.io import GRBSave, grbsave_to_gbm_fits
+import cosmogrb.instruments.gbm as gbm
+
 
 __all__ = ["gbm", "GRBSave", "grbsave_to_gbm_fits"]
 

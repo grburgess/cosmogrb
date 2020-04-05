@@ -37,11 +37,10 @@ class ReloadedUniverse(object):
 
             ra.append(grb.ra)
             dec.append(grb.dec)
-        
-        ax.scatter(ra , dec,  s=40,transform=ax.get_transform("icrs"))
+
+        ax.scatter(ra, dec, s=40, transform=ax.get_transform("icrs"))
 
         return dec
-        
 
     def __getitem__(self, key):
 

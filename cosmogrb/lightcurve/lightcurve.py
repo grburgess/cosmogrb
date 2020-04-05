@@ -63,7 +63,7 @@ class LightCurve(object):
         self._T0 = T0
 
         self._instrument = instrument
-        
+
         # for holding information (numbers/str)
         # for special types
 
@@ -190,7 +190,7 @@ class LightCurve(object):
             channels=self._response.channels,
             ebounds=self._response.channel_edges,
             T0=self._T0,
-            instrument = self._instrument,
+            instrument=self._instrument,
             extra_info=self._extra_info,
         )
 

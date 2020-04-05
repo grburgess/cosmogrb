@@ -84,7 +84,6 @@ def test_process_universe(client, universe):
     files = glob("SynthGRB*store.h5")
 
     info_files = glob("SynthGRB*store_detection_info.h5")
-    
 
     assert len(files) == len(info_files)
 
@@ -92,7 +91,7 @@ def test_process_universe(client, universe):
 
         assert file_existing_and_readable(x)
         assert file_existing_and_readable(y)
-        
+
         assert x.split("store")[0] == y.split("store")[0]
 
         os.remove(y)

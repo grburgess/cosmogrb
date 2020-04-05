@@ -160,7 +160,7 @@ class Universe(object, metaclass=abc.ABCMeta):
             ]
 
             # create a survey file to save all the information from the run
-            
+
             survey = Survey(
                 grb_save_files=grb_save_files, population_file=self._population_file
             )

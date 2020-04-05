@@ -2,6 +2,7 @@ import h5py
 import abc
 import pandas as pd
 from IPython.display import display
+
 # import concurrent.futures as futures
 import collections
 
@@ -183,8 +184,8 @@ class GRB(object, metaclass=abc.ABCMeta):
             f.attrs["grb_name"] = self._name
             f.attrs["n_lightcurves"] = len(self._lightcurves)
             f.attrs["T0"] = self._T0
-            f.attrs['z'] = self._z
-            f.attrs['duration'] = self._duration
+            f.attrs["z"] = self._z
+            f.attrs["duration"] = self._duration
             f.attrs["ra"] = self._ra
             f.attrs["dec"] = self._dec
 
@@ -209,19 +210,19 @@ class GRB(object, metaclass=abc.ABCMeta):
 
                 lc = lightcurve.lightcurve_storage
 
-            
-
-                
                 lc_group = det_group.create_group(f"{lc.name}")
                 lc_group.attrs["tstart"] = lc.tstart
                 lc_group.attrs["tstop"] = lc.tstop
                 lc_group.attrs["time_adjustment"] = lc.time_adjustment
+                lc_group.attrs["instrument"] = lc.instrument
 
                 if lc.extra_info:
-                    recursively_save_dict_contents_to_group(f, f"{lc.name}/extra_info", lc.extra_info )
+                    recursively_save_dict_contents_to_group(
+                        f, f"{lc.name}/extra_info", lc.extra_info
+                    )
 
                 lc_group.create_dataset("channels", data=lc.channels)
-                
+
                 # now create groups for the total, source and bkg
                 # counts
 
@@ -268,8 +269,6 @@ class GRB(object, metaclass=abc.ABCMeta):
             if clean_up:
 
                 self._lightcurves.clear()
-
-
 
     def __repr__(self):
 
@@ -321,7 +320,6 @@ class GRB(object, metaclass=abc.ABCMeta):
 
         return pd.Series(data=std_dict, index=std_dict.keys())
 
-                
 
 def process_lightcurve(lc):
     return lc.process()

@@ -8,7 +8,7 @@ class GBM_CPL_Universe(Universe):
 
     """
 
-    def __init__(self, population, save_path='.'):
+    def __init__(self, population, save_path="."):
 
         super(GBM_CPL_Universe, self).__init__(population, save_path=save_path)
 

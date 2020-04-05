@@ -1,10 +1,10 @@
 import abc
 import os
 import numpy as np
-import concurrent.futures as futures
-
-
 import popsynth
+
+from cosmogrb.universe.survey import Survey
+
 import coloredlogs, logging
 import cosmogrb.utils.logging
 
@@ -21,7 +21,7 @@ def sample_theta_phi(size):
 
     """
 
-    theta = 90-  np.rad2deg(np.arccos(1 - 2 * np.random.uniform(0.0, 1.0, size=size)))
+    theta = 90 - np.rad2deg(np.arccos(1 - 2 * np.random.uniform(0.0, 1.0, size=size)))
     phi = np.rad2deg(np.random.uniform(0, 2 * np.pi, size=size))
 
     return theta, phi
@@ -32,11 +32,25 @@ class Universe(object, metaclass=abc.ABCMeta):
 
     """
 
-    def __init__(self, population, grb_base_name="SynthGRB", save_path="."):
+    def __init__(self, population_file, grb_base_name="SynthGRB", save_path="."):
+        """
 
-        assert isinstance(population, popsynth.Population)
+        
 
-        self._population = population
+        :param population_file: 
+        :param grb_base_name: 
+        :param save_path: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        # we want to store the absolute path so that we can find it later
+        self._population_file = os.path.abspath(population_file)
+
+        self._is_processed = False
+
+        self._population = popsynth.Population.from_file(population_file)
 
         self._grb_base_name = grb_base_name
 
@@ -122,6 +136,37 @@ class Universe(object, metaclass=abc.ABCMeta):
 
             res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers]
 
+        self._is_processed = True
+
+    def save(self, file_name):
+        """
+
+        Save the infomation from the simulation to 
+        and HDF5 file
+
+        :param file_name: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        if self._is_processed:
+
+            grb_save_files = [
+                os.path.abspath(
+                    os.path.join(self._save_path, f"{self._grb_base_name}_{i}_store.h5")
+                )
+                for i in range(self._n_grbs)
+            ]
+
+            # create a survey file to save all the information from the run
+
+            survey = Survey(
+                grb_save_files=grb_save_files, population_file=self._population_file
+            )
+
+            survey.write(file_name)
+
     @abc.abstractmethod
     def _grb_wrapper(self, parameter_server, serial=False):
 
@@ -181,17 +226,17 @@ class GRBWrapper(object, metaclass=abc.ABCMeta):
     def __init__(self, parameter_server, serial=False):
 
         # construct the grb
-        
+
         grb = self._grb_type(**parameter_server.parameters)
 
         # if we are running this parallel
-        
+
         if not serial:
 
-            grb.go(client=None,serial=serial)
+            grb.go(client=None, serial=serial)
 
         # otherwise let the GRB know
-            
+
         else:
 
             grb.go(serial=serial)

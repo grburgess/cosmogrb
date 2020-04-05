@@ -66,12 +66,13 @@ def grb_constant(client):
 
 
 @pytest.fixture(scope="session")
-def universe():
+def universe(client):
     population_file = get_path_of_data_file("test_grb_pop.h5")
 
-    pop = popsynth.Population.from_file(population_file)
+    universe = GBM_CPL_Universe(population_file)
 
-    universe = GBM_CPL_Universe(pop)
+    universe.go(client)
+    universe.save("universe.h5")
 
     yield universe
 
@@ -79,6 +80,8 @@ def universe():
 
     for f in files_to_remove:
         os.remove(f)
+
+    os.remove("universe.h5")
 
 
 @pytest.fixture(scope="session")

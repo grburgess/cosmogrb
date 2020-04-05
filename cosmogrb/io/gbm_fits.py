@@ -7,28 +7,28 @@ def grbsave_to_gbm_fits(file_name, destination="."):
 
     grb = GRBSave.from_file(file_name)
 
-    for key in grb.keys:
+    for key, det in grb.items():
 
-        tstart = grb[key]["lightcurve"].tstart + grb[key]["lightcurve"].time_adjustment
-        tstop = grb[key]["lightcurve"].tstop + grb[key]["lightcurve"].time_adjustment
+        tstart = det["lightcurve"].tstart + det["lightcurve"].time_adjustment
+        tstop = det["lightcurve"].tstop + det["lightcurve"].time_adjustment
 
         tte_file = TTEFile(
             det_name=key,
             tstart=tstart,
             tstop=tstop,
-            trigger_time=grb.T0 + grb[key]["lightcurve"].time_adjustment,
+            trigger_time=grb.T0 + det["lightcurve"].time_adjustment,
             ra=grb.ra,
             dec=grb.dec,
             channel=np.arange(0, 128, dtype=np.int16),
-            emin=grb[key]["response"].channel_edges[:-1],
-            emax=grb[key]["response"].channel_edges[1:],
-            pha=grb[key]["lightcurve"].pha.astype(np.int16),
-            time=grb[key]["lightcurve"].times + grb[key]["lightcurve"].time_adjustment,
+            emin=det["response"].channel_edges[:-1],
+            emax=det["response"].channel_edges[1:],
+            pha=det["lightcurve"].pha.astype(np.int16),
+            time=det["lightcurve"].times + det["lightcurve"].time_adjustment,
         )
 
         tte_file.writeto(f"tte_{grb.name}_{key}.fits", overwrite=True)
 
-        rsp = grb[key]["response"]
+        rsp = det["response"]
 
         file_name = f"rsp_{grb.name}_{key}.rsp"
 

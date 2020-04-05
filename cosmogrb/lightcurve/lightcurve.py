@@ -14,6 +14,7 @@ class LightCurve(object):
         source,
         background,
         response,
+        instrument,
         T0=0,
         grb_name="SynthGRB",
         tstart=0,
@@ -60,6 +61,8 @@ class LightCurve(object):
         self._name = name
         self._grb_name = grb_name
         self._T0 = T0
+
+        self._instrument = instrument
 
         # for holding information (numbers/str)
         # for special types
@@ -187,6 +190,7 @@ class LightCurve(object):
             channels=self._response.channels,
             ebounds=self._response.channel_edges,
             T0=self._T0,
+            instrument=self._instrument,
             extra_info=self._extra_info,
         )
 
@@ -272,4 +276,3 @@ class LightCurve(object):
     @property
     def lightcurve_storage(self):
         return self._lc_storage
-

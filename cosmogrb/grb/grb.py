@@ -214,7 +214,8 @@ class GRB(object, metaclass=abc.ABCMeta):
                 lc_group.attrs["tstart"] = lc.tstart
                 lc_group.attrs["tstop"] = lc.tstop
                 lc_group.attrs["time_adjustment"] = lc.time_adjustment
-
+                lc_group.attrs["instrument"] = lc.instrument
+                
                 if lc.extra_info:
                     recursively_save_dict_contents_to_group(
                         f, f"{lc.name}/extra_info", lc.extra_info

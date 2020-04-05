@@ -8,10 +8,12 @@ logger = logging.getLogger("cosmogrb.lightcurve.lc_analyzer")
 
 
 class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
-    def __init__(self, lightcurve):
+    def __init__(self, lightcurve, instrument):
 
         assert isinstance(lightcurve, LightCurveStorage)
 
+        assert lightcurve.instrument == instrument, f"The lightcurve was not created for {instrumemt} but for {lightcurve.instrument}"
+        
         self._lightcurve = lightcurve
 
         self._is_detected = False

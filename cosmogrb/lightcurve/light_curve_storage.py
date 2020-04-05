@@ -23,6 +23,7 @@ class LightCurveStorage(object):
         channels,
         ebounds,
         T0,
+        instrument,
         extra_info,
     ):
         """
@@ -68,11 +69,17 @@ class LightCurveStorage(object):
 
         self._T0 = T0
 
+        self._instrument = instrument
+
         self._extra_info = extra_info
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def instrument(self):
+        return self._instrument
 
     @property
     def tstart(self):
@@ -553,6 +560,7 @@ class LightCurveStorage(object):
         std_dict = collections.OrderedDict()
 
         std_dict["name"] = self._name
+        std_dict["instrument"] = self._instrument
         std_dict["tstart"] = self._tstart
         std_dict["tstop"] = self._tstop
         std_dict["time adjustment"] = self._time_adjustment

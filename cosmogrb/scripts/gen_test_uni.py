@@ -10,7 +10,7 @@ from dask.distributed import Client, LocalCluster
 # pytest. it is meant to be run from the top of the pacakge
 
 
-pop = popsynth.Population.from_file("cosmogrb/data/test_grb_pop.h5")
+pop = "cosmogrb/data/test_grb_pop.h5"
 
 uni = GBM_CPL_Universe(pop, save_path="cosmogrb/data/")
 

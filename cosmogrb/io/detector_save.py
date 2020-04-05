@@ -6,7 +6,7 @@ from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
 
 
 class DetectorSave(object):
-    def __init__(self, name, is_detected, extra_info=None):
+    def __init__(self, name, is_detected, instrument, extra_info=None):
         """
         reloads the information collected from running detection
         algorithm on a GRB
@@ -23,6 +23,7 @@ class DetectorSave(object):
         self._name = name
         self._is_detected = is_detected
         self._extra_info = extra_info
+        self._instrument = instrument
 
         if extra_info is not None:
             assert isinstance(extra_info, dict)
@@ -31,6 +32,10 @@ class DetectorSave(object):
     @property
     def name(self):
         return self._name
+
+    @property
+    def instrument(self):
+        return self._instrument
 
     @property
     def is_detected(self):
@@ -47,6 +52,7 @@ class DetectorSave(object):
 
             name = f.attrs["name"]
             is_detected = f.attrs["is_detected"]
+            instrument = f.attrs["instrument"]
 
             try:
 
@@ -56,12 +62,11 @@ class DetectorSave(object):
 
                 extra_info = None
 
-            return cls(name, is_detected, extra_info)
-
+            return cls(name, is_detected, instrument, extra_info)
 
     def __repr__(self):
         return self._output(as_display=False).to_string()
-        
+
     def info(self):
 
         self._output(as_display=True)

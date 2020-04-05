@@ -6,7 +6,7 @@ def test_lightcurve_plotting():
 
     grb = GRBSave.from_file(get_path_of_data_file("test_grb.h5"))
 
-    for key in grb.keys:
+    for key, get in grb.items():
 
         lc = grb[key]["lightcurve"]
 

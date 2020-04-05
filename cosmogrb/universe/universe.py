@@ -3,7 +3,7 @@ import os
 import numpy as np
 import popsynth
 
-from cosmogrb.universe.universe_info import UniverseInfo
+from cosmogrb.universe.survey import Survey
 
 import coloredlogs, logging
 import cosmogrb.utils.logging
@@ -44,7 +44,6 @@ class Universe(object, metaclass=abc.ABCMeta):
         :rtype: 
 
         """
-
 
         # we want to store the absolute path so that we can find it later
         self._population_file = os.path.abspath(population_file)
@@ -160,11 +159,13 @@ class Universe(object, metaclass=abc.ABCMeta):
                 for i in range(self._n_grbs)
             ]
 
-            uni_info = UniverseInfo(
+            # create a survey file to save all the information from the run
+            
+            survey = Survey(
                 grb_save_files=grb_save_files, population_file=self._population_file
             )
 
-            uni_info.write(file_name)
+            survey.write(file_name)
 
     @abc.abstractmethod
     def _grb_wrapper(self, parameter_server, serial=False):

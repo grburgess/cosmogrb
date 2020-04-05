@@ -13,7 +13,7 @@ Welcome to cosmogrb's documentation!
 
    notebooks/intro.ipynb
    notebooks/grb.ipynb
-
+   notebooks/universe.ipynb
    
 
    

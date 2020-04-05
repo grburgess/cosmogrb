@@ -88,7 +88,7 @@ html_theme_options = {
  #   'canonical_url': 'https://johannesbuchner.github.io/UltraNest/',
     'style_external_links': True,
     # 'vcs_pageview_mode': 'edit',
-    'style_nav_header_background': '#06A466',
+    'style_nav_header_background': '#2A2828',
     #'only_logo': False,
 }
 

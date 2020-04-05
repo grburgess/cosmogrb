@@ -5,7 +5,7 @@ from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 
 
 class GRBDetector(object, metaclass=abc.ABCMeta):
-    def __init__(self, grb_save_file_name):
+    def __init__(self, grb_save_file_name, instrumemt):
         """
 
         A generic class for assessing if a GRB was detected or not
@@ -17,8 +17,19 @@ class GRBDetector(object, metaclass=abc.ABCMeta):
         """
 
         self._grb_save = GRBSave.from_file(grb_save_file_name)
+
+
+        # make sure that this detector is correct for this instrument
+        
+        for _, v in self._grb_save.items():
+
+            assert (
+                v["lightcurve"].instrumemt == instrumemt
+            ), f"The lightcurve was not created for {instrumemt} but for {v['lightcurve'].instrument}"
+
         self._is_detected = False
         self._name = self._grb_save.name
+        self._instrument = instrumemt
 
         file_name_head = ".".join(grb_save_file_name.split(".")[:-1])
 
@@ -34,16 +45,17 @@ class GRBDetector(object, metaclass=abc.ABCMeta):
     def process(self):
 
         # the method to process the detection
-        
+
         pass
-    
+
     def save(self):
 
         with h5py.File(self._out_file_name, "w") as f:
 
             f.attrs["is_detected"] = self._is_detected
             f.attrs["name"] = self._name
-
+            f.attrs["instrument"] = self._instrument
+            
             # store any extra info if there is
             # some.
 

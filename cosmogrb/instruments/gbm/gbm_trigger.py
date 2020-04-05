@@ -53,11 +53,11 @@ class GBMTrigger(GRBDetector):
         angular_distances = []
         lc_names = []
 
-        for name in self._grb_save.keys:
+        for name, det in self._grb_save.items():
 
             if name.startswith("n"):
 
-                lc = self._grb_save[name]["lightcurve"]
+                lc = det["lightcurve"]
                 lc_names.append(name)
 
                 angular_distances.append(lc.extra_info["angle"])

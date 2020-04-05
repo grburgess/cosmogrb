@@ -54,7 +54,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         self._detection_time = None
         self._detection_time_scale = None
 
-        super(GBMLightCurveAnalyzer, self).__init__(lightcurve)
+        super(GBMLightCurveAnalyzer, self).__init__(lightcurve, instrument="GBM")
 
     def _compute_detection(self):
 

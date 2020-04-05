@@ -4,24 +4,48 @@ import numpy as np
 import pandas as pd
 from IPython.display import display
 import collections
+import warnings
 
 from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.io.detector_save import DetectorSave
 from cosmogrb.grb.grb_detector import GRBDetector
+from cosmogrb.utils.file_utils import file_existing_and_readable
 
 
-class UniverseInfo(object):
-    """Documentation for UniverseInfo
-
-    """
-
+class Survey(object):
     def __init__(self, grb_save_files, population_file, grb_detector_files=None):
+        """
+        Holds the information from 
+
+        :param grb_save_files: 
+        :param population_file: 
+        :param grb_detector_files: 
+        :returns: 
+        :rtype: 
+
+        """
 
         self._n_grbs = len(grb_save_files)
         self._grb_save_files = grb_save_files
-        self._population_file = population_file
-        self._population = popsynth.Population.from_file(self._population_file)
+
+        # build  a population from the file
+
+        if file_existing_and_readable(population_file):
+
+            self._population_file = population_file
+            self._population = popsynth.Population.from_file(self._population_file)
+
+        else:
+
+            self._population_file = None
+            self._population = None
+
+            warnings.warn(f"{population_file} does not exist. Perhaps you moved it?")
+
         self._grb_detector_files = grb_detector_files
+
+        # we start off with not being processed unless
+        # we find that there are some detector files
 
         self._is_processed = False
 
@@ -32,6 +56,8 @@ class UniverseInfo(object):
             self._is_processed = True
 
             assert len(grb_detector_files) == len(grb_save_files)
+
+            # fill in the detected ones
 
             for i, f in enumerate(grb_detector_files):
 
@@ -63,7 +89,19 @@ class UniverseInfo(object):
             generic_info["n_detected"] = self.n_detected
 
     def process(self, detector_type, client=None, serial=False, **kwargs):
+        """
+        Process the triggers or detectors in the survey. This runs the provided
+        GRBDetector type on each of the GRBs and prepares the information 
 
+        :param detector_type: 
+        :param client: 
+        :param serial: 
+        :returns: 
+        :rtype: 
+
+        """
+        
+        
         assert issubclass(detector_type, GRBDetector), "Not a valid GRB detector"
 
         if not serial:
@@ -86,8 +124,22 @@ class UniverseInfo(object):
 
                 _submit([grb_file, GRBDetector, kwargs])
 
-        
+        # the survey has now had its triggers run
+        # so lets flip its status and make sure that when
+        # when we save it, we record the new status
+                
+        self._is_processed = True
 
+        self._grb_detector_files = []
+        
+        for file_name in self._grb_save_files:
+
+            file_name_head = ".".join(file_name.split(".")[:-1])
+
+            out_file_name = f"{file_name_head}_detection_info.h5"
+
+            self._grb_detector_files.append(out_file_name)
+        
         
     @property
     def is_processed(self):
@@ -95,16 +147,24 @@ class UniverseInfo(object):
         return self._is_processed
 
     def write(self, file_name):
+        """
+        write the info to a file.
+        if the universe has been processed, this information is also written
 
-        dt = h5py.string_dtype(encoding='utf-8')
-        
+        :param file_name: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        dt = h5py.string_dtype(encoding="utf-8")
+
         with h5py.File(file_name, "w") as f:
 
             f.attrs["n_grbs"] = self._n_grbs
             f.attrs["is_processed"] = self._is_processed
             f.attrs["population_file"] = self._population_file
-            
-            
+
             grbs = f.create_dataset(
                 "grb_saves", data=np.array(self._grb_save_files, dtype=dt)
             )
@@ -117,7 +177,17 @@ class UniverseInfo(object):
 
     @classmethod
     def from_file(cls, file_name):
+        """
+        create a universe 
 
+        :param cls: 
+        :param file_name: 
+        :returns: 
+        :rtype: 
+
+        """
+        
+        
         with h5py.File(file_name, "r") as f:
 
             n_grbs = f.attrs["n_grbs"]

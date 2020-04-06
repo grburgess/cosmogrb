@@ -15,45 +15,6 @@ import numpy as np
 # pytest. it is meant to be run from the top of the pacakge
 
 
-grb = GBMGRB_CPL(
-    ra=312.0,
-    dec=-62.0,
-    z=1.0,
-    peak_flux=5e-7,
-    alpha=-0.66,
-    ep=500.0,
-    tau=2.0,
-    trise=1.0,
-    tdecay=1.0,
-    duration=80.0,
-    T0=0.1,
-)
-
-grb.go(client=None, serial=True)
-
-
-grb.save("cosmogrb/data/test_grb.h5")
-
-
-grb = GBMGRB_CPL(
-    ra=312.0,
-    dec=-62.0,
-    z=1.0,
-    peak_flux=5e-20,
-    alpha=-0.66,
-    ep=500.0,
-    tau=2.0,
-    trise=1.0,
-    tdecay=1.0,
-    duration=80.0,
-    T0=0.1,
-)
-
-grb.go(client=None, serial=True)
-
-
-grb.save("cosmogrb/data/weak_grb.h5")
-
 
 class TDecaySampler(popsynth.AuxiliarySampler):
     def __init__(self):

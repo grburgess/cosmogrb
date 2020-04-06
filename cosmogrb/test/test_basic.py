@@ -35,7 +35,7 @@ def test_gbm_save(grb):
 
 def test_read_gbm_save():
 
-    path = get_path_of_data_file("SynthGRB_0_store.h5")
+    path = "SynthGRB_0_store.h5"
 
     grb = GRBSave.from_file(path)
 

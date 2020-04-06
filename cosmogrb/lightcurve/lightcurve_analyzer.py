@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 
 import coloredlogs, logging

@@ -204,7 +204,7 @@ class Survey(collections.OrderedDict):
 
             for grb_file in self._grb_save_files:
 
-                _submit([grb_file, GRBDetector, kwargs])
+                _submit([grb_file, detector_type, kwargs])
 
         # the survey has now had its triggers run
         # so lets flip its status and make sure that when

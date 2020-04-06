@@ -1,5 +1,5 @@
 import h5py
-import abc
+from collections import abc
 import pandas as pd
 from IPython.display import display
 

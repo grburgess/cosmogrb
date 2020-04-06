@@ -1,5 +1,5 @@
 import h5py
-import abc
+from collections import abc
 from cosmogrb import GRBSave
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 

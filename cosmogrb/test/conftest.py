@@ -32,13 +32,13 @@ def grb(client):
         ra=312.0,
         dec=-62.0,
         z=1.0,
-        peak_flux=5e-6,
+        peak_flux=1e-5,
         alpha=-0.66,
         ep=500.0,
         tau=2.0,
         trise=0.1,
-        tdecay=0.5,
-        duration=1.0,
+        tdecay=1.,
+        duration=2.0,
         T0=0.1,
     )
 

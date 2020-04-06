@@ -2,9 +2,9 @@ from cosmogrb.utils.package_utils import get_path_of_data_file
 from cosmogrb.io.grb_save import GRBSave
 
 
-def test_lightcurve_plotting():
+def test_lightcurve_plotting(grb):
 
-    grb = GRBSave.from_file(get_path_of_data_file("test_grb.h5"))
+    grb = GRBSave.from_file("test_grb.h5")
 
     for key, get in grb.items():
 

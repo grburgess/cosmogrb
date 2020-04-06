@@ -33,15 +33,20 @@ def test_gbm_save(grb):
     os.remove(file_name)
 
 
-def test_read_gbm_save():
+def test_read_gbm_save(grb):
 
-    path = "SynthGRB_0_store.h5"
+    path = "test_grb.h5"
 
     grb = GRBSave.from_file(path)
 
     print(grb)
     grb.info()
 
+
+    for k,v in grb.items():
+
+        print(k,v)
+    
     lightcurve = grb["n1"]["lightcurve"]
 
     print(lightcurve)

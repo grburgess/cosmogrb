@@ -22,12 +22,14 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
 
         if self._lightcurve.n_counts_source > 0:
 
-            logger.debug(f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
-
             self._process_dead_time()
 
             self._compute_detection()
 
+        else:
+
+            logger.debug(f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
+            
     @abc.abstractmethod
     def _compute_detection(self):
 

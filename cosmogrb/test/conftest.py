@@ -32,7 +32,7 @@ def grb(client):
         ra=312.0,
         dec=-62.0,
         z=1.0,
-        peak_flux=5e-9,
+        peak_flux=5e-6,
         alpha=-0.66,
         ep=500.0,
         tau=2.0,
@@ -44,7 +44,36 @@ def grb(client):
 
     grb.go(client=client)
 
-    return grb
+    grb.save("test_grb.h5")
+    
+    yield grb
+
+    os.remove("test_grb.h5")
+
+
+@pytest.fixture(scope="session")
+def weak_grb(client):
+    grb = GBMGRB_CPL(
+        ra=312.0,
+        dec=-62.0,
+        z=1.0,
+        peak_flux=5e-20,
+        alpha=-0.66,
+        ep=500.0,
+        tau=2.0,
+        trise=0.1,
+        tdecay=0.5,
+        duration=1.0,
+        T0=0.1,
+    )
+
+    grb.go(client=client)
+
+    grb.save("weak_grb.h5")
+
+    yield grb
+
+    os.remove("weak_grb.h5")
 
 
 @pytest.fixture(scope="session")
@@ -85,17 +114,17 @@ def universe(client):
 
 
 @pytest.fixture(scope="session")
-def gbm_trigger():
+def gbm_trigger(grb):
 
-    gbm_trigger = GBMTrigger(get_path_of_data_file("test_grb.h5"))
+    gbm_trigger = GBMTrigger("test_grb.h5")
 
     return gbm_trigger
 
 
 @pytest.fixture(scope="session")
-def weak_gbm_trigger():
+def weak_gbm_trigger(weak_grb):
 
     # a weak GRB that should not trigger a detection
-    weak_gbm_trigger = GBMTrigger(get_path_of_data_file("weak_grb.h5"), max_n_dets=4)
+    weak_gbm_trigger = GBMTrigger("weak_grb.h5", max_n_dets=4)
 
     return weak_gbm_trigger

@@ -58,7 +58,7 @@ def test_weak_gbm_trigger(weak_gbm_trigger):
     assert not weak_gbm_trigger.is_detected
 
 
-def test_process_survey(client, universe):
+def test_process_survey(universe):
 
     # load the universe
 
@@ -76,7 +76,7 @@ def test_process_survey(client, universe):
 
     survey.info()
     
-    survey.process(GBMTrigger, client=client)
+    survey.process(GBMTrigger, serial=True)
 
     # now it should be processed
     assert survey.is_processed

@@ -43,6 +43,9 @@ class ResponseGenerator(object):
 
     def __init__(self):
 
+        # this is the minimum MET in the orbit.
+        # all response time are relative to this
+        
         T0 = gbm_orbit.T0
 
         self._detectors = {}
@@ -82,7 +85,8 @@ class ResponseGenerator(object):
 
     def set_time(self, time, det_name):
         """
-        set the time of the specific response generator
+        set the time of the specific response generator.
+        Time is relative to T0
 
         :param time: 
         :param det_name: 

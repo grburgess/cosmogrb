@@ -5,7 +5,8 @@ from cosmogrb.utils.package_utils import get_path_of_user_dir
 structure = {}
 structure["logging"] = dict(level="INFO")
 structure["multiprocess"] = dict(n_grb_workers=6, n_universe_workers=6)
-
+structure["gbm"] = {}
+structure["gbm"]["orbit"] = dict(default_time=0, use_random_time=True)
 
 class CosmogrbConfig(YAMLConfig):
     def __init__(self):

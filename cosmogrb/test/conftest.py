@@ -3,14 +3,17 @@ import shutil
 from glob import glob
 import pytest
 
-from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB, GBMGRB_CPL
+from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB_CPL
 from cosmogrb.utils.package_utils import get_path_of_data_file
 from cosmogrb.instruments.gbm.gbm_universe import GBM_CPL_Universe
 from cosmogrb.instruments.gbm.gbm_trigger import GBMTrigger
 
 from dask.distributed import Client, LocalCluster
 
-import popsynth
+
+from cosmogrb import cosmogrb_config
+
+cosmogrb_config["gbm"]["orbit"]["use_random_time"] = False
 
 
 @pytest.fixture(scope="session")

@@ -87,7 +87,8 @@ class GBMGRB(GRB):
                 tstop=self._background_stop,
             )
 
-            lc.set_time_adjustment(self._responses[key].T0)
+            # we need to save the trigger time
+            lc.set_time_adjustment(self._responses[key].trigger_time)
 
             self._add_lightcurve(lc)
 
@@ -99,7 +100,7 @@ class GBMGRB(GRB):
                 logger.debug(f"creating BGO reponse for {det} via grb {self._name}")
 
                 rsp = BGOResponse(
-                    det, self._ra, self._dec, self._T0, save=False, name=self._name
+                    det, self._ra, self._dec, save=False, name=self._name
                 )
 
             else:
@@ -107,7 +108,7 @@ class GBMGRB(GRB):
                 logger.debug(f"creating NAI reponse for {det} via GRB {self._name}")
 
                 rsp = NaIResponse(
-                    det, self._ra, self._dec, self._T0, save=False, name=self._name
+                    det, self._ra, self._dec, save=False, name=self._name
                 )
 
             self._add_response(det, rsp)

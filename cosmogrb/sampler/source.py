@@ -305,7 +305,7 @@ class SourceFunction(object):
 
 
 class Source(Sampler):
-    def __init__(self, tstart, tstop, source_function, z, use_plaw_sample=False):
+    def __init__(self, tstart, tstop, source_function, use_plaw_sample=False):
 
         self._source_function = source_function
 
@@ -316,8 +316,6 @@ class Source(Sampler):
             np.log10(self._source_function.emax),
             25,
         )
-
-        self.z = z
 
         # pass on tstart and tstop
 
@@ -394,13 +392,6 @@ class Source(Sampler):
 
         return np.max(fluxes)
 
-    def _propagate_photons(self, photons):
-        """
-        scale photon energy due to cosmological redshift
-        """
-
-        return photons/(1+self.z)
-
     def sample_times(self):
         """
         sample the evolution function INTEGRATED
@@ -426,7 +417,7 @@ class Source(Sampler):
 
         if not self._use_plaw_sample:
 
-            source_frame_photons = evolution_sampler(
+            return evolution_sampler(
                 times,
                 len(times),
                 self._source_function.evolution,
@@ -437,7 +428,7 @@ class Source(Sampler):
 
         else:
 
-            source_frame_photons = plaw_evolution_sampler(
+            return plaw_evolution_sampler(
                 times,
                 len(times),
                 self._source_function.evolution,
@@ -446,8 +437,6 @@ class Source(Sampler):
                 self._source_function.emax,
                 self._source_function.response.effective_area_max,
             )
-        
-        return self._propagate_photons(source_frame_photons)
 
     def sample_channel(self, photons, response):
 

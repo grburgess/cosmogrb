@@ -74,7 +74,6 @@ class GBMGRB(GRB):
                 0.0,
                 self._duration,
                 source_function,
-                z = self.z,
                 use_plaw_sample=self._use_plaw_sample,
             )
 
@@ -146,7 +145,6 @@ class GBMGRB_CPL(GBMGRB):
         self._alpha = alpha
         self._ep = ep
         self._trise = trise
-        self.z = z
 
         source_params = dict(
             peak_flux=peak_flux,
@@ -176,7 +174,6 @@ class GBMGRB_CPL_Constant(GBMGRB):
     ):
 
         source_params = dict(peak_flux=peak_flux, alpha=alpha, ep=ep,)
-        self.z = z
 
         # pass up
         super(GBMGRB_CPL_Constant, self).__init__(

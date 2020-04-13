@@ -317,7 +317,7 @@ class Source(Sampler):
             25,
         )
 
-        self.z = z
+        self._z = z
 
         # pass on tstart and tstop
 
@@ -399,7 +399,7 @@ class Source(Sampler):
         scale photon energy due to cosmological redshift
         """
 
-        return photons/(1+self.z)
+        return photons/(1+self._z)
 
     def sample_times(self):
         """

@@ -172,9 +172,11 @@ class GBMResponse(Response):
         # since this is now done with a singleton it
         # may cause some race conditions
 
-        gbm_response_generator.set_time(self._time, detector_name)
-        matrix = gbm_response_generator.set_location(ra, dec, detector_name)
+        # gbm_response_generator.set_time(self._time, detector_name)
+        # matrix = gbm_response_generator.set_location(ra, dec, detector_name)
 
+        matrix = gbm_response_generator.generate_response(ra, dec, self._time, detector_name)
+        
         return (
             matrix,
             gbm_response_generator.mc_energies[detector_name],

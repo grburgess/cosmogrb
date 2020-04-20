@@ -7,7 +7,7 @@ from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.constant_cpl import ConstantCPL
 
 
-from cosmogrb.grb import GRB
+from cosmogrb.grb import GRB, SourceParameter
 
 import coloredlogs, logging
 import cosmogrb.utils.logging
@@ -45,7 +45,7 @@ class GBMGRB(GRB):
         T0=0,
         ra=0,
         dec=0,
-        **source_params,
+        **kwargs,
     ):
 
         self._use_plaw_sample = True
@@ -59,7 +59,7 @@ class GBMGRB(GRB):
             ra=ra,
             dec=dec,
             source_function_class=source_function_class,
-            **source_params,
+            **kwargs,
         )
 
     def _setup_source(self):
@@ -74,7 +74,7 @@ class GBMGRB(GRB):
                 0.0,
                 self._duration,
                 source_function,
-                z = self._z,
+                z=self._z,
                 use_plaw_sample=self._use_plaw_sample,
             )
 
@@ -100,17 +100,13 @@ class GBMGRB(GRB):
 
                 logger.debug(f"creating BGO reponse for {det} via grb {self._name}")
 
-                rsp = BGOResponse(
-                    det, self._ra, self._dec, save=False, name=self._name
-                )
+                rsp = BGOResponse(det, self._ra, self._dec, save=False, name=self._name)
 
             else:
 
                 logger.debug(f"creating NAI reponse for {det} via GRB {self._name}")
 
-                rsp = NaIResponse(
-                    det, self._ra, self._dec, save=False, name=self._name
-                )
+                rsp = NaIResponse(det, self._ra, self._dec, save=False, name=self._name)
 
             self._add_response(det, rsp)
 
@@ -127,35 +123,14 @@ class GBMGRB(GRB):
 
 
 class GBMGRB_CPL(GBMGRB):
-    def __init__(
-        self,
-        ra,
-        dec,
-        z,
-        peak_flux,
-        alpha,
-        ep,
-        tau,
-        trise,
-        tdecay,
-        duration,
-        T0,
-        name="SynthGRB",
-    ):
+    peak_flux = SourceParameter()
+    alpha = SourceParameter()
+    ep = SourceParameter()
+    tau = SourceParameter()
+    trise = SourceParameter()
+    tdecay = SourceParameter()
 
-        self._alpha = alpha
-        self._ep = ep
-        self._trise = trise
-        self._z = z
-
-        source_params = dict(
-            peak_flux=peak_flux,
-            trise=trise,
-            tdecay=tdecay,
-            ep_tau=tau,
-            alpha=alpha,
-            ep_start=ep,
-        )
+    def __init__(self, ra, dec, z, duration, T0, name="SynthGRB", **kwargs):
 
         # pass up
         super(GBMGRB_CPL, self).__init__(
@@ -166,17 +141,16 @@ class GBMGRB_CPL(GBMGRB):
             T0=T0,
             ra=ra,
             dec=dec,
-            **source_params,
+            **kwargs,
         )
 
 
 class GBMGRB_CPL_Constant(GBMGRB):
-    def __init__(
-        self, ra, dec, z, peak_flux, alpha, ep, duration, T0, name="SynthGRB",
-    ):
+    peak_flux = SourceParameter()
+    alpha = SourceParameter()
+    ep = SourceParameter()
 
-        source_params = dict(peak_flux=peak_flux, alpha=alpha, ep=ep,)
-        self._z = z
+    def __init__(self, ra, dec, z, duration, T0, name="SynthGRB", **kwargs):
 
         # pass up
         super(GBMGRB_CPL_Constant, self).__init__(
@@ -187,5 +161,5 @@ class GBMGRB_CPL_Constant(GBMGRB):
             T0=T0,
             ra=ra,
             dec=dec,
-            **source_params,
+            **kwargs,
         )

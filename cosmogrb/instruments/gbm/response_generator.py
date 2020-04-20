@@ -29,23 +29,20 @@ _det_translate = dict(
 )
 
 
+class SingletonMeta(type):
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls, "_inst"):
+            obj = super(SingletonMeta, cls).__call__(*args, **kwargs)
+            cls._inst = obj
+        return cls._inst
+
+
 class ResponseGenerator(object):
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-
-            logger.debug("I'm creating a new instance! Should only happen once")
-
-            cls._instance = super(ResponseGenerator, cls).__new__(cls)
-            # Put any initialization here.
-        return cls._instance
-
     def __init__(self):
 
         # this is the minimum MET in the orbit.
         # all response time are relative to this
-        
+
         T0 = gbm_orbit.T0
 
         self._detectors = {}
@@ -83,6 +80,25 @@ class ResponseGenerator(object):
     def ebounds(self):
         return self._ebounds
 
+
+    def generate_response(self, ra, dec, time, det_name):
+
+        assert det_name in self._detectors
+
+        logger.debug(f"setting time of {det_name} to {time}")
+
+        self._detectors[det_name].set_time(time)
+
+        assert det_name in self._detectors
+
+        logger.debug(f"setting location of {det_name} to {ra}, {dec}")
+
+        self._detectors[det_name].set_location(ra, dec)
+
+        return self._detectors[det_name].matrix.T
+
+
+    
     def set_time(self, time, det_name):
         """
         set the time of the specific response generator.

@@ -1,4 +1,4 @@
-from cosmogrb.grb.grb import GRB
+from cosmogrb.grb.grb import GRB, SourceParameter
 
 
-__all__ = ["GRB", "GBMGRB", "GBMGRB_CPL"]
+__all__ = ["GRB", "SourceParameter"]

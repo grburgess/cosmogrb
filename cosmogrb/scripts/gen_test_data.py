@@ -15,11 +15,10 @@ import numpy as np
 # pytest. it is meant to be run from the top of the pacakge
 
 
-
 class TDecaySampler(popsynth.AuxiliarySampler):
     def __init__(self):
 
-        super(TDecaySampler, self).__init__(name="tdecay", sigma=None, observed=False)
+        super(TDecaySampler, self).__init__(name="tdecay", observed=False)
 
     def true_sampler(self, size):
 
@@ -35,7 +34,7 @@ class DurationSampler(popsynth.AuxiliarySampler):
     def __init__(self):
 
         super(DurationSampler, self).__init__(
-            name="duration", sigma=None, observed=False
+            name="duration", observed=False
         )
 
     def true_sampler(self, size):
@@ -70,17 +69,39 @@ pop_gen = popsynth.populations.ParetoSFRPopulation(
 )
 
 
-ep = LogNormalAuxSampler(mu=300.0, tau=0.5, name="log_ep", observed=False)
-alpha = TruncatedNormalAuxSampler(
-    lower=-1.5, upper=0.1, mu=-1, tau=0.25, name="alpha", observed=False
-)
-tau = TruncatedNormalAuxSampler(
-    lower=1.5, upper=2.5, mu=2, tau=0.25, name="tau", observed=False
-)
-trise = TruncatedNormalAuxSampler(
-    lower=0.01, upper=5.0, mu=1, tau=1.0, name="trise", observed=False
-)
-t90 = LogNormalAuxSampler(mu=10, tau=0.25, name="log_t90", observed=False)
+ep = LogNormalAuxSampler(name="log_ep", observed=False)
+ep.mu = 500
+ep.tau = 0.5
+
+alpha = TruncatedNormalAuxSampler(name="alpha", observed=False)
+
+alpha.lower = -1.5
+alpha.upper = 0.0
+alpha.mu = -1.0
+alpha.tau = 0.25
+
+
+tau = TruncatedNormalAuxSampler(name="tau", observed=False)
+
+tau.lower = 1.5
+tau.upper = 2.5
+tau.mu = 2.0
+tau.tau = 0.25
+
+
+trise = TruncatedNormalAuxSampler(name="trise", observed=False)
+
+trise.lower = 0.01
+trise.upper = 5.0
+trise.mu = 1.0
+trise.tau = 1.0
+
+
+t90 = LogNormalAuxSampler(name="log_t90", observed=False)
+
+t90.mu = 10
+t90.tau = 0.25
+
 
 tdecay = TDecaySampler()
 duration = DurationSampler()

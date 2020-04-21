@@ -60,6 +60,19 @@ html_favicon = "media/favicon.ico"
 html_show_sphinx = False
 
 
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'css/custom.css',
+]
+
+
+html_js_files = [
+    'css/custom.js',
+]
+
+
+
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 

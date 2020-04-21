@@ -28,17 +28,14 @@ class SourceParameter(object):
         self._vmin = vmin
         self._vmax = vmax
         self._default = default
-        self._is_set = False
+
 
     def __get__(self, obj, type=None) -> object:
-        if not self._is_set:
-            obj._parameter_storage[self.name] = self._default
-            self._is_set = True
-
-        return obj._parameter_storage[self.name]
+        
+        return obj._source_params[self.name]
 
     def __set__(self, obj, value) -> None:
-        self._is_set = True
+
 
         if self._vmin is not None:
             assert (
@@ -52,6 +49,9 @@ class SourceParameter(object):
 
         obj._parameter_storage[self.name] = value
 
+    @property
+    def default(self):
+        return self._default
 
 class GRBMeta(type):
     @classmethod
@@ -82,6 +82,8 @@ class GRBMeta(type):
             if isinstance(v, SourceParameter):
                 v.name = k
 
+                attrs["_source_params"][k] = v.default
+                
         return cls
 
     def __subclasscheck__(cls, subclass):
@@ -164,11 +166,16 @@ class GRB(object, metaclass=GRBMeta):
         self._source_function = source_function_class
 
         # now set any source parameters that were passed
+
         for k, v in kwargs.items():
+
             if k in self._source_params:
 
-                self._source_params[k] = kwargs.pop(k)
 
+                
+                self._source_params[k] = kwargs[k]
+
+        
         # this stores extra information
         # about the GRB that can be used later
         self._extra_info = {}

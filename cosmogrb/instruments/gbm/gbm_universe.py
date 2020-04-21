@@ -20,12 +20,12 @@ class GBM_CPL_Universe(Universe):
         # get the Ra and Dec
         super(GBM_CPL_Universe, self)._process_populations()
 
-        self._local_parameters["ep"] = np.power(10, self._population.log_ep)
+        self._local_parameters["ep_start"] = np.power(10, self._population.log_ep)
         self._local_parameters["alpha"] = self._population.alpha
         self._local_parameters["peak_flux"] = self._population.latent_fluxes
         self._local_parameters["trise"] = self._population.trise
         self._local_parameters["tdecay"] = self._population.tdecay
-        self._local_parameters["tau"] = self._population.tau
+        self._local_parameters["ep_tau"] = self._population.tau
 
     def _parameter_server_type(self, **kwargs):
 
@@ -52,7 +52,7 @@ class GBM_CPL_ParameterServer(ParameterServer):
     """
 
     def __init__(
-        self, name, ra, dec, z, duration, T0, peak_flux, alpha, ep, tau, trise, tdecay
+        self, name, ra, dec, z, duration, T0, peak_flux, alpha, ep_start, ep_tau, trise, tdecay
     ):
         """FIXME! briefly describe function
 
@@ -82,8 +82,8 @@ class GBM_CPL_ParameterServer(ParameterServer):
             T0=T0,
             peak_flux=peak_flux,
             alpha=alpha,
-            ep=ep,
-            tau=tau,
+            ep_start=ep_start,
+            ep_tau=ep_tau,
             trise=trise,
             tdecay=tdecay,
         )

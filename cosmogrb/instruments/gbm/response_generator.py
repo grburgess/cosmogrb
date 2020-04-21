@@ -37,7 +37,7 @@ class SingletonMeta(type):
         return cls._inst
 
 
-class ResponseGenerator(object):
+class ResponseGenerator(object, metaclass=SingletonMeta):
     def __init__(self):
 
         # this is the minimum MET in the orbit.

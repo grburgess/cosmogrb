@@ -125,8 +125,8 @@ class GBMGRB(GRB):
 class GBMGRB_CPL(GBMGRB):
     peak_flux = SourceParameter()
     alpha = SourceParameter()
-    ep = SourceParameter()
-    tau = SourceParameter()
+    ep_start = SourceParameter()
+    ep_tau = SourceParameter()
     trise = SourceParameter()
     tdecay = SourceParameter()
 

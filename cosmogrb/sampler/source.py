@@ -101,6 +101,9 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
         # is likely very fragile. The idea is that power law
         # envelope needs to be greater than the function every where
 
+        if index == -1.0:
+            index = -1 + 1E-20
+        
         while flag:
 
             # sample from a power law

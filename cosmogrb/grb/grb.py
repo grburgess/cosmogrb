@@ -44,15 +44,13 @@ class SourceParameter(object):
 
         return obj._source_params[self.name]
 
-        return obj._source_params[self.name]
-
     def __set__(self, obj, value) -> None:
         self._is_set = True
 
         if self._vmin is not None:
             assert (
                 value >= self._vmin
-            ), f"trying to set {self.x} to a value below {self._vmin} is not allowed"
+            ), f"trying to set {self.name} to a value below {self._vmin} is not allowed"
 
         if self._vmax is not None:
             assert (
@@ -65,8 +63,11 @@ class SourceParameter(object):
 class GRBMeta(type):
     def __new__(mcls, name, bases, attrs, **kwargs):
 
+        attrs["_parameter_names"] = []
+        
         cls = super().__new__(mcls, name, bases, attrs, **kwargs)
 
+        
         # Compute set of abstract method names
         abstracts = {
             name
@@ -86,7 +87,8 @@ class GRBMeta(type):
 
             if isinstance(v, SourceParameter):
                 v.name = k
-
+                attrs["_parameter_names"].append(k)
+                
         return cls
 
     def __subclasscheck__(cls, subclass):
@@ -174,7 +176,7 @@ class GRB(object, metaclass=GRBMeta):
 
         for k, v in kwargs.items():
 
-            if k in self._source_params:
+            if k in self._parameter_names:
 
                 self._source_params[k] = kwargs[k]
 

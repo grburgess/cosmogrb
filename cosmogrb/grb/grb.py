@@ -29,13 +29,25 @@ class SourceParameter(object):
         self._vmax = vmax
         self._default = default
 
+    @property
+    def default(self):
+        return self._default
 
     def __get__(self, obj, type=None) -> object:
-        
+
+        try:
+
+            return obj._source_params[self.name]
+
+        except:
+            obj._source_params[self.name] = self._default
+
+        return obj._source_params[self.name]
+
         return obj._source_params[self.name]
 
     def __set__(self, obj, value) -> None:
-
+        self._is_set = True
 
         if self._vmin is not None:
             assert (
@@ -45,24 +57,14 @@ class SourceParameter(object):
         if self._vmax is not None:
             assert (
                 value <= self._vmax
-            ), f"trying to set {self.x} to a value above {self._vmax} is not allowed"
+            ), f"trying to set {self.name} to a value above {self._vmax} is not allowed"
 
-        obj._parameter_storage[self.name] = value
+        obj._source_params[self.name] = value
 
-    @property
-    def default(self):
-        return self._default
 
 class GRBMeta(type):
-    @classmethod
-    def __prepare__(mcls, name, bases):
-
-        out = {}
-        out["_source_params"] = {}
-
-        return out
-
     def __new__(mcls, name, bases, attrs, **kwargs):
+
         cls = super().__new__(mcls, name, bases, attrs, **kwargs)
 
         # Compute set of abstract method names
@@ -78,12 +80,13 @@ class GRBMeta(type):
                     abstracts.add(name)
         cls.__abstractmethods__ = frozenset(abstracts)
 
+        ### parameters
+
         for k, v in attrs.items():
-            if isinstance(v, SourceParameter):
+
+            if isinstance(v, Parameter):
                 v.name = k
 
-                attrs["_source_params"][k] = v.default
-                
         return cls
 
     def __subclasscheck__(cls, subclass):
@@ -141,6 +144,8 @@ class GRB(object, metaclass=GRBMeta):
         :rtype: 
 
         """
+        self._source_params = {}
+        
         self._name = name
         self._T0 = T0
         self._duration = duration
@@ -171,11 +176,8 @@ class GRB(object, metaclass=GRBMeta):
 
             if k in self._source_params:
 
-
-                
                 self._source_params[k] = kwargs[k]
 
-        
         # this stores extra information
         # about the GRB that can be used later
         self._extra_info = {}

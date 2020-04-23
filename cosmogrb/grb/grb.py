@@ -84,7 +84,7 @@ class GRBMeta(type):
 
         for k, v in attrs.items():
 
-            if isinstance(v, Parameter):
+            if isinstance(v, SourceParameter):
                 v.name = k
 
         return cls

@@ -13,6 +13,9 @@ from dask.distributed import worker_client
 
 from cosmogrb.sampler.source import SourceFunction
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
+
+from cosmogrb.utils.meta import GRBMeta, RequiredParameter, SourceParameter
+
 import coloredlogs, logging
 import cosmogrb.utils.logging
 from cosmogrb import cosmogrb_config
@@ -21,119 +24,20 @@ from cosmogrb import cosmogrb_config
 logger = logging.getLogger("cosmogrb.grb")
 
 
-class SourceParameter(object):
-    def __init__(self, default=None, vmin=None, vmax=None):
-
-        self.name = None
-        self._vmin = vmin
-        self._vmax = vmax
-        self._default = default
-
-    @property
-    def default(self):
-        return self._default
-
-    def __get__(self, obj, type=None) -> object:
-
-        try:
-
-            return obj._source_params[self.name]
-
-        except:
-            obj._source_params[self.name] = self._default
-
-        return obj._source_params[self.name]
-
-    def __set__(self, obj, value) -> None:
-        self._is_set = True
-
-        if self._vmin is not None:
-            assert (
-                value >= self._vmin
-            ), f"trying to set {self.name} to a value below {self._vmin} is not allowed"
-
-        if self._vmax is not None:
-            assert (
-                value <= self._vmax
-            ), f"trying to set {self.name} to a value above {self._vmax} is not allowed"
-
-        obj._source_params[self.name] = value
-
-
-class GRBMeta(type):
-    def __new__(mcls, name, bases, attrs, **kwargs):
-
-        attrs["_parameter_names"] = []
-        
-        cls = super().__new__(mcls, name, bases, attrs, **kwargs)
-
-        
-        # Compute set of abstract method names
-        abstracts = {
-            name
-            for name, value in attrs.items()
-            if getattr(value, "__isabstractmethod__", False)
-        }
-        for base in bases:
-            for name in getattr(base, "__abstractmethods__", set()):
-                value = getattr(cls, name, None)
-                if getattr(value, "__isabstractmethod__", False):
-                    abstracts.add(name)
-        cls.__abstractmethods__ = frozenset(abstracts)
-
-        ### parameters
-
-        for k, v in attrs.items():
-
-            if isinstance(v, SourceParameter):
-                v.name = k
-                attrs["_parameter_names"].append(k)
-                
-        return cls
-
-    def __subclasscheck__(cls, subclass):
-        """Override for issubclass(subclass, cls)."""
-        if not isinstance(subclass, type):
-            raise TypeError("issubclass() arg 1 must be a class")
-        # Check cache
-
-        # Check the subclass hook
-        ok = cls.__subclasshook__(subclass)
-        if ok is not NotImplemented:
-            assert isinstance(ok, bool)
-            if ok:
-                cls._abc_cache.add(subclass)
-            else:
-                cls._abc_negative_cache.add(subclass)
-            return ok
-        # Check if it's a direct subclass
-        if cls in getattr(subclass, "__mro__", ()):
-            cls._abc_cache.add(subclass)
-            return True
-        # Check if it's a subclass of a registered class (recursive)
-        for rcls in cls._abc_registry:
-            if issubclass(subclass, rcls):
-                cls._abc_cache.add(subclass)
-                return True
-        # Check if it's a subclass of a subclass (recursive)
-        for scls in cls.__subclasses__():
-            if issubclass(subclass, scls):
-                cls._abc_cache.add(subclass)
-                return True
-        # No dice; update negative cache
-        cls._abc_negative_cache.add(subclass)
-        return False
-
 
 class GRB(object, metaclass=GRBMeta):
+
+
+    name = RequiredParameter(default="SynthGRB")
+    z = RequiredParameter(default=1, vmin=0)
+    T0 = RequiredParameter(default=0)
+    ra = RequiredParameter(default=0)
+    dec = RequiredParameter(default=0)
+    duration = RequiredParameter(default=1, vmin = 0)
+    
+
     def __init__(
         self,
-        name="SynthGRB",
-        duration=1,
-        z=1,
-        T0=0,
-        ra=0,
-        dec=0,
         source_function_class=None,
         **kwargs,
     ):
@@ -147,21 +51,8 @@ class GRB(object, metaclass=GRBMeta):
 
         """
         self._source_params = {}
+        self._required_params = {}
         
-        self._name = name
-        self._T0 = T0
-        self._duration = duration
-        self._z = z
-        self._ra = ra
-        self._dec = dec
-
-        assert z > 0, f"z: {z} must be greater than zero"
-        assert duration > 0, f"duration: {duration} must be greater than zero"
-
-        logger.debug(f"created a GRB with name: {name}")
-        logger.debug(f"created a GRB with ra: {ra} and dec: {dec}")
-        logger.debug(f"created a GRB with redshift: {z}")
-        logger.debug(f"created a GRB with duration: {duration} and T0: {T0}")
 
         # create an empty list for the light curves
         # eetc
@@ -180,11 +71,16 @@ class GRB(object, metaclass=GRBMeta):
 
                 self._source_params[k] = kwargs[k]
 
+            elif k in self._required_names:
+
+                self._required_params[k] = kwargs[k]
+
+                
         # this stores extra information
         # about the GRB that can be used later
         self._extra_info = {}
 
-        self._setup()
+
 
     @abc.abstractmethod
     def _setup(self):
@@ -250,6 +146,20 @@ class GRB(object, metaclass=GRBMeta):
 
     def go(self, client=None, serial=False):
 
+        self._setup()
+
+        for key in self._required_names:
+            assert self._required_params[key] is not None, f"you have not set {key}"
+        
+        assert self.z > 0, f"z: {self.z} must be greater than zero"
+        assert self.duration > 0, f"duration: {self.duration} must be greater than zero"
+
+        logger.debug(f"created a GRB with name: {self.name}")
+        logger.debug(f"created a GRB with ra: {self.ra} and dec: {self.dec}")
+        logger.debug(f"created a GRB with redshift: {self.z}")
+        logger.debug(f"created a GRB with duration: {self.duration} and T0: {self.T0}")
+
+        
         if not serial:
 
             if client is not None:
@@ -292,13 +202,13 @@ class GRB(object, metaclass=GRBMeta):
         with h5py.File(file_name, "w") as f:
 
             # save the general
-            f.attrs["grb_name"] = self._name
+            f.attrs["grb_name"] = self.name
             f.attrs["n_lightcurves"] = len(self._lightcurves)
-            f.attrs["T0"] = self._T0
-            f.attrs["z"] = self._z
-            f.attrs["duration"] = self._duration
-            f.attrs["ra"] = self._ra
-            f.attrs["dec"] = self._dec
+            f.attrs["T0"] = self.T0
+            f.attrs["z"] = self.z
+            f.attrs["duration"] = self.duration
+            f.attrs["ra"] = self.ra
+            f.attrs["dec"] = self.dec
 
             # store the source function parameters
 
@@ -393,12 +303,12 @@ class GRB(object, metaclass=GRBMeta):
 
         std_dict = collections.OrderedDict()
 
-        std_dict["name"] = self._name
-        std_dict["z"] = self._z
-        std_dict["ra"] = self._ra
-        std_dict["dec"] = self._dec
-        std_dict["duration"] = self._duration
-        std_dict["T0"] = self._T0
+        std_dict["name"] = self.name
+        std_dict["z"] = self.z
+        std_dict["ra"] = self.ra
+        std_dict["dec"] = self.dec
+        std_dict["duration"] = self.duration
+        std_dict["T0"] = self.T0
 
         if as_display:
 

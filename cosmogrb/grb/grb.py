@@ -24,22 +24,17 @@ from cosmogrb import cosmogrb_config
 logger = logging.getLogger("cosmogrb.grb")
 
 
-
 class GRB(object, metaclass=GRBMeta):
 
-
     name = RequiredParameter(default="SynthGRB")
-    z = RequiredParameter(default=1, vmin=0)
+    z = RequiredParameter(default=1, vmin=0, vmax=20)
     T0 = RequiredParameter(default=0)
     ra = RequiredParameter(default=0)
     dec = RequiredParameter(default=0)
-    duration = RequiredParameter(default=1, vmin = 0)
-    
+    duration = RequiredParameter(default=1, vmin=0)
 
     def __init__(
-        self,
-        source_function_class=None,
-        **kwargs,
+        self, source_function_class=None, **kwargs,
     ):
         """
         A basic GRB
@@ -52,7 +47,6 @@ class GRB(object, metaclass=GRBMeta):
         """
         self._source_params = {}
         self._required_params = {}
-        
 
         # create an empty list for the light curves
         # eetc
@@ -70,21 +64,25 @@ class GRB(object, metaclass=GRBMeta):
             if k in self._parameter_names:
 
                 logger.debug(f"setting source param {k}: {kwargs[k]}")
-                
+
                 self._source_params[k] = kwargs[k]
+
+                # make sure this is valid
+
+                getattr(self, k)
 
             elif k in self._required_names:
 
-                logger.debug(f"setting required param {k}: {kwargs[k]}")
-                
+                logger.debug(f"\setting required param {k}: {kwargs[k]}")
+
                 self._required_params[k] = kwargs[k]
 
-                
+                # make sure this is valid
+                getattr(self, k)
+
         # this stores extra information
         # about the GRB that can be used later
         self._extra_info = {}
-
-
 
     @abc.abstractmethod
     def _setup(self):
@@ -154,7 +152,7 @@ class GRB(object, metaclass=GRBMeta):
 
         for key in self._required_names:
             assert self._required_params[key] is not None, f"you have not set {key}"
-        
+
         assert self.z > 0, f"z: {self.z} must be greater than zero"
         assert self.duration > 0, f"duration: {self.duration} must be greater than zero"
 
@@ -163,7 +161,6 @@ class GRB(object, metaclass=GRBMeta):
         logger.debug(f"created a GRB with redshift: {self.z}")
         logger.debug(f"created a GRB with duration: {self.duration} and T0: {self.T0}")
 
-        
         if not serial:
 
             if client is not None:

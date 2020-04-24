@@ -6,7 +6,9 @@ class Parameter(object):
         self._vmax = vmax
         self._default = default
         self._dict_name = dict_name
-
+        self._current_value = default
+        
+        
     @property
     def default(self):
         return self._default
@@ -15,12 +17,27 @@ class Parameter(object):
 
         try:
 
-            return getattr(obj, self._dict_name)[self.name]
+            value = getattr(obj, self._dict_name)[self.name]
 
         except:
             getattr(obj, self._dict_name)[self.name] = self._default
 
-        return getattr(obj, self._dict_name)[self.name]
+            value = getattr(obj, self._dict_name)[self.name]
+
+        if not isinstance(value, str):
+            if self._vmin is not None:
+                assert (
+                    value >= self._vmin
+                ), f"trying to set {self.name} to a value below {self._vmin} is not allowed"
+
+            if self._vmax is not None:
+                assert (
+                    value <= self._vmax
+                ), f"trying to set {self.name} to a value above {self._vmax} is not allowed"
+
+            
+            
+        return value
 
     def __set__(self, obj, value) -> None:
 
@@ -36,7 +53,8 @@ class Parameter(object):
                 ), f"trying to set {self.name} to a value above {self._vmax} is not allowed"
 
         getattr(obj, self._dict_name)[self.name] = value
-
+        self._current_value = value
+        
 
 class SourceParameter(Parameter):
     def __init__(self, default=None, vmin=None, vmax=None):

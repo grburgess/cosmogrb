@@ -95,7 +95,9 @@ def test_inhereted_grb():
 
     grb = ChildDummyGRB()
     
-    assert list(grb._source_params.keys()) == ['x']
+    assert grb._source_params == {}
+
+    assert "x" in ChildDummyGRB._parameter_names
 
     for rp in ["name", "T0", "z", "ra", "dec", "duration"]:
 

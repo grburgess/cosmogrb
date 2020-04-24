@@ -80,7 +80,6 @@ class ResponseGenerator(object, metaclass=SingletonMeta):
     def ebounds(self):
         return self._ebounds
 
-
     def generate_response(self, ra, dec, time, det_name):
 
         assert det_name in self._detectors
@@ -97,8 +96,6 @@ class ResponseGenerator(object, metaclass=SingletonMeta):
 
         return self._detectors[det_name].matrix.T
 
-
-    
     def set_time(self, time, det_name):
         """
         set the time of the specific response generator.

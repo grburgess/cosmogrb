@@ -42,11 +42,10 @@ def test_read_gbm_save(grb):
     print(grb)
     grb.info()
 
+    for k, v in grb.items():
 
-    for k,v in grb.items():
+        print(k, v)
 
-        print(k,v)
-    
     lightcurve = grb["n1"]["lightcurve"]
 
     print(lightcurve)

@@ -33,9 +33,7 @@ class TDecaySampler(popsynth.AuxiliarySampler):
 class DurationSampler(popsynth.AuxiliarySampler):
     def __init__(self):
 
-        super(DurationSampler, self).__init__(
-            name="duration", observed=False
-        )
+        super(DurationSampler, self).__init__(name="duration", observed=False)
 
     def true_sampler(self, size):
 

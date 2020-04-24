@@ -52,7 +52,19 @@ class GBM_CPL_ParameterServer(ParameterServer):
     """
 
     def __init__(
-        self, name, ra, dec, z, duration, T0, peak_flux, alpha, ep_start, ep_tau, trise, tdecay
+        self,
+        name,
+        ra,
+        dec,
+        z,
+        duration,
+        T0,
+        peak_flux,
+        alpha,
+        ep_start,
+        ep_tau,
+        trise,
+        tdecay,
     ):
         """FIXME! briefly describe function
 

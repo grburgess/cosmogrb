@@ -41,11 +41,11 @@ sys.path.insert(0, os.path.abspath('../'))
 # ones.
 
 extensions = ['nbsphinx',
+              'recommonmark',
               'sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
-              'sphinx.ext.githubpages',
               'sphinx.ext.napoleon',
               'sphinx_gallery.load_style',
 ]

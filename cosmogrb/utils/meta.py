@@ -7,8 +7,7 @@ class Parameter(object):
         self._default = default
         self._dict_name = dict_name
         self._current_value = default
-        
-        
+
     @property
     def default(self):
         return self._default
@@ -35,8 +34,6 @@ class Parameter(object):
                     value <= self._vmax
                 ), f"trying to set {self.name} to a value above {self._vmax} is not allowed"
 
-            
-            
         return value
 
     def __set__(self, obj, value) -> None:
@@ -54,7 +51,7 @@ class Parameter(object):
 
         getattr(obj, self._dict_name)[self.name] = value
         self._current_value = value
-        
+
 
 class SourceParameter(Parameter):
     def __init__(self, default=None, vmin=None, vmax=None):
@@ -73,7 +70,7 @@ class GRBMeta(type):
 
         # build the list to make sure things are
         # attached
-        
+
         if "_parameter_names" not in attrs:
             attrs["_parameter_names"] = []
 
@@ -84,11 +81,11 @@ class GRBMeta(type):
         # now, we want to make sure that subclasses
         # inherit the parameter names. Thus, we look
         # up the bases of the current class and
-        # grab any that were attached. 
+        # grab any that were attached.
 
         # in the future, I may want to remove the parameter
         # names from this so that they are not inheritied
-            
+
         for base in bases:
 
             try:

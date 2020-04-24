@@ -37,17 +37,14 @@ class GBMGRB(GRB):
     )
 
     def __init__(
-        self,
-        source_function_class,
-        **kwargs,
+        self, source_function_class, **kwargs,
     ):
 
         self._use_plaw_sample = True
 
         # pass up
         super(GBMGRB, self).__init__(
-            source_function_class=source_function_class,
-            **kwargs,
+            source_function_class=source_function_class, **kwargs,
         )
 
     def _setup_source(self):
@@ -122,8 +119,7 @@ class GBMGRB_CPL(GBMGRB):
 
         # pass up
         super(GBMGRB_CPL, self).__init__(
-            source_function_class=CPLSourceFunction,
-            **kwargs,
+            source_function_class=CPLSourceFunction, **kwargs,
         )
 
 
@@ -136,6 +132,5 @@ class GBMGRB_CPL_Constant(GBMGRB):
 
         # pass up
         super(GBMGRB_CPL_Constant, self).__init__(
-            source_function_class=ConstantCPL,
-            **kwargs,
+            source_function_class=ConstantCPL, **kwargs,
         )

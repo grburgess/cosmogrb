@@ -40,7 +40,7 @@ def grb(client):
         ep_start=500.0,
         ep_tau=2.0,
         trise=0.1,
-        tdecay=1.,
+        tdecay=1.0,
         duration=2.0,
         T0=0.1,
     )
@@ -48,7 +48,7 @@ def grb(client):
     grb.go(client=client)
 
     grb.save("test_grb.h5")
-    
+
     yield grb
 
     os.remove("test_grb.h5")
@@ -95,8 +95,6 @@ def grb_constant(client):
     grb.go(client=client)
 
     return grb
-
-
 
 
 @pytest.fixture(scope="session")

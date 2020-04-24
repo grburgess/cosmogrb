@@ -8,7 +8,6 @@ import coloredlogs, logging
 import cosmogrb.utils.logging
 
 
-
 logger = logging.getLogger("cosmogrb.gbm.gbm_orbit")
 
 
@@ -30,7 +29,7 @@ class GBMOrbit(object):
         self._maximum_time = 86519.99999904633
         self._T0 = self._minimum_met
         self._used_times = []
-        
+
         logger.debug("Setting up the GBM orbit")
 
         self._interpolator = PositionInterpolator.from_poshist_hdf5(
@@ -40,7 +39,6 @@ class GBMOrbit(object):
         self._tmin, self._tmax = self._interpolator.minmax_time()
 
         self._delta_time = self._tmax - self._tmin
-
 
     @property
     def position_interpolator(self):
@@ -53,19 +51,14 @@ class GBMOrbit(object):
         """
         return self._T0
 
-
     @property
     def random_time(self):
 
         time = np.random.uniform(0, self._maximum_time)
         self._used_times.append(time)
-        
+
         return time
 
-
-
-    
-    
     def met(self, time):
         """
         Get the MET of the time relative time
@@ -75,7 +68,7 @@ class GBMOrbit(object):
         :rtype: 
 
         """
-            
+
         return self._interpolator.met(time)
 
 

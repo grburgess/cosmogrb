@@ -13,6 +13,9 @@ from dask.distributed import worker_client
 
 from cosmogrb.sampler.source import SourceFunction
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
+
+from cosmogrb.utils.meta import GRBMeta, RequiredParameter, SourceParameter
+
 import coloredlogs, logging
 import cosmogrb.utils.logging
 from cosmogrb import cosmogrb_config
@@ -21,17 +24,17 @@ from cosmogrb import cosmogrb_config
 logger = logging.getLogger("cosmogrb.grb")
 
 
-class GRB(object, metaclass=abc.ABCMeta):
+class GRB(object, metaclass=GRBMeta):
+
+    name = RequiredParameter(default="SynthGRB")
+    z = RequiredParameter(default=1, vmin=0, vmax=20)
+    T0 = RequiredParameter(default=0)
+    ra = RequiredParameter(default=0, vmin=0, vmax=360)
+    dec = RequiredParameter(default=0, vmin=-90, vmax=90)
+    duration = RequiredParameter(default=1, vmin=0)
+
     def __init__(
-        self,
-        name="SynthGRB",
-        duration=1,
-        z=1,
-        T0=0,
-        ra=0,
-        dec=0,
-        source_function_class=None,
-        **source_params,
+        self, source_function_class=None, **kwargs,
     ):
         """
         A basic GRB
@@ -42,20 +45,8 @@ class GRB(object, metaclass=abc.ABCMeta):
         :rtype: 
 
         """
-        self._name = name
-        self._T0 = T0
-        self._duration = duration
-        self._z = z
-        self._ra = ra
-        self._dec = dec
-
-        assert z > 0, f"z: {z} must be greater than zero"
-        assert duration > 0, f"duration: {duration} must be greater than zero"
-
-        logger.debug(f"created a GRB with name: {name}")
-        logger.debug(f"created a GRB with ra: {ra} and dec: {dec}")
-        logger.debug(f"created a GRB with redshift: {z}")
-        logger.debug(f"created a GRB with duration: {duration} and T0: {T0}")
+        self._source_params = {}
+        self._required_params = {}
 
         # create an empty list for the light curves
         # eetc
@@ -64,16 +55,34 @@ class GRB(object, metaclass=abc.ABCMeta):
         self._backgrounds = collections.OrderedDict()
 
         assert issubclass(source_function_class, SourceFunction)
-        assert isinstance(source_params, dict)
-
         self._source_function = source_function_class
-        self._source_params = source_params
+
+        # now set any source parameters that were passed
+
+        for k, v in kwargs.items():
+
+            if k in self._parameter_names:
+
+                logger.debug(f"setting source param {k}: {kwargs[k]}")
+
+                self._source_params[k] = kwargs[k]
+
+                # make sure this is valid
+
+                getattr(self, k)
+
+            elif k in self._required_names:
+
+                logger.debug(f"\setting required param {k}: {kwargs[k]}")
+
+                self._required_params[k] = kwargs[k]
+
+                # make sure this is valid
+                getattr(self, k)
 
         # this stores extra information
         # about the GRB that can be used later
         self._extra_info = {}
-
-        self._setup()
 
     @abc.abstractmethod
     def _setup(self):
@@ -139,6 +148,19 @@ class GRB(object, metaclass=abc.ABCMeta):
 
     def go(self, client=None, serial=False):
 
+        self._setup()
+
+        for key in self._required_names:
+            assert self._required_params[key] is not None, f"you have not set {key}"
+
+        assert self.z > 0, f"z: {self.z} must be greater than zero"
+        assert self.duration > 0, f"duration: {self.duration} must be greater than zero"
+
+        logger.debug(f"created a GRB with name: {self.name}")
+        logger.debug(f"created a GRB with ra: {self.ra} and dec: {self.dec}")
+        logger.debug(f"created a GRB with redshift: {self.z}")
+        logger.debug(f"created a GRB with duration: {self.duration} and T0: {self.T0}")
+
         if not serial:
 
             if client is not None:
@@ -181,13 +203,13 @@ class GRB(object, metaclass=abc.ABCMeta):
         with h5py.File(file_name, "w") as f:
 
             # save the general
-            f.attrs["grb_name"] = self._name
+            f.attrs["grb_name"] = self.name
             f.attrs["n_lightcurves"] = len(self._lightcurves)
-            f.attrs["T0"] = self._T0
-            f.attrs["z"] = self._z
-            f.attrs["duration"] = self._duration
-            f.attrs["ra"] = self._ra
-            f.attrs["dec"] = self._dec
+            f.attrs["T0"] = self.T0
+            f.attrs["z"] = self.z
+            f.attrs["duration"] = self.duration
+            f.attrs["ra"] = self.ra
+            f.attrs["dec"] = self.dec
 
             # store the source function parameters
 
@@ -282,12 +304,12 @@ class GRB(object, metaclass=abc.ABCMeta):
 
         std_dict = collections.OrderedDict()
 
-        std_dict["name"] = self._name
-        std_dict["z"] = self._z
-        std_dict["ra"] = self._ra
-        std_dict["dec"] = self._dec
-        std_dict["duration"] = self._duration
-        std_dict["T0"] = self._T0
+        std_dict["name"] = self.name
+        std_dict["z"] = self.z
+        std_dict["ra"] = self.ra
+        std_dict["dec"] = self.dec
+        std_dict["duration"] = self.duration
+        std_dict["T0"] = self.T0
 
         if as_display:
 

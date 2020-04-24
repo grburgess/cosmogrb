@@ -34,9 +34,7 @@ _det_translate = dict(
 
 
 class GBMResponse(Response):
-    def __init__(
-        self, detector_name, ra, dec, radius, height, save=False, name=None
-    ):
+    def __init__(self, detector_name, ra, dec, radius, height, save=False, name=None):
         """
 
         A generic GBM reponse that builds itself from the response 
@@ -61,7 +59,7 @@ class GBMResponse(Response):
         # get a _relative_ time to the being of the posthist
         # MET, i.e., time = MET - T0. Thus, we get a relative
         # time in the orbit
-        
+
         if cosmogrb_config["gbm"]["orbit"]["use_random_time"]:
 
             time = gbm_orbit.random_time
@@ -69,7 +67,7 @@ class GBMResponse(Response):
         else:
 
             # if we want a fixed time, then choose the default
-            
+
             time = cosmogrb_config["gbm"]["orbit"]["default_time"]
 
         # we pass this time to the repsonse generator. Note, our local
@@ -78,7 +76,7 @@ class GBMResponse(Response):
         # we still need the relative time
 
         self._time = time
-        
+
         self._setup_gbm_geometry(detector_name, ra, dec)
 
         # tmin, tmax = gbm_orbit.position_interpolator.minmax_time()
@@ -87,9 +85,6 @@ class GBMResponse(Response):
 
         self._ra = ra
         self._dec = dec
-
-            
-        
 
         self._detector_name = detector_name
 
@@ -172,8 +167,12 @@ class GBMResponse(Response):
         # since this is now done with a singleton it
         # may cause some race conditions
 
-        gbm_response_generator.set_time(self._time, detector_name)
-        matrix = gbm_response_generator.set_location(ra, dec, detector_name)
+        # gbm_response_generator.set_time(self._time, detector_name)
+        # matrix = gbm_response_generator.set_location(ra, dec, detector_name)
+
+        matrix = gbm_response_generator.generate_response(
+            ra, dec, self._time, detector_name
+        )
 
         return (
             matrix,

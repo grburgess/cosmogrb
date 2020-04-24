@@ -42,7 +42,7 @@ class Observation(object):
         if self._detector is None:
 
             return None
-        
+
         else:
 
             return DetectorSave.from_file(self._detector)
@@ -82,7 +82,6 @@ class Survey(collections.OrderedDict):
 
             warnings.warn(f"{population_file} does not exist. Perhaps you moved it?")
 
-
         for f in self._grb_save_files:
 
             with h5py.File(f, "r") as f:
@@ -98,16 +97,13 @@ class Survey(collections.OrderedDict):
 
         self._grb_detector_files = None
 
-
         # lets see if we have detector files
-        
-        
+
         if grb_detector_files is not None:
 
             self._is_processed = True
 
             self._grb_detector_files = natsorted(grb_detector_files)
-
 
             assert len(grb_detector_files) == len(grb_save_files)
 

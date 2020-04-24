@@ -7,7 +7,7 @@ from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.constant_cpl import ConstantCPL
 
 
-from cosmogrb.grb import GRB
+from cosmogrb.grb import GRB, SourceParameter
 
 import coloredlogs, logging
 import cosmogrb.utils.logging
@@ -37,29 +37,14 @@ class GBMGRB(GRB):
     )
 
     def __init__(
-        self,
-        source_function_class,
-        name="SynthGRB",
-        duration=1,
-        z=1,
-        T0=0,
-        ra=0,
-        dec=0,
-        **source_params,
+        self, source_function_class, **kwargs,
     ):
 
         self._use_plaw_sample = True
 
         # pass up
         super(GBMGRB, self).__init__(
-            name=name,
-            duration=duration,
-            z=z,
-            T0=T0,
-            ra=ra,
-            dec=dec,
-            source_function_class=source_function_class,
-            **source_params,
+            source_function_class=source_function_class, **kwargs,
         )
 
     def _setup_source(self):
@@ -72,9 +57,9 @@ class GBMGRB(GRB):
 
             source = Source(
                 0.0,
-                self._duration,
+                self.duration,
                 source_function,
-                z = self._z,
+                z=self.z,
                 use_plaw_sample=self._use_plaw_sample,
             )
 
@@ -83,7 +68,7 @@ class GBMGRB(GRB):
                 self._backgrounds[key],
                 self._responses[key],
                 name=key,
-                grb_name=self._name,
+                grb_name=self.name,
                 tstart=self._background_start,
                 tstop=self._background_stop,
             )
@@ -98,19 +83,15 @@ class GBMGRB(GRB):
         for det in self._gbm_detectors:
             if det[0] == "b":
 
-                logger.debug(f"creating BGO reponse for {det} via grb {self._name}")
+                logger.debug(f"creating BGO reponse for {det} via grb {self.name}")
 
-                rsp = BGOResponse(
-                    det, self._ra, self._dec, save=False, name=self._name
-                )
+                rsp = BGOResponse(det, self.ra, self.dec, save=False, name=self.name)
 
             else:
 
-                logger.debug(f"creating NAI reponse for {det} via GRB {self._name}")
+                logger.debug(f"creating NAI reponse for {det} via GRB {self.name}")
 
-                rsp = NaIResponse(
-                    det, self._ra, self._dec, save=False, name=self._name
-                )
+                rsp = NaIResponse(det, self.ra, self.dec, save=False, name=self.name)
 
             self._add_response(det, rsp)
 
@@ -127,65 +108,29 @@ class GBMGRB(GRB):
 
 
 class GBMGRB_CPL(GBMGRB):
-    def __init__(
-        self,
-        ra,
-        dec,
-        z,
-        peak_flux,
-        alpha,
-        ep,
-        tau,
-        trise,
-        tdecay,
-        duration,
-        T0,
-        name="SynthGRB",
-    ):
+    peak_flux = SourceParameter()
+    alpha = SourceParameter()
+    ep_start = SourceParameter()
+    ep_tau = SourceParameter()
+    trise = SourceParameter()
+    tdecay = SourceParameter()
 
-        self._alpha = alpha
-        self._ep = ep
-        self._trise = trise
-        self._z = z
-
-        source_params = dict(
-            peak_flux=peak_flux,
-            trise=trise,
-            tdecay=tdecay,
-            ep_tau=tau,
-            alpha=alpha,
-            ep_start=ep,
-        )
+    def __init__(self, **kwargs):
 
         # pass up
         super(GBMGRB_CPL, self).__init__(
-            source_function_class=CPLSourceFunction,
-            name=name,
-            duration=duration,
-            z=z,
-            T0=T0,
-            ra=ra,
-            dec=dec,
-            **source_params,
+            source_function_class=CPLSourceFunction, **kwargs,
         )
 
 
 class GBMGRB_CPL_Constant(GBMGRB):
-    def __init__(
-        self, ra, dec, z, peak_flux, alpha, ep, duration, T0, name="SynthGRB",
-    ):
+    peak_flux = SourceParameter()
+    alpha = SourceParameter()
+    ep = SourceParameter()
 
-        source_params = dict(peak_flux=peak_flux, alpha=alpha, ep=ep,)
-        self._z = z
+    def __init__(self, **kwargs):
 
         # pass up
         super(GBMGRB_CPL_Constant, self).__init__(
-            source_function_class=ConstantCPL,
-            name=name,
-            duration=duration,
-            z=z,
-            T0=T0,
-            ra=ra,
-            dec=dec,
-            **source_params,
+            source_function_class=ConstantCPL, **kwargs,
         )

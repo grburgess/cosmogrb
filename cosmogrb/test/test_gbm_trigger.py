@@ -64,8 +64,7 @@ def test_process_survey(universe):
 
     survey = Survey.from_file("universe.h5")
 
-
-    for k,v in survey.items():
+    for k, v in survey.items():
 
         v.grb.name == k
 
@@ -75,7 +74,7 @@ def test_process_survey(universe):
     assert not survey.is_processed
 
     survey.info()
-    
+
     survey.process(GBMTrigger, serial=True)
 
     # now it should be processed
@@ -88,15 +87,13 @@ def test_process_survey(universe):
     survey2 = Survey.from_file("new_universe.h5")
 
     survey2.info()
-    
-    for k,v in survey2.items():
-            
+
+    for k, v in survey2.items():
+
         v.grb.name == k
 
         v.detector_info.name == k
 
-
-    
     # make  sure the loaded one is now processed
     assert survey2.is_processed
 

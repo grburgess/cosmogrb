@@ -37,10 +37,10 @@ def grb(client):
         z=1.0,
         peak_flux=1e-5,
         alpha=-0.66,
-        ep=500.0,
-        tau=2.0,
+        ep_start=500.0,
+        ep_tau=2.0,
         trise=0.1,
-        tdecay=1.,
+        tdecay=1.0,
         duration=2.0,
         T0=0.1,
     )
@@ -48,7 +48,7 @@ def grb(client):
     grb.go(client=client)
 
     grb.save("test_grb.h5")
-    
+
     yield grb
 
     os.remove("test_grb.h5")
@@ -62,8 +62,8 @@ def weak_grb(client):
         z=1.0,
         peak_flux=5e-20,
         alpha=-0.66,
-        ep=500.0,
-        tau=2.0,
+        ep_start=500.0,
+        ep_tau=2.0,
         trise=0.1,
         tdecay=0.5,
         duration=1.0,

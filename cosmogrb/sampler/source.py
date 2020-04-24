@@ -101,6 +101,9 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
         # is likely very fragile. The idea is that power law
         # envelope needs to be greater than the function every where
 
+        if index == -1.0:
+            index = -1 + 1e-20
+
         while flag:
 
             # sample from a power law
@@ -399,7 +402,7 @@ class Source(Sampler):
         scale photon energy due to cosmological redshift
         """
 
-        return photons/(1+self._z)
+        return photons / (1 + self._z)
 
     def sample_times(self):
         """
@@ -446,7 +449,7 @@ class Source(Sampler):
                 self._source_function.emax,
                 self._source_function.response.effective_area_max,
             )
-        
+
         return self._propagate_photons(source_frame_photons)
 
     def sample_channel(self, photons, response):

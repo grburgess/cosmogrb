@@ -6,12 +6,10 @@ import popsynth
 from cosmogrb.universe.survey import Survey
 
 
-
 import coloredlogs, logging
 import cosmogrb.utils.logging
 
 logger = logging.getLogger("cosmogrb.universe")
-
 
 
 class Universe(object, metaclass=abc.ABCMeta):
@@ -66,9 +64,9 @@ class Universe(object, metaclass=abc.ABCMeta):
 
     def _get_sky_coord(self):
 
-        self._ra =  np.rad2deg(self._population.phi)
+        self._ra = np.rad2deg(self._population.phi)
         self._dec = 90 - np.rad2deg(self._population.theta)
-    
+
     def _get_redshift(self):
         self._z = self._population.distances
 
@@ -121,7 +119,6 @@ class Universe(object, metaclass=abc.ABCMeta):
         :rtype: 
 
         """
-        
 
         if client is not None:
 

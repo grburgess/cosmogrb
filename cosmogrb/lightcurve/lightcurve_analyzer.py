@@ -29,7 +29,7 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
         else:
 
             logger.debug(f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
-            
+
     @abc.abstractmethod
     def _compute_detection(self):
 

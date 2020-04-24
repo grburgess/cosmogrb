@@ -29,8 +29,8 @@ class GRB(object, metaclass=GRBMeta):
     name = RequiredParameter(default="SynthGRB")
     z = RequiredParameter(default=1, vmin=0, vmax=20)
     T0 = RequiredParameter(default=0)
-    ra = RequiredParameter(default=0)
-    dec = RequiredParameter(default=0)
+    ra = RequiredParameter(default=0, vmin=0, vmax=360)
+    dec = RequiredParameter(default=0, vmin=-90, vmax=90)
     duration = RequiredParameter(default=1, vmin=0)
 
     def __init__(

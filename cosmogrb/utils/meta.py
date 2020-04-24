@@ -24,7 +24,7 @@ class Parameter(object):
 
     def __set__(self, obj, value) -> None:
 
-        if not isinstance(value,str):
+        if not isinstance(value, str):
             if self._vmin is not None:
                 assert (
                     value >= self._vmin
@@ -51,12 +51,44 @@ class RequiredParameter(Parameter):
 
 
 class GRBMeta(type):
-    def __new__(mcls, name, bases, attrs, **kwargs):
+    def __new__(mcls, name, bases, attrs):
 
-        attrs["_parameter_names"] = []
-        attrs["_required_names"] = []
+        # build the list to make sure things are
+        # attached
+        
+        if "_parameter_names" not in attrs:
+            attrs["_parameter_names"] = []
 
-        cls = super().__new__(mcls, name, bases, attrs, **kwargs)
+        if "_required_names" not in attrs:
+
+            attrs["_required_names"] = []
+
+        # now, we want to make sure that subclasses
+        # inherit the parameter names. Thus, we look
+        # up the bases of the current class and
+        # grab any that were attached. 
+
+        # in the future, I may want to remove the parameter
+        # names from this so that they are not inheritied
+            
+        for base in bases:
+
+            try:
+                attrs["_parameter_names"].extend(base._parameter_names)
+
+            except:
+
+                pass
+
+            try:
+
+                attrs["_required_names"].extend(base._required_names)
+
+            except:
+
+                pass
+
+        cls = super().__new__(mcls, name, bases, attrs)
 
         # Compute set of abstract method names
         abstracts = {
@@ -79,7 +111,8 @@ class GRBMeta(type):
                 v.name = k
                 attrs["_parameter_names"].append(k)
 
-            elif isinstance(v, RequiredParameter):
+            if isinstance(v, RequiredParameter):
+
                 v.name = k
                 attrs["_required_names"].append(k)
 

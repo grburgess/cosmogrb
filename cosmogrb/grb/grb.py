@@ -69,10 +69,14 @@ class GRB(object, metaclass=GRBMeta):
 
             if k in self._parameter_names:
 
+                logger.debug(f"setting source param {k}: {kwargs[k]}")
+                
                 self._source_params[k] = kwargs[k]
 
             elif k in self._required_names:
 
+                logger.debug(f"setting required param {k}: {kwargs[k]}")
+                
                 self._required_params[k] = kwargs[k]
 
                 

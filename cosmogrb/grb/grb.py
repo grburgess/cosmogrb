@@ -1,24 +1,24 @@
-import h5py
 import abc
+# import concurrent.futures as futures
+import collections
+import logging
+
+import h5py
 import pandas as pd
 from IPython.display import display
 
-# import concurrent.futures as futures
-import collections
-
-
+import coloredlogs
+import cosmogrb.utils.logging
+from cosmogrb import cosmogrb_config
+from cosmogrb.sampler.source import SourceFunction
+from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
+from cosmogrb.utils.meta import GRBMeta, RequiredParameter
 from dask.distributed import worker_client
 
 # from cosmogrb import cosmogrb_client
 
-from cosmogrb.sampler.source import SourceFunction
-from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 
-from cosmogrb.utils.meta import GRBMeta, RequiredParameter, SourceParameter
 
-import coloredlogs, logging
-import cosmogrb.utils.logging
-from cosmogrb import cosmogrb_config
 
 
 logger = logging.getLogger("cosmogrb.grb")
@@ -159,13 +159,15 @@ class GRB(object, metaclass=GRBMeta):
         logger.debug(f"created a GRB with name: {self.name}")
         logger.debug(f"created a GRB with ra: {self.ra} and dec: {self.dec}")
         logger.debug(f"created a GRB with redshift: {self.z}")
-        logger.debug(f"created a GRB with duration: {self.duration} and T0: {self.T0}")
+        logger.debug(
+            f"created a GRB with duration: {self.duration} and T0: {self.T0}")
 
         if not serial:
 
             if client is not None:
 
-                futures = client.map(process_lightcurve, self._lightcurves.values())
+                futures = client.map(process_lightcurve,
+                                     self._lightcurves.values())
 
                 results = client.gather(futures)
 
@@ -173,7 +175,8 @@ class GRB(object, metaclass=GRBMeta):
 
                 with worker_client() as client:
 
-                    futures = client.map(process_lightcurve, self._lightcurves.values())
+                    futures = client.map(
+                        process_lightcurve, self._lightcurves.values())
 
                     results = client.gather(futures)
 
@@ -181,7 +184,8 @@ class GRB(object, metaclass=GRBMeta):
 
         else:
 
-            results = [process_lightcurve(lc) for lc in self._lightcurves.values()]
+            results = [process_lightcurve(lc)
+                       for lc in self._lightcurves.values()]
 
         for lc in results:
 
@@ -213,7 +217,8 @@ class GRB(object, metaclass=GRBMeta):
 
             # store the source function parameters
 
-            recursively_save_dict_contents_to_group(f, "source", self._source_params)
+            recursively_save_dict_contents_to_group(
+                f, "source", self._source_params)
 
             # now save everything from the detectors
 
@@ -250,8 +255,10 @@ class GRB(object, metaclass=GRBMeta):
 
                 total_group = lc_group.create_group("total_signal")
 
-                total_group.create_dataset("pha", data=lc.pha, compression="lzf")
-                total_group.create_dataset("times", data=lc.times, compression="lzf")
+                total_group.create_dataset(
+                    "pha", data=lc.pha, compression="lzf")
+                total_group.create_dataset(
+                    "times", data=lc.times, compression="lzf")
 
                 source_group = lc_group.create_group("source_signal")
 

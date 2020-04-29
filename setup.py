@@ -26,3 +26,4 @@ setup(
     package_data={"": extra_files},
     cmdclass=versioneer.get_cmdclass(),
 )
+

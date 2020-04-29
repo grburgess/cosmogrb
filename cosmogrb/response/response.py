@@ -9,6 +9,8 @@ from cosmogrb.utils.response_file import RSP
 @nb.njit(fastmath=True)
 def _digitize(photon_energies, energy_edges, cum_matrix):
 
+    
+    
     pha_channels = np.zeros(len(photon_energies))
     for i in range(len(photon_energies)):
         idx = np.searchsorted(energy_edges, photon_energies[i]) - 1

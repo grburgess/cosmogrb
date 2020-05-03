@@ -1,16 +1,14 @@
-import numpy as np
 import numba as nb
-
+import numpy as np
 from scipy.interpolate import interp1d
 
+from cosmogrb.utils.interpolation import Interp1D
 from cosmogrb.utils.response_file import RSP
 
 
-@nb.njit(fastmath=True)
+@nb.njit(fastmath=True, cache=True)
 def _digitize(photon_energies, energy_edges, cum_matrix):
 
-    
-    
     pha_channels = np.zeros(len(photon_energies))
     for i in range(len(photon_energies)):
         idx = np.searchsorted(energy_edges, photon_energies[i]) - 1
@@ -73,12 +71,12 @@ class Response(object):
 
         ea_curve = self._matrix.sum(axis=1)
 
-        self._effective_area = interp1d(
+        self._effective_area = Interp1D(
             self._energy_mean,
             self._matrix.sum(axis=1),
-            kind="cubic",
-            bounds_error=False,
-            fill_value=0.0,
+            # kind="cubic",
+            # bounds_error=False,
+            # fill_value=0.0,
         )
 
         idx = ea_curve[:-10].argmax()
@@ -113,9 +111,11 @@ class Response(object):
             / self._total_probability_per_bin[non_zero_idx, np.newaxis]
         )
 
-        self._detection_probability = 1 - np.exp(-self._total_probability_per_bin)
+        self._detection_probability = 1 - \
+            np.exp(-self._total_probability_per_bin)
 
-        self._cumulative_maxtrix = np.cumsum(self._normed_probability_matrix, axis=1)
+        self._cumulative_maxtrix = np.cumsum(
+            self._normed_probability_matrix, axis=1)
 
     def digitize(self, photon_energies):
         """
@@ -158,7 +158,7 @@ class Response(object):
     def set_function(self, integral_function=None):
         """
         Set the function to be used for the convolution
-        
+
         :param integral_function: a function f = f(e1,e2) which returns the integral of the model between e1 and e2
         :type integral_function: callable
         """

@@ -1,11 +1,13 @@
 import numba as nb
 import numpy as np
-from scipy.special import gammaincc, gamma
+from scipy.special import gamma, gammaincc
+
+import numba_special
 
 from .source import SourceFunction, evolver
 
 
-@nb.njit(fastmath=True)
+@nb.njit(fastmath=True, cache=True)
 def norris(x, K, t_start, t_rise, t_decay):
     if x > t_start:
         return (
@@ -25,7 +27,7 @@ def norris(x, K, t_start, t_rise, t_decay):
 
 #     return
 
-
+@nb.njit(fastmath=True, cache=True)
 def ggrb_int_cpl(a, Ec, Emin, Emax):
 
     # Gammaincc does not support quantities
@@ -35,6 +37,18 @@ def ggrb_int_cpl(a, Ec, Emin, Emax):
     return -Ec * Ec * (i2 - i1)
 
 
+@nb.njit(fastmath=True, cache=True)
+def _flux(x, alpha, Ec):
+
+    log_xc = np.log(Ec)
+
+    log_v = alpha * (np.log(x) - log_xc) - (x/Ec)
+    out = np.exp(log_v)
+
+    return out
+
+
+@nb.njit(fastmath=True, cache=True)
 def cpl(x, alpha, xp, F, a, b):
 
     if alpha == -2:
@@ -55,11 +69,7 @@ def cpl(x, alpha, xp, F, a, b):
 
     # Cutoff power law
 
-    xec = x / Ec
-
-    flux = np.power(xec, alpha) * np.exp(-xec)
-
-    return norm * flux
+    return norm * _flux(x, alpha, Ec)
 
 
 class CPLSourceFunction(SourceFunction):
@@ -108,7 +118,7 @@ class CPLSourceFunction(SourceFunction):
         )
 
 
-@nb.jit(forceobj=True)
+@nb.njit(fastmath=True)
 def _cpl_evolution(
     energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax
 ):
@@ -130,14 +140,19 @@ def _cpl_evolution(
 
     """
 
-    out = np.zeros((time.shape[0], energy.shape[0]))
+    N = time.shape[0]
+    M = energy.shape[0]
 
-    for i in range(time.shape[0]):
+    out = np.zeros((N, M))
 
-        K = norris(time[i], K=peak_flux, t_start=0.0, t_rise=trise, t_decay=tdecay)
+    for n in range(N):
 
-        ep = ep_start / (1 + time[i] / ep_tau)
+        K = norris(time[n], K=peak_flux, t_start=0.0,
+                   t_rise=trise, t_decay=tdecay)
 
-        out[i, :] = cpl(energy, alpha=alpha, xp=ep, F=K, a=emin, b=emax)
+        ep = ep_start / (1 + time[n] / ep_tau)
+
+        for m in range(M):
+            out[n, m] = cpl(energy[m], alpha=alpha, xp=ep, F=K, a=emin, b=emax)
 
     return out

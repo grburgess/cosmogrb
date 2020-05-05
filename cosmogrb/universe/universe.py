@@ -1,13 +1,13 @@
 import abc
+import logging
 import os
+
 import numpy as np
-import popsynth
 
-from cosmogrb.universe.survey import Survey
-
-
-import coloredlogs, logging
+import coloredlogs
 import cosmogrb.utils.logging
+import popsynth
+from cosmogrb.universe.survey import Survey
 
 logger = logging.getLogger("cosmogrb.universe")
 
@@ -20,7 +20,7 @@ class Universe(object, metaclass=abc.ABCMeta):
     def __init__(self, population_file, grb_base_name="SynthGRB", save_path="."):
         """
 
-        
+
 
         :param population_file: 
         :param grb_base_name: 
@@ -51,7 +51,8 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         # build the GRBs
 
-        self._name = [f"{self._grb_base_name}_{i}" for i in range(self._n_grbs)]
+        self._name = [
+            f"{self._grb_base_name}_{i}" for i in range(self._n_grbs)]
 
         logger.debug(f"The Universe contains {self._n_grbs} GRBs")
 
@@ -98,7 +99,8 @@ class Universe(object, metaclass=abc.ABCMeta):
 
             param_server = self._parameter_server_type(**param_dict)
 
-            file_name = os.path.join(self._save_path, f"{self._name[i]}_store.h5")
+            file_name = os.path.join(
+                self._save_path, f"{self._name[i]}_store.h5")
 
             param_server.set_file_path(file_name)
 
@@ -130,7 +132,8 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         else:
 
-            res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers]
+            res = [self._grb_wrapper(ps, serial=True)
+                   for ps in self._parameter_servers]
 
         self._is_processed = True
 
@@ -150,7 +153,8 @@ class Universe(object, metaclass=abc.ABCMeta):
 
             grb_save_files = [
                 os.path.abspath(
-                    os.path.join(self._save_path, f"{self._grb_base_name}_{i}_store.h5")
+                    os.path.join(self._save_path,
+                                 f"{self._grb_base_name}_{i}_store.h5")
                 )
                 for i in range(self._n_grbs)
             ]

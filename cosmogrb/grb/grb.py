@@ -84,6 +84,8 @@ class GRB(object, metaclass=GRBMeta):
         # about the GRB that can be used later
         self._extra_info = {}
 
+        self._setup()
+        
     @abc.abstractmethod
     def _setup(self):
 
@@ -148,7 +150,7 @@ class GRB(object, metaclass=GRBMeta):
 
     def go(self, client=None, serial=False):
 
-        self._setup()
+        
 
         for key in self._required_names:
             assert self._required_params[key] is not None, f"you have not set {key}"

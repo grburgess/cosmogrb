@@ -1,12 +1,19 @@
-import matplotlib.pyplot as plt
+import functools
 
+
+import matplotlib.pyplot as plt
+import numba as nb
 import numpy as np
 import scipy.integrate as integrate
-import numba as nb
+
+import coloredlogs
+import logging
+import cosmogrb.utils.logging
+from cosmogrb.utils.array_to_cmap import array_to_cmap
 
 from .sampler import Sampler
-from cosmogrb.utils.array_to_cmap import array_to_cmap
-import functools
+
+logger = logging.getLogger("cosmogrb.source")
 
 
 @nb.jit(forceobj=True)
@@ -21,9 +28,12 @@ def source_poisson_generator(tstart, tstop, function, fmax):
 
     arrival_times = [tstart]
 
-    while time < tstop:
+    while True:
 
         time = time - (1.0 / fmax) * np.log(np.random.rand())
+        if time > tstop:
+            break
+
         test = np.random.rand()
 
         p_test = function(time) / fmax
@@ -46,7 +56,7 @@ def evolution_sampler(times, N, function, grid, emin, emax):
         # find the maximum of the function.
         fmax = np.max(function(grid, np.array([t]))[0, :])
 
-        while flag:
+        while True:
 
             test = np.random.uniform(0, fmax)
             x = np.random.uniform(emin, emax)
@@ -54,7 +64,7 @@ def evolution_sampler(times, N, function, grid, emin, emax):
             if test <= function(np.array([x]), np.array([t]))[0, 0]:
 
                 out[i] = x
-                flag = False
+                break
 
     return out
 
@@ -178,7 +188,7 @@ class SourceFunction(object):
 
     def evolution(self, energy, time):
         """
-        
+
         must return a matrix (time.shape, energy.shape)
 
         """
@@ -218,7 +228,7 @@ class SourceFunction(object):
 
     def intergral_function(self, e1, e2, t1, t2):
         """
-        
+
         """
 
         return (

@@ -24,3 +24,4 @@ def test_gbm_background_constructor():
     for det in allowed_dets:
 
         bkg = GBMBackground(-10, 10, average_rate=100.0, detector=det)
+        bkg.sample_times()

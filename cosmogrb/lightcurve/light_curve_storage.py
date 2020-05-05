@@ -3,8 +3,12 @@ from IPython.display import display
 import collections
 import matplotlib.pyplot as plt
 import numpy as np
+import coloredlogs, logging
+import cosmogrb.utils.logging
 
 from cosmogrb.utils.plotting import step_plot, channel_plot
+
+logger = logging.getLogger("cosmogrb.lightcurve_storage")
 
 
 class LightCurveStorage(object):
@@ -252,8 +256,13 @@ class LightCurveStorage(object):
             tmin < tmax
         ), f"the specified tmin and tmax are out of order ({tmin} > {tmax})"
 
+        logger.debug(f"attempting to bin {len(times)} counts")
+
+        
         bins = np.arange(tmin, tmax, dt)
 
+        logger.debug(f"created {len(bins)} spanning {tmin} to {tmax} at a cadence of {dt}")
+        
         idx = np.ones_like(times, dtype=bool)
 
         # filter channels if requested
@@ -322,6 +331,8 @@ class LightCurveStorage(object):
 
         if len(times) <= 1:
 
+            logger.debug("tried to plot a light curve with no photons")
+            
             #            logging.warn('there were no')
             return fig
 
@@ -329,6 +340,8 @@ class LightCurveStorage(object):
             dt=dt, emin=emin, emax=emax, times=times, pha=pha, tmin=tmin, tmax=tmax
         )
 
+        logger.debug(f"there are {len(xbins)} bins")
+        
         step_plot(xbins, rate, ax=ax, **kwargs)
 
         ax.set_xlabel("time")
@@ -352,6 +365,8 @@ class LightCurveStorage(object):
 
         """
 
+        logger.debug("DISPLAY TOTAL LIGHTCURVE")
+        
         fig = self._display_lightcurve(
             times=self._times,
             pha=self._pha,
@@ -382,6 +397,8 @@ class LightCurveStorage(object):
         :rtype: 
 
         """
+        logger.debug("DISPLAY BACKGROUND LIGHTCURVE")
+        
         fig = self._display_lightcurve(
             times=self._times_background,
             pha=self._pha_background,
@@ -412,6 +429,9 @@ class LightCurveStorage(object):
         :rtype: 
 
         """
+
+        logger.debug("DISPLAY SOURCE LIGHTCURVE")
+        
         fig = self._display_lightcurve(
             times=self._times_source,
             pha=self._pha_source,

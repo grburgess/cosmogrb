@@ -1,11 +1,17 @@
-import numpy as np
-from numba import jit, njit
-import h5py
+import logging
 import os
 
+import h5py
+import numpy as np
+from numba import jit, njit
+
+import coloredlogs
+import cosmogrb.utils.logging
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 from .sampler import Sampler
-from cosmogrb.utils.package_utils import get_path_of_data_file
+
+logger = logging.getLogger("cosmogrb.background")
 
 
 @jit(forceobj=True)
@@ -26,9 +32,11 @@ def background_poisson_generator(tstart, tstop, rate):
 
     arrival_times = [tstart]
 
-    while time < tstop:
+    while True:
 
         time = time - (1.0 / fmax) * np.log(np.random.rand())
+        if time > tstop:
+            break
         test = np.random.rand()
 
         p_test = rate / fmax
@@ -117,6 +125,8 @@ class Background(Sampler):
 
         self._background_spectrum_template = background_spectrum_template
 
+        logger.debug(f"background rate is {self._background_rate}")
+
         super(Background, self).__init__(
             tstart=tstart, tstop=tstop,
         )
@@ -135,6 +145,8 @@ class Background(Sampler):
         background_times = background_poisson_generator(
             self._tstart, self._tstop, self._background_rate
         )
+
+        logger.debug(f"created {len(background_times)} background counts")
 
         return background_times
 

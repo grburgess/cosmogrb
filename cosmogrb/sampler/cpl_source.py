@@ -1,8 +1,9 @@
 import numba as nb
 import numpy as np
+import numba_scipy
 from scipy.special import gamma, gammaincc
 
-import numba_special
+
 
 from .source import SourceFunction, evolver
 
@@ -27,25 +28,21 @@ def norris(x, K, t_start, t_rise, t_decay):
 
 #     return
 
-@nb.njit(fastmath=True, cache=True)
-def ggrb_int_cpl(a, Ec, Emin, Emax):
+# @nb.njit(fastmath=True, cache=True)
+# def ggrb_int_cpl(a, Ec, Emin, Emax):
 
-    # Gammaincc does not support quantities
-    i1 = gammaincc(2 + a, Emin / Ec) * gamma(2 + a)
-    i2 = gammaincc(2 + a, Emax / Ec) * gamma(2 + a)
+#     # Gammaincc does not support quantities
+#     i1 = gammaincc(2 + a, Emin / Ec) * gamma(2 + a)
+#     i2 = gammaincc(2 + a, Emax / Ec) * gamma(2 + a)
 
-    return -Ec * Ec * (i2 - i1)
+#     return -Ec * Ec * (i2 - i1)
 
 
-@nb.njit(fastmath=True, cache=True)
-def _flux(x, alpha, Ec):
+# @nb.njit(fastmath=True, cache=True)
+# def _flux(x, alpha, Ec):
 
-    log_xc = np.log(Ec)
 
-    log_v = alpha * (np.log(x) - log_xc) - (x/Ec)
-    out = np.exp(log_v)
-
-    return out
+#     return out
 
 
 @nb.njit(fastmath=True, cache=True)
@@ -61,15 +58,33 @@ def cpl(x, alpha, xp, F, a, b):
 
     # Cutoff power law
 
-    intflux = ggrb_int_cpl(alpha, Ec, a, b)
+    # get the intergrated flux
+    
+    # Gammaincc does not support quantities
+    i1 = gammaincc(2 + alpha, a / Ec) * gamma(2 + alpha)
+    i2 = gammaincc(2 + alpha, b / Ec) * gamma(2 + alpha)
+
+    intflux =  -Ec * Ec * (i2 - i1)
+
+    
+    # intflux = ggrb_int_cpl(alpha, Ec, a, b)
+
+    
+    
 
     erg2keV = 6.24151e8
 
     norm = F * erg2keV / (intflux)
 
+    log_xc = np.log(Ec)
+
+    log_v = alpha * (np.log(x) - log_xc) - (x/Ec)
+    flux = np.exp(log_v)
+
+    
     # Cutoff power law
 
-    return norm * _flux(x, alpha, Ec)
+    return norm * flux
 
 
 class CPLSourceFunction(SourceFunction):
@@ -118,7 +133,7 @@ class CPLSourceFunction(SourceFunction):
         )
 
 
-@nb.njit(fastmath=True)
+@nb.njit(fastmath=True, cache=True)
 def _cpl_evolution(
     energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax
 ):

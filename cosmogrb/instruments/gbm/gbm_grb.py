@@ -1,16 +1,15 @@
-from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve
-from cosmogrb.instruments.gbm.gbm_background import GBMBackground
-from cosmogrb.instruments.gbm.gbm_response import NaIResponse, BGOResponse
-from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
-from cosmogrb.sampler.source import Source
-from cosmogrb.sampler.cpl_source import CPLSourceFunction
-from cosmogrb.sampler.constant_cpl import ConstantCPL
+import logging
 
-
-from cosmogrb.grb import GRB, SourceParameter
-
-import coloredlogs, logging
+import coloredlogs
 import cosmogrb.utils.logging
+from cosmogrb.grb import GRB, SourceParameter
+from cosmogrb.instruments.gbm.gbm_background import GBMBackground
+from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve
+from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
+from cosmogrb.instruments.gbm.gbm_response import BGOResponse, NaIResponse
+from cosmogrb.sampler.constant_cpl import ConstantCPL
+from cosmogrb.sampler.cpl_source import CPLSourceFunction
+from cosmogrb.sampler.source import Source
 
 logger = logging.getLogger("cosmogrb.grb.gbmgrb")
 
@@ -83,15 +82,19 @@ class GBMGRB(GRB):
         for det in self._gbm_detectors:
             if det[0] == "b":
 
-                logger.debug(f"creating BGO reponse for {det} via grb {self.name}")
+                logger.debug(
+                    f"creating BGO reponse for {det} via grb {self.name}")
 
-                rsp = BGOResponse(det, self.ra, self.dec, save=False, name=self.name)
+                rsp = BGOResponse(det, self.ra, self.dec,
+                                  save=False, name=self.name)
 
             else:
 
-                logger.debug(f"creating NAI reponse for {det} via GRB {self.name}")
+                logger.debug(
+                    f"creating NAI reponse for {det} via GRB {self.name}")
 
-                rsp = NaIResponse(det, self.ra, self.dec, save=False, name=self.name)
+                rsp = NaIResponse(det, self.ra, self.dec,
+                                  save=False, name=self.name)
 
             self._add_response(det, rsp)
 

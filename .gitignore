@@ -105,3 +105,8 @@ venv.bak/
 /.DS_Store
 /cosmogrb/.DS_Store
 /dask-worker-space/
+/.dir-locals.el
+/.envrc
+/docs/.DS_Store
+/docs/notebooks/*.rsp
+/docs/notebooks/*.fits

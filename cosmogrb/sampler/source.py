@@ -114,7 +114,7 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
         if index == -1.0:
             index = -1 + 1e-20
 
-        while flag:
+        while True:
 
             # sample from a power law
             u = np.random.uniform(0, 1)
@@ -129,7 +129,8 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
             if y <= function(x, times[i])[0, 0]:
 
                 out[i] = x
-                flag = False
+                break
+
 
     return out
 

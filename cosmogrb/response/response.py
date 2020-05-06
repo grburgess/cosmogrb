@@ -74,9 +74,8 @@ class Response(object):
         self.effective_area = Interp1D(
             self._energy_mean,
             self._matrix.sum(axis=1),
-            # kind="cubic",
-            # bounds_error=False,
-            # fill_value=0.0,
+            self._energy_mean.min(),
+            self._energy_mean.max()
         )
 
         idx = ea_curve[:-10].argmax()

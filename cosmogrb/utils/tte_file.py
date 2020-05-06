@@ -224,8 +224,16 @@ class TTEFile(FITSFile):
 
         # just to find the info
         primary = fits.PrimaryHDU()
+        
         primary.header.set("TSTART", tstart)
         primary.header.set("TSTOP", tstop)
+        primary.header.set("TRIGTIME", trigger_time)
+        primary.header.set("DATE-OBS", "2009-05-19T18:49:32")
+        primary.header.set("DATE-END","2009-05-19T18:49:32" )
+        primary.header.set("DETNAM",det_name )
+        primary.header.set("INSTRUME", "GBM" )
+        primary.header.set("TELESCOP", "GLAST" )
+        
 
         ebounds_extension = EBOUNDS(
             det_name, tstart, tstop, trigger_time, ra, dec, channel, emin, emax

@@ -202,6 +202,8 @@ class GTI(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
+       
+        
         # self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
 
@@ -226,7 +228,13 @@ class TTEFile(FITSFile):
         primary = fits.PrimaryHDU()
         primary.header.set("TSTART", tstart)
         primary.header.set("TSTOP", tstop)
-
+        primary.header.set("TRIGTIME", trigger_time)
+        primary.header.set("DATE-OBS", "2009-05-19T18:49:32")
+        primary.header.set("DATE-END","2009-05-19T18:49:32" )
+        primary.header.set("DETNAM",det_name )
+        primary.header.set("INSTRUME", "GBM" )
+        primary.header.set("TELESCOP", "GLAST" )
+        
         ebounds_extension = EBOUNDS(
             det_name, tstart, tstop, trigger_time, ra, dec, channel, emin, emax
         )

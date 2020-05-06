@@ -7,7 +7,7 @@ from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve
 from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
 from cosmogrb.instruments.gbm.gbm_response import BGOResponse, NaIResponse
-from cosmogrb.sampler.constant_cpl import ConstantCPL
+#from cosmogrb.sampler.constant_cpl import ConstantCPL
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.source import Source
 
@@ -126,14 +126,14 @@ class GBMGRB_CPL(GBMGRB):
         )
 
 
-class GBMGRB_CPL_Constant(GBMGRB):
-    peak_flux = SourceParameter()
-    alpha = SourceParameter()
-    ep = SourceParameter()
+# class GBMGRB_CPL_Constant(GBMGRB):
+#     peak_flux = SourceParameter()
+#     alpha = SourceParameter()
+#     ep = SourceParameter()
 
-    def __init__(self, **kwargs):
+#     def __init__(self, **kwargs):
 
-        # pass up
-        super(GBMGRB_CPL_Constant, self).__init__(
-            source_function_class=ConstantCPL, **kwargs,
-        )
+#         # pass up
+#         super(GBMGRB_CPL_Constant, self).__init__(
+#             source_function_class=ConstantCPL, **kwargs,
+#         )

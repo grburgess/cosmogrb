@@ -51,17 +51,17 @@ class Response(object):
 
         self._construct_probabilities()
 
-    def effective_area(self, energy):
-        """
-        The effective area of the detector
-        in cm^2
+    # def effective_area(self, energy):
+    #     """
+    #     The effective area of the detector
+    #     in cm^2
 
-        :returns: 
-        :rtype: 
+    #     :returns: 
+    #     :rtype: 
 
-        """
+    #     """
 
-        return self._effective_area(energy)
+    #     return self._effective_area(energy)
 
     def _build_effective_area_curve(self):
 
@@ -71,7 +71,7 @@ class Response(object):
 
         ea_curve = self._matrix.sum(axis=1)
 
-        self._effective_area = Interp1D(
+        self.effective_area = Interp1D(
             self._energy_mean,
             self._matrix.sum(axis=1),
             # kind="cubic",

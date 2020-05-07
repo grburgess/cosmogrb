@@ -1,17 +1,16 @@
+import logging
 import os
 import shutil
 from glob import glob
+
 import pytest
-
-from cosmogrb.instruments.gbm import GBMGRB_CPL_Constant, GBMGRB_CPL
-from cosmogrb.utils.package_utils import get_path_of_data_file
-from cosmogrb.instruments.gbm.gbm_universe import GBM_CPL_Universe
-from cosmogrb.instruments.gbm.gbm_trigger import GBMTrigger
-
 from dask.distributed import Client, LocalCluster
 
-
 from cosmogrb import cosmogrb_config
+from cosmogrb.instruments.gbm import GBMGRB_CPL
+from cosmogrb.instruments.gbm.gbm_trigger import GBMTrigger
+from cosmogrb.instruments.gbm.gbm_universe import GBM_CPL_Universe
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 cosmogrb_config["gbm"]["orbit"]["use_random_time"] = False
 
@@ -19,7 +18,8 @@ cosmogrb_config["gbm"]["orbit"]["use_random_time"] = False
 @pytest.fixture(scope="session")
 def client():
 
-    cluster = LocalCluster(n_workers=4)
+    cluster = LocalCluster(n_workers=4, nanny=False,
+                            threads_per_worker=1)
     client = Client(cluster)
 
     yield client
@@ -79,22 +79,22 @@ def weak_grb(client):
     os.remove("weak_grb.h5")
 
 
-@pytest.fixture(scope="session")
-def grb_constant(client):
-    grb = GBMGRB_CPL_Constant(
-        ra=312.0,
-        dec=-62.0,
-        z=1.0,
-        peak_flux=5e-9,
-        alpha=-0.66,
-        ep=500.0,
-        duration=1.0,
-        T0=0.1,
-    )
+# @pytest.fixture(scope="session")
+# def grb_constant(client):
+#     grb = GBMGRB_CPL_Constant(
+#         ra=312.0,
+#         dec=-62.0,
+#         z=1.0,
+#         peak_flux=5e-9,
+#         alpha=-0.66,
+#         ep=500.0,
+#         duration=1.0,
+#         T0=0.1,
+#     )
 
-    grb.go(client=client)
+#     grb.go(client=client)
 
-    return grb
+#     return grb
 
 
 @pytest.fixture(scope="session")

@@ -17,6 +17,7 @@ class jitpickler:
         self.__dict__['obj'] = jitobj
         self.__dict__['__module__'] = jitobj.__module__
         self.__dict__['__doc__'] = jitobj.__doc__
+        self.__dict__['evaluate'] = jitobj.evaluate
 
     def __getstate__(self):
         obj = self.__dict__['obj']
@@ -56,8 +57,8 @@ def jitpickle(cls):
 
 
 
-spec = [("x", nb.float32[:] ),
-        ("y", nb.float32[:] ),
+spec = [("x", nb.float64[:] ),
+        ("y", nb.float64[:] ),
         ("xmin", nb.float32 ),
         ("xmax", nb.float32 ),
 

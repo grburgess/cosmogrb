@@ -1,20 +1,20 @@
-import logging
-import os
-
 import h5py
 import numpy as np
-from numba import jit, njit
+import numba as nb
 
+import logging
 import coloredlogs
 import cosmogrb.utils.logging
-from cosmogrb.utils.package_utils import get_path_of_data_file
+
+from cosmogrb.utils.numba_array import VectorFloat64
+
 
 from .sampler import Sampler
 
 logger = logging.getLogger("cosmogrb.background")
 
 
-@jit(forceobj=True)
+@nb.njit(fastmath=True)
 def background_poisson_generator(tstart, tstop, rate):
     """
 
@@ -30,7 +30,8 @@ def background_poisson_generator(tstart, tstop, rate):
 
     time = tstart
 
-    arrival_times = [tstart]
+    arrival_times = VectorFloat64(0)
+    arrival_times.append(time)
 
     while True:
 
@@ -44,7 +45,7 @@ def background_poisson_generator(tstart, tstop, rate):
         if test <= p_test:
             arrival_times.append(time)
 
-    return np.array(arrival_times)
+    return arrival_times.arr
 
 
 class BackgroundSpectrumTemplate(object):

@@ -10,8 +10,8 @@ python:
 # os:
 #   - linux
 #   - osx
-env:
-  NUMBA_DISABLE_JIT=1
+#env:
+#  NUMBA_DISABLE_JIT=1
 
 before_install:
   - sudo apt-get install gfortran

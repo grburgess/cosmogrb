@@ -10,7 +10,7 @@ from IPython.display import display
 import coloredlogs
 import cosmogrb.utils.logging
 from cosmogrb import cosmogrb_config
-from cosmogrb.sampler.source import SourceFunction
+from cosmogrb.sampler.source_function import SourceFunction
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 from cosmogrb.utils.meta import GRBMeta, RequiredParameter
 from dask.distributed import worker_client

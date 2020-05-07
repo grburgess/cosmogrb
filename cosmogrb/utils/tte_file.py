@@ -202,6 +202,8 @@ class GTI(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
+       
+        
         # self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
 

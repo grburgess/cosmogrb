@@ -1,12 +1,13 @@
 import numba as nb
 import numpy as np
-from scipy.interpolate import interp1d
+from numba.core import types
+from numba.typed import Dict
 
 from cosmogrb.utils.interpolation import Interp1D
 from cosmogrb.utils.response_file import RSP
 
 
-@nb.njit(fastmath=True, cache=True)
+@nb.njit(fastmath=True, cache=False)
 def _digitize(photon_energies, energy_edges, cum_matrix):
 
     pha_channels = np.zeros(len(photon_energies))
@@ -34,14 +35,16 @@ class Response(object):
         channel_starts_at=0,
     ):
 
-        self._matrix = matrix
-        self._energy_edges = energy_edges
-        self._energy_width = np.diff(energy_edges)
-        self._energy_mean = (energy_edges[:-1] + energy_edges[1:]) / 2.0
+        self._matrix = matrix.astype('f8')
+        self._energy_edges = energy_edges.astype('f8')
+        self._energy_width = np.diff(self._energy_edges)
+        self._energy_mean = (
+            self._energy_edges[:-1] + self._energy_edges[1:]) / 2.0
 
-        self._channel_edges = channel_edges
-        self._channel_width = np.diff(channel_edges)
-        self._channel_mean = (channel_edges[:-1] + channel_edges[1:]) / 2.0
+        self._channel_edges = channel_edges.astype('f8')
+        self._channel_width = np.diff(self._channel_edges)
+        self._channel_mean = (
+            self._channel_edges[:-1] + self._channel_edges[1:]) / 2.0
 
         self._channels = np.arange(len(self._channel_width), dtype=np.int64)
 
@@ -51,17 +54,17 @@ class Response(object):
 
         self._construct_probabilities()
 
-    def effective_area(self, energy):
-        """
-        The effective area of the detector
-        in cm^2
+    # def effective_area(self, energy):
+    #     """
+    #     The effective area of the detector
+    #     in cm^2
 
-        :returns: 
-        :rtype: 
+    #     :returns:
+    #     :rtype:
 
-        """
+    #     """
 
-        return self._effective_area(energy)
+    #     return self._effective_area(energy)
 
     def _build_effective_area_curve(self):
 
@@ -71,14 +74,35 @@ class Response(object):
 
         ea_curve = self._matrix.sum(axis=1)
 
-        self._effective_area = Interp1D(
+        # we just a numba jitclass to interpolate
+        # we want this passable to functions locally
+
+        self.effective_area = Interp1D(
             self._energy_mean,
-            self._matrix.sum(axis=1),
-            # kind="cubic",
-            # bounds_error=False,
-            # fill_value=0.0,
+            ea_curve,
+            self._energy_mean.min(),
+            self._energy_mean.max()
         )
 
+        # However is very difficult to serialize
+        # this shit. So, some functions may just want
+        # to do the interpolation themselves. We pack
+        # these variables up for that
+
+        # self.effective_area_dict = Dict.empty(
+        #     key_type=types.unicode_type,
+        #     value_type=types.float64[:]
+        # )
+
+        # The typed-dict can be used from the interpreter.
+
+        # NOTE: you can't pickle these fucking things..
+        # self.effective_area_dict["mean_energy"] = self._energy_mean
+        # self.effective_area_dict["ea_curve"] = ea_curve
+
+
+        self.effective_area_packed = np.vstack((self._energy_mean, ea_curve))
+        
         idx = ea_curve[:-10].argmax()
         self._max_energy = self._energy_mean[idx]
 

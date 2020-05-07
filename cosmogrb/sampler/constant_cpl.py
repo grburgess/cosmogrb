@@ -1,44 +1,11 @@
 import numba as nb
 import numpy as np
-from scipy.special import gammaincc, gamma
 
-from .source import SourceFunction, evolver
+from cosmogrb.sampler.cpl_constant_functions import (
+    cpl_evolution, energy_integrated_evolution, sample_energy, sample_events,
+    time_integrated_evolution)
 
-
-def ggrb_int_cpl(a, Ec, Emin, Emax):
-
-    # Gammaincc does not support quantities
-    i1 = gammaincc(2 + a, Emin / Ec) * gamma(2 + a)
-    i2 = gammaincc(2 + a, Emax / Ec) * gamma(2 + a)
-
-    return -Ec * Ec * (i2 - i1)
-
-
-def cpl(x, alpha, xp, F, a, b):
-
-    if alpha == -2:
-
-        Ec = xp / 0.0001  # TRICK: avoid a=-2
-
-    else:
-
-        Ec = xp / (2 + alpha)
-
-    # Cutoff power law
-
-    intflux = ggrb_int_cpl(alpha, Ec, a, b)
-
-    erg2keV = 6.24151e8
-
-    norm = F * erg2keV / (intflux)
-
-    # Cutoff power law
-
-    xec = x / Ec
-
-    flux = np.power(xec, alpha) * np.exp(-xec)
-
-    return norm * flux
+from .source_function import SourceFunction
 
 
 class ConstantCPL(SourceFunction):
@@ -57,43 +24,76 @@ class ConstantCPL(SourceFunction):
             emin=emin, emax=emax, index=alpha, response=response
         )
 
-    @evolver
     def evolution(self, energy, time):
 
         # call the numba function for speed
-        return _cpl_evolution(
+        return cpl_evolution(
             energy=np.atleast_1d(energy),
             time=np.atleast_1d(time),
             peak_flux=self._peak_flux,
             ep=self._ep,
             alpha=self._alpha,
+
             emin=self._emin,
             emax=self._emax,
         )
 
+    def time_integrated_spectrum(self, energy, tmin, tmax):
 
-@nb.jit(forceobj=True)
-def _cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax):
-    """
-    evolution of the CPL function with time
+        return time_integrated_evolution(
+            energy=np.atleast_1d(energy),
+            tmin=tmin,
+            tmax=tmax,
+            peak_flux=self._peak_flux,
+            ep=self._ep,
+            alpha=self._alpha,
 
-    :param energy: 
-    :param time: 
-    :param peak_flux: 
-    :param ep_start: 
-    :param emin: 
-    :param emax: 
-    :returns: 
-    :rtype: 
+            emin=self._emin,
+            emax=self._emax,
+            effective_area=self._response.effective_area_packed
+        )
 
-    """
+    def energy_integrated_evolution(self, time):
 
-    out = np.zeros((time.shape[0], energy.shape[0]))
+        ea = self._response.effective_area_packed
 
-    for i in range(time.shape[0]):
+        return energy_integrated_evolution(
+            time=np.atleast_1d(time),
+            peak_flux=self._peak_flux,
+            ep=self._ep,
+            alpha=self._alpha,
 
-        K = peak_flux
+            emin=self._emin,
+            emax=self._emax,
+            effective_area=ea
+        )
 
-        out[i, :] = cpl(energy, alpha=alpha, xp=ep, F=K, a=emin, b=emax)
+    def sample_events(self, tstart, tstop, fmax):
 
-    return out
+        return sample_events(
+            tstart=tstart,
+            tstop=tstop,
+            peak_flux=self._peak_flux,
+            ep=self._ep,
+            alpha=self._alpha,
+
+            emin=self._emin,
+            emax=self._emax,
+            effective_area=self._response.effective_area_packed,
+            fmax=fmax,
+        )
+
+    def sample_energy(self, times):
+
+        ea = self._response.effective_area_packed
+
+        return sample_energy(
+            times=times,
+            peak_flux=self._peak_flux,
+            ep=self._ep,
+            alpha=self._alpha,
+
+            emin=self._emin,
+            emax=self._emax,
+            effective_area=ea
+        )

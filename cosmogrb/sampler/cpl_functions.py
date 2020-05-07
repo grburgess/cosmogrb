@@ -127,6 +127,8 @@ def sample_events(
     arrival_times = VectorFloat64(0)
     arrival_times.append(time)
 
+    vtime = np.empty(1)
+    
     while True:
 
         time = time - (1.0 / fmax) * np.log(np.random.rand())
@@ -135,14 +137,13 @@ def sample_events(
 
         test = np.random.rand()
 
-        vtime = VectorFloat64(0)
-        vtime.append(time)
+        vtime[0] = time
 
         p_test = (
             energy_integrated_evolution(
                 emin,
                 emax,
-                vtime.arr,
+                vtime,
                 peak_flux,
                 ep_start,
                 ep_tau,

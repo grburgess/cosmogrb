@@ -1,6 +1,9 @@
 import abc
 
-import numpy as np
+import matplotlib.pyplot as plt
+
+
+from cosmogrb.utils.array_to_cmap import array_to_cmap
 
 
 class SourceFunction(object, metaclass=abc.ABCMeta):
@@ -58,12 +61,11 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         """
 
         pass
-        
+
         # ene_grid = np.logspace(np.log10(self._emin), np.log10(self._emax), 11)
 
         # return integrate.simps(self.evolution(ene_grid, time)[0, :], ene_grid)
 
-        
     @abc.abstractclassmethod
     def time_integrated_spectrum(self, energy, t1, t2):
         """
@@ -77,7 +79,7 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         """
 
         pass
-        
+
         # time_grid = np.linspace(t1, t2, 50)
 
         # return integrate.simps(self.evolution(energy, time_grid)[:, 0], time_grid)
@@ -91,7 +93,6 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
     def sample_energy(self, times):
 
         pass
-        
 
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """

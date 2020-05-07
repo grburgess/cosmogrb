@@ -1,15 +1,14 @@
 import functools
-import logging
 
-import coloredlogs
-import matplotlib.pyplot as plt
-import numba as nb
+
+
+
 import numpy as np
 import scipy.integrate as integrate
 
+import logging
+import coloredlogs
 import cosmogrb.utils.logging
-from cosmogrb.utils.array_to_cmap import array_to_cmap
-from cosmogrb.utils.numba_array import VectorFloat64
 
 from .sampler import Sampler
 
@@ -18,26 +17,6 @@ logger = logging.getLogger("cosmogrb.source")
 
 # @nb.jit(forceobj=True)
 
-
-def evolver(method):
-    """
-    makes sure that evolution functions are correct and that 
-    they take into account the response
-    """
-
-    @functools.wraps(method)
-    def wrapper(instance, energy, time):
-
-        time = np.atleast_1d(time)
-        energy = np.atleast_1d(energy)
-
-        out = method(instance, energy, time)
-
-        assert out.shape == (len(time), len(energy))
-
-        return out * instance._response.effective_area(energy)
-
-    return wrapper
 
 
 class Source(Sampler):

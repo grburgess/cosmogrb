@@ -64,10 +64,10 @@ def test_read_gbm_save(grb):
         os.remove(f)
 
 
-# def test_constant_grb(grb_constant):
+def test_constant_grb(grb_constant):
 
-#     file_name = "_cpl_const.h5"
+    file_name = "_cpl_const.h5"
 
-#     grb_constant.save(file_name)
+    grb_constant.save(file_name)
 
-#     os.remove(file_name)
+    os.remove(file_name)

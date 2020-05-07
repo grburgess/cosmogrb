@@ -1,12 +1,15 @@
+import collections
+import logging
+
+import coloredlogs
+import matplotlib.pyplot as plt
+import numba as nb
+import numpy as np
 import pandas as pd
 from IPython.display import display
-import collections
-import matplotlib.pyplot as plt
-import numpy as np
-import coloredlogs, logging
-import cosmogrb.utils.logging
 
-from cosmogrb.utils.plotting import step_plot, channel_plot
+import cosmogrb.utils.logging
+from cosmogrb.utils.plotting import channel_plot, step_plot
 
 logger = logging.getLogger("cosmogrb.lightcurve_storage")
 
@@ -197,23 +200,7 @@ class LightCurveStorage(object):
 
         """
 
-        if original_idx is None:
-
-            original_idx = np.ones_like(times, dtype=bool)
-
-        if tmin is not None:
-
-            idx_lo = times > tmin
-
-            original_idx = np.logical_and(original_idx, idx_lo)
-
-        if tmax is not None:
-
-            idx_hi = times < tmax
-
-            original_idx = np.logical_and(original_idx, idx_hi)
-
-        return original_idx
+        return select_time(tmin, tmax, times, original_idx)
 
     def get_idx_over_interval(self, tmin, tmax):
         """
@@ -231,7 +218,7 @@ class LightCurveStorage(object):
 
     def _bin_lightcurve(self, dt, emin, emax, times, pha, tmin=None, tmax=None):
         """
-        
+
         bin the light curve for plotting
 
         :param dt: 
@@ -258,11 +245,11 @@ class LightCurveStorage(object):
 
         logger.debug(f"attempting to bin {len(times)} counts")
 
-        
         bins = np.arange(tmin, tmax, dt)
 
-        logger.debug(f"created {len(bins)} spanning {tmin} to {tmax} at a cadence of {dt}")
-        
+        logger.debug(
+            f"created {len(bins)} spanning {tmin} to {tmax} at a cadence of {dt}")
+
         idx = np.ones_like(times, dtype=bool)
 
         # filter channels if requested
@@ -332,7 +319,7 @@ class LightCurveStorage(object):
         if len(times) <= 1:
 
             logger.debug("tried to plot a light curve with no photons")
-            
+
             #            logging.warn('there were no')
             return fig
 
@@ -341,7 +328,7 @@ class LightCurveStorage(object):
         )
 
         logger.debug(f"there are {len(xbins)} bins")
-        
+
         step_plot(xbins, rate, ax=ax, **kwargs)
 
         ax.set_xlabel("time")
@@ -366,7 +353,7 @@ class LightCurveStorage(object):
         """
 
         logger.debug("DISPLAY TOTAL LIGHTCURVE")
-        
+
         fig = self._display_lightcurve(
             times=self._times,
             pha=self._pha,
@@ -398,7 +385,7 @@ class LightCurveStorage(object):
 
         """
         logger.debug("DISPLAY BACKGROUND LIGHTCURVE")
-        
+
         fig = self._display_lightcurve(
             times=self._times_background,
             pha=self._pha_background,
@@ -431,7 +418,7 @@ class LightCurveStorage(object):
         """
 
         logger.debug("DISPLAY SOURCE LIGHTCURVE")
-        
+
         fig = self._display_lightcurve(
             times=self._times_source,
             pha=self._pha_source,
@@ -610,3 +597,29 @@ class LightCurveStorage(object):
                     std_dict[k] = v
 
         return pd.Series(data=std_dict, index=std_dict.keys())
+
+
+@nb.njit(fastmath=True, nogil=True, cache=True)
+def select_time(tmin, tmax, times, original_idx=None):
+
+    N = times.shape[0]
+
+    if original_idx is None:
+
+        original_idx = np.zeros(N, dtype=nb.bool_)
+
+    if tmin is None:
+        tmin = times[0]
+
+    m = np.searchsorted(times, tmin)
+
+    for n in range(m, N):
+
+        if (tmax is not None) and (times[n] < tmax):
+
+            original_idx[n] = 1
+
+        else:
+            break
+
+    return original_idx

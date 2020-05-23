@@ -610,7 +610,8 @@ def select_time(tmin, tmax, times, original_idx=None):
 
     if tmin is None:
         tmin = times[0]
-
+    print(tmin)
+        
     m = np.searchsorted(times, tmin)
 
     for n in range(m, N):

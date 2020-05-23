@@ -17,16 +17,21 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         """
 
         self._index = index
-        self._emin = emin
-        self._emax = emax
 
         # set a response if needed
         self._response = response
         self._source = None
 
+        self._emin = response.emin
+        self._emax = response.emax
+
+        
     def set_response(self, response):
 
         self._response = response
+        self._emin = response.emin
+        self._emax = response.emax
+
 
     @property
     def response(self):

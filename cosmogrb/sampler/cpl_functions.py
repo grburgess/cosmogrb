@@ -70,6 +70,10 @@ def cpl_evolution(
     N = time.shape[0]
     M = energy.shape[0]
 
+
+    a = 10. # keV
+    b = 1.e4
+    
     out = np.empty((N, M))
 
     for n in range(N):
@@ -79,7 +83,7 @@ def cpl_evolution(
         ep = ep_start / (1 + time[n] / ep_tau)
 
         for m in range(M):
-            out[n, m] = cpl(energy[m], alpha=alpha, xp=ep, F=K, a=emin, b=emax)
+            out[n, m] = cpl(energy[m], alpha=alpha, xp=ep, F=K, a=a, b=b)
 
     return out
 

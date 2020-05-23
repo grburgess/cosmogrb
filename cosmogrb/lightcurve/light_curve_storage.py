@@ -490,6 +490,12 @@ class LightCurveStorage(object):
         emin = self._ebounds[:-1]
         emax = self._ebounds[1:]
 
+        if tmin is None:
+            tmin = self._tstart
+
+        if tmax is None:
+            tmax = self._tstop
+        
         counts = self._bin_spectrum(tmin, tmax, times, pha)
 
         # plot counts and background for the currently selected data
@@ -610,7 +616,8 @@ def select_time(tmin, tmax, times, original_idx=None):
 
     if tmin is None:
         tmin = times[0]
-
+    
+        
     m = np.searchsorted(times, tmin)
 
     for n in range(m, N):

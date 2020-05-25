@@ -148,7 +148,7 @@ class GBM_CPL_Constant_Wrapper(GRBWrapper):
         )
 
     def _grb_type(self, **kwargs):
-        return GBMGRB_CPL(**kwargs)
+        return GBMGRB_CPL_Constant(**kwargs)
 
 
 class GBM_CPL_Constant_ParameterServer(ParameterServer):

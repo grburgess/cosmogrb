@@ -41,6 +41,9 @@ class Response(object):
         self._energy_mean = (
             self._energy_edges[:-1] + self._energy_edges[1:]) / 2.0
 
+        self._emin = self._energy_edges[0]
+        self._emax = self._energy_edges[-1]
+        
         self._channel_edges = channel_edges.astype('f8')
         self._channel_width = np.diff(self._channel_edges)
         self._channel_mean = (
@@ -163,6 +166,15 @@ class Response(object):
     def energy_edges(self):
         return self._energy_edges
 
+
+    @property
+    def emin(self):
+        return self._emin
+
+    @property
+    def emax(self):
+        return self._emax
+    
     @property
     def channel_edges(self):
         return self._channel_edges

@@ -31,6 +31,9 @@ def cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax):
     N = time.shape[0]
     M = energy.shape[0]
 
+    a = 10
+    b = 1e4
+    
     out = np.empty((N, M))
 
     for n in range(N):

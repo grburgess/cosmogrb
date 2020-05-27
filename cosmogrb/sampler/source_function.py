@@ -41,7 +41,8 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
     def set_source(self, source):
 
         self._source = source
-
+        self._z = source.z
+        
     @abc.abstractmethod
     def evolution(self, energy, time):
         """

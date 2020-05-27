@@ -46,6 +46,10 @@ class Source(Sampler):
 
             self._fmax = self._get_energy_integrated_max()
 
+    @property
+    def z(self):
+        return self._z
+            
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function
 
@@ -109,12 +113,12 @@ class Source(Sampler):
 
         return np.max(fluxes)
 
-    def _propagate_photons(self, photons):
-        """
-        scale photon energy due to cosmological redshift
-        """
+    # def _propagate_photons(self, photons):
+    #     """
+    #     scale photon energy due to cosmological redshift
+    #     """
 
-        return photons / (1 + self._z)
+    #     return photons# / (1 + self._z)
 
     def sample_times(self):
         """
@@ -134,9 +138,9 @@ class Source(Sampler):
 
         np.random.seed()
 
-        source_frame_photons = self._source_function.sample_energy(times)
+        photons = self._source_function.sample_energy(times)
 
-        return self._propagate_photons(source_frame_photons)
+        return 
 
     def sample_channel(self, photons, response):
 

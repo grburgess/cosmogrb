@@ -36,6 +36,7 @@ class ConstantCPL(SourceFunction):
 
             emin=self._emin,
             emax=self._emax,
+            z=self._z
         )
 
     def time_integrated_spectrum(self, energy, tmin, tmax):
@@ -50,7 +51,8 @@ class ConstantCPL(SourceFunction):
 
             emin=self._emin,
             emax=self._emax,
-            effective_area=self._response.effective_area_packed
+            effective_area=self._response.effective_area_packed,
+            z=self._z
         )
 
     def energy_integrated_evolution(self, time):
@@ -62,10 +64,10 @@ class ConstantCPL(SourceFunction):
             peak_flux=self._peak_flux,
             ep=self._ep,
             alpha=self._alpha,
-
             emin=self._emin,
             emax=self._emax,
-            effective_area=ea
+            effective_area=ea,
+            z=self._z
         )
 
     def sample_events(self, tstart, tstop, fmax):
@@ -81,6 +83,7 @@ class ConstantCPL(SourceFunction):
             emax=self._emax,
             effective_area=self._response.effective_area_packed,
             fmax=fmax,
+            z=self._z
         )
 
     def sample_energy(self, times):
@@ -95,5 +98,6 @@ class ConstantCPL(SourceFunction):
 
             emin=self._emin,
             emax=self._emax,
-            effective_area=ea
+            effective_area=ea,
+            z=self._z
         )

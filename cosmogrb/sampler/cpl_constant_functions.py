@@ -9,7 +9,7 @@ from cosmogrb.utils.numba_array import VectorFloat64
 
 
 @nb.njit(fastmath=True, cache=False)
-def cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax):
+def cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax, z):
     """
     evolution of the CPL function with time
 
@@ -38,24 +38,24 @@ def cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax):
 
     for n in range(N):
         for m in range(M):
-            out[n, m] = cpl(energy[m], alpha=alpha, xp=ep, F=peak_flux, a=a, b=b)
+            out[n, m] = cpl(energy[m] * (1+z), alpha=alpha, xp=ep, F=peak_flux, a=a, b=b)
 
     return out
 
 
 @nb.njit(fastmath=True, cache=False)
 def folded_cpl_evolution(
-    energy, time, peak_flux, ep, alpha, emin, emax, response,
+        energy, time, peak_flux, ep, alpha, emin, emax, response, z,
 ):
 
     return interp(response[0], response[1], energy) * cpl_evolution(
-        energy, time, peak_flux, ep, alpha, emin, emax
+        energy, time, peak_flux, ep, alpha, emin, emax, z
     )
 
 
 @nb.njit(fastmath=True, cache=False)
 def sample_events(
-    emin, emax, tstart, tstop, peak_flux, ep, alpha, effective_area, fmax,
+        emin, emax, tstart, tstop, peak_flux, ep, alpha, effective_area, fmax, z,
 ):
 
     time = tstart
@@ -76,7 +76,7 @@ def sample_events(
 
         p_test = (
             energy_integrated_evolution(
-                emin, emax, vtime, peak_flux, ep, alpha, effective_area,
+                emin, emax, vtime, peak_flux, ep, alpha, effective_area, z
             )
             / fmax
         )
@@ -88,7 +88,7 @@ def sample_events(
 
 
 @nb.njit(fastmath=True, cache=False)
-def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area):
+def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area, z):
 
     N = times.shape[0]
 
@@ -97,7 +97,7 @@ def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area):
     out = np.zeros(N)
 
     tmps = folded_cpl_evolution(
-        egrid, times, peak_flux, ep, alpha, emin, emax, effective_area,
+        egrid, times, peak_flux, ep, alpha, emin, emax, effective_area,z
     )
 
     x = np.empty(1)
@@ -143,7 +143,7 @@ def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area):
                 y
                 <= (
                     folded_cpl_evolution(
-                        x, vtime, peak_flux, ep, alpha, emin, emax, effective_area
+                        x, vtime, peak_flux, ep, alpha, emin, emax, effective_area,z
                     )
                 )[0, 0]
             ):
@@ -155,7 +155,7 @@ def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area):
 
 
 @nb.njit(fastmath=True, cache=False)
-def energy_integrated_evolution(emin, emax, time, peak_flux, ep, alpha, effective_area):
+def energy_integrated_evolution(emin, emax, time, peak_flux, ep, alpha, effective_area, z):
 
     n_energies = 75
 
@@ -169,7 +169,7 @@ def energy_integrated_evolution(emin, emax, time, peak_flux, ep, alpha, effectiv
         alpha,
         emin,
         emax,
-        effective_area,
+        effective_area,z
     )
 
     return np.trapz(energy_slice[0, :], energy_grid)
@@ -186,6 +186,7 @@ def time_integrated_evolution(
     emin,
     emax,
     effective_area,
+    z
 ):
 
     n_times = 50
@@ -193,7 +194,7 @@ def time_integrated_evolution(
     time_grid = np.linspace(tmin, tmax, n_times)
 
     time_slice = folded_cpl_evolution(
-        energy, time_grid, peak_flux, ep, alpha, emin, emax, effective_area
+        energy, time_grid, peak_flux, ep, alpha, emin, emax, effective_area, z
     )
 
     return np.trapz(time_slice[:, 0], time_grid)

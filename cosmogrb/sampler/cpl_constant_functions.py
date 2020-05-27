@@ -38,7 +38,7 @@ def cpl_evolution(energy, time, peak_flux, ep, alpha, emin, emax):
 
     for n in range(N):
         for m in range(M):
-            out[n, m] = cpl(energy[m], alpha=alpha, xp=ep, F=peak_flux, a=emin, b=emax)
+            out[n, m] = cpl(energy[m], alpha=alpha, xp=ep, F=peak_flux, a=a, b=b)
 
     return out
 

@@ -140,7 +140,7 @@ class Source(Sampler):
 
         photons = self._source_function.sample_energy(times)
 
-        return 
+        return photons
 
     def sample_channel(self, photons, response):
 

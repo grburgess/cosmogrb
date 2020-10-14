@@ -23,7 +23,6 @@ def cpl(x, alpha, xp, F, a, b):
 
     # get the intergrated flux
 
-    # Gammaincc does not support quantities
     i1 = gammaincc(2 + alpha, a / Ec) * gamma(2 + alpha)
     i2 = gammaincc(2 + alpha, b / Ec) * gamma(2 + alpha)
 

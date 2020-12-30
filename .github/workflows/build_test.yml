@@ -17,9 +17,14 @@ jobs:
       uses: fkirc/skip-duplicate-actions@master
       with:
         github_token: ${{ github.token }}
+        concurrent_skipping: 'never'
+        skip_after_successful_duplicate: 'true'
+        paths_ignore: '["**/README.md", "**/docs/**"]'
+        do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
 
   
-  build:
+  test:
+    name: Run Tests
     needs: skip_duplicate
     if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
     runs-on: ${{ matrix.os }}

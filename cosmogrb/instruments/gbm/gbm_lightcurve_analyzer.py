@@ -179,7 +179,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         return dead_time
 
 
-@nb.njit(fastmath=True, parallel=False, cache=True, nogil=True)
+@nb.njit(fastmath=True, parallel=False, cache=False, nogil=True)
 def _sum_dead_time(dead_time_per_event, N):
 
     dead_time = 0.0

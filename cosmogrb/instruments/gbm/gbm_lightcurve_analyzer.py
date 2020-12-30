@@ -190,7 +190,7 @@ def _sum_dead_time(dead_time_per_event, N):
     return dead_time
 
 
-@nb.njit(fastmath=True, cache=True)
+@nb.njit(fastmath=True, cache=False)
 def _run_trigger(
     n_bins_background,
     n_bins_source,
@@ -236,7 +236,7 @@ def _run_trigger(
             return False, 0
 
 
-@nb.njit(fastmath=True, cache=True)
+@nb.njit(fastmath=True, cache=False)
 def _calculate_dead_time_per_event(times, pha):
     """
     Computes an array of deadtimes following the perscription of Meegan et al. (2009).
@@ -255,7 +255,7 @@ def _calculate_dead_time_per_event(times, pha):
     return dead_time_per_event
 
 
-@nb.njit(fastmath=True, cache=True)
+@nb.njit(fastmath=True, cache=False)
 def dumb_significance(Non, Noff, on_exposure, off_exposure):
 
     alpha = on_exposure / off_exposure

@@ -110,3 +110,4 @@ venv.bak/
 /docs/.DS_Store
 /docs/notebooks/*.rsp
 /docs/notebooks/*.fits
+/docs/notebooks/*.ipynb

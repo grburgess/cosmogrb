@@ -26,12 +26,34 @@ import sys
 import os
 
 
+from pathlib import Path
 
 
 
 sys.path.insert(0, os.path.abspath('../'))
 
 
+DOCS = Path(__file__).parent
+
+# -- Generate API documentation ------------------------------------------------
+def run_apidoc(app):
+    """Generage API documentation"""
+    import better_apidoc
+
+    better_apidoc.APP = app
+    better_apidoc.main(
+        [
+            "better-apidoc",
+            # "-t",
+            # str(docs / "_templates"),
+            "--force",
+            "--no-toc",
+            "--separate",
+            "-o",
+            str(DOCS / "API"),
+            str(DOCS / ".." / "cosmogrb" ),
+        ]
+    )
 
 
 # -- General configuration ---------------------------------------------------
@@ -48,10 +70,26 @@ extensions = ['nbsphinx',
               'sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinx_gallery.load_style',
+              'rtds_action'
 ]
 
 napoleon_google_docstring = True
 napoleon_use_param = False
+
+
+# The name of your GitHub repository
+rtds_action_github_repo = "grburgess/cosmogrb"
+
+
+# The path where the artifact should be extracted
+# Note: this is relative to the conf.py file!
+rtds_action_path = "notebooks"
+
+# The "prefix" used in the `upload-artifact` step of the action
+rtds_action_artifact_prefix = "notebooks-for-"
+
+# A GitHub personal access token is required, more info below
+rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
 
 html_show_sourcelink = False
@@ -188,3 +226,7 @@ texinfo_documents = [
 ]
 
 
+
+# -----------------------------------------------------------------------------
+def setup(app):
+    app.connect("builder-inited", run_apidoc)

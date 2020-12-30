@@ -8,9 +8,9 @@ jupyter:
       format_version: '1.2'
       jupytext_version: 1.8.0
   kernelspec:
-    display_name: cosmogrb
+    display_name: Python3
     language: python
-    name: cosmogrb
+    name: Python3
 ---
 
 # Introduction

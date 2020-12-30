@@ -8,9 +8,9 @@ jupyter:
       format_version: '1.2'
       jupytext_version: 1.8.0
   kernelspec:
-    display_name: cosmogrb
+    display_name: Python3
     language: python
-    name: cosmogrb
+    name: Python3
 ---
 
 # Simulating a Universe of GRBs
@@ -23,10 +23,9 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 %matplotlib notebook
-from jupyterthemes import jtplot
-
-jtplot.style(context='notebook', fscale=1, grid=False)
-plt.style.use('mike') 
+#from jupyterthemes import jtplot
+#jtplot.style(context='notebook', fscale=1, grid=False)
+#plt.style.use('mike') 
 ```
 
 ## Create a population of GRBs

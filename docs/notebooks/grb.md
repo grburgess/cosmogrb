@@ -8,18 +8,18 @@ jupyter:
       format_version: '1.2'
       jupytext_version: 1.8.0
   kernelspec:
-    display_name: cosmogrb
+    display_name: Python3
     language: python
-    name: cosmogrb
+    name: Python3
 ---
 
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
 %matplotlib inline
-from jupyterthemes import jtplot
-plt.style.use('mike') 
-jtplot.style(context='talk', fscale=1, grid=False)
+#from jupyterthemes import jtplot
+#plt.style.use('mike') 
+#jtplot.style(context='talk', fscale=1, grid=False)
 
 import cosmogrb
 ```

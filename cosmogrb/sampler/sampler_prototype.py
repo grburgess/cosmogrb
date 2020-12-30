@@ -1,6 +1,6 @@
 import numba as nb
 import numpy as np
-
+from cosmogrb.utils.numba_array import VectorFloat64
 
 @nb.njit()
 def source_poisson_generator(tstart, tstop, function, fmax):

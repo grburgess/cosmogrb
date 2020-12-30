@@ -5,8 +5,8 @@ from functools import update_wrapper, wraps
 import numba as nb
 import numpy as np
 from interpolation import interp
-from numba import float64, int32, jitclass
-
+from numba import float64, int32
+from numba.experimental import jitclass
 
 class jitpickler:
     '''

@@ -605,7 +605,7 @@ class LightCurveStorage(object):
         return pd.Series(data=std_dict, index=std_dict.keys())
 
 
-@nb.njit(fastmath=True, nogil=True, cache=True)
+@nb.njit(fastmath=True, nogil=True, cache=False)
 def select_time(tmin, tmax, times, original_idx=None):
 
     N = times.shape[0]

@@ -198,7 +198,9 @@ class GBMResponse(Response):
 
     @property
     def T0(self):
-        return gbm_orbit.met(time)
+
+        # THIS MIGHT BE WRONG!
+        return gbm_orbit.met(self._time)
 
     @property
     def detector_name(self):

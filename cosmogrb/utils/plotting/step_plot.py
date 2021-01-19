@@ -58,7 +58,9 @@ def step_plot(xbins, y, ax, fill=False, fill_min=0, **kwargs):
                     new_x.append(x2)
                     new_y.append(y)
 
-        new_y.append(new_y[-1])
+        if len(new_y) > 0:
+
+            new_y.append(new_y[-1])
 
         new_y = np.ma.masked_where(~np.isfinite(new_y), new_y)
 

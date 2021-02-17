@@ -149,7 +149,7 @@ class LightCurve(object):
         self._times = self._times[idx]
         self._pha = self._pha[idx]
 
-        logging.debug(
+        logger.debug(
             f"{self._grb_name} {self._name} has {len(self._pha)} counts after combining "
         )
 

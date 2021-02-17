@@ -1,10 +1,10 @@
+
 import numpy as np
-import coloredlogs, logging
-import cosmogrb.utils.logging
 
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
+from cosmogrb.utils.logging import setup_logger
 
-logger = logging.getLogger("cosmogrb.lightcurve")
+logger = setup_logger(__name__)
 
 
 class LightCurve(object):
@@ -95,7 +95,8 @@ class LightCurve(object):
 
         pha = self._source.sample_channel(photons, self._response)
 
-        logger.debug(f"{self._grb_name} {self._name}: now has digitized its events")
+        logger.debug(
+            f"{self._grb_name} {self._name}: now has digitized its events")
 
         self._photons = photons
         self._initial_source_light_curves = times
@@ -140,7 +141,8 @@ class LightCurve(object):
             self._initial_bkg_light_curves, self._initial_source_light_curves
         )
 
-        self._pha = np.append(self._initial_bkg_channels, self._initial_source_channels)
+        self._pha = np.append(self._initial_bkg_channels,
+                              self._initial_source_channels)
 
         idx = self._times.argsort()
 
@@ -227,7 +229,8 @@ class LightCurve(object):
 
         """
 
-        self._source.display_energy_integrated_light_curve(time=time, ax=ax, **kwargs)
+        self._source.display_energy_integrated_light_curve(
+            time=time, ax=ax, **kwargs)
 
     @property
     def time_adjustment(self):

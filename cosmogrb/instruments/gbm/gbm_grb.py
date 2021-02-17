@@ -1,7 +1,5 @@
 import logging
 
-import coloredlogs
-import cosmogrb.utils.logging
 from cosmogrb.grb import GRB, SourceParameter
 from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 from cosmogrb.instruments.gbm.gbm_lightcurve import GBMLightCurve
@@ -10,8 +8,9 @@ from cosmogrb.instruments.gbm.gbm_response import BGOResponse, NaIResponse
 from cosmogrb.sampler.constant_cpl import ConstantCPL
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
 from cosmogrb.sampler.source import Source
+from cosmogrb.utils.logging import setup_logger
 
-logger = logging.getLogger("cosmogrb.grb.gbmgrb")
+logger = setup_logger(__name__)
 
 
 class GBMGRB(GRB):

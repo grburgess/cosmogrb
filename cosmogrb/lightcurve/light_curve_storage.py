@@ -1,17 +1,16 @@
 import collections
 import logging
 
-import coloredlogs
 import matplotlib.pyplot as plt
 import numba as nb
 import numpy as np
 import pandas as pd
 from IPython.display import display
 
-import cosmogrb.utils.logging
+from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.plotting import channel_plot, step_plot
 
-logger = logging.getLogger("cosmogrb.lightcurve_storage")
+logger = setup_logger(__name__)
 
 
 class LightCurveStorage(object):
@@ -495,7 +494,7 @@ class LightCurveStorage(object):
 
         if tmax is None:
             tmax = self._tstop
-        
+
         counts = self._bin_spectrum(tmin, tmax, times, pha)
 
         # plot counts and background for the currently selected data
@@ -616,8 +615,7 @@ def select_time(tmin, tmax, times, original_idx=None):
 
     if tmin is None:
         tmin = times[0]
-    
-        
+
     m = np.searchsorted(times, tmin)
 
     for n in range(m, N):

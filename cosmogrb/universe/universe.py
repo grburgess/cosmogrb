@@ -4,12 +4,13 @@ import os
 
 import numpy as np
 
-import coloredlogs
-import cosmogrb.utils.logging
+from cosmogrb.utils.logging import setup_logger
+
 import popsynth
 from cosmogrb.universe.survey import Survey
 
-logger = logging.getLogger("cosmogrb.universe")
+
+logger = setup_logger(__name__)
 
 
 class Universe(object, metaclass=abc.ABCMeta):

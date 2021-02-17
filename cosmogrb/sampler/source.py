@@ -1,22 +1,15 @@
 import functools
 
-
-
-
 import numpy as np
 import scipy.integrate as integrate
 
-import logging
-import coloredlogs
-import cosmogrb.utils.logging
+from cosmogrb.utils.logging import setup_logger
 
 from .sampler import Sampler
 
-logger = logging.getLogger("cosmogrb.source")
-
+logger = setup_logger(__name__)
 
 # @nb.jit(forceobj=True)
-
 
 
 class Source(Sampler):
@@ -49,7 +42,7 @@ class Source(Sampler):
     @property
     def z(self):
         return self._z
-            
+
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function
 

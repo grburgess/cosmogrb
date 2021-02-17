@@ -2,12 +2,10 @@ import numba as nb
 import numpy as np
 
 from cosmogrb.lightcurve.lightcurve import LightCurve
+from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.tte_file import TTEFile
 
-import coloredlogs, logging
-import cosmogrb.utils.logging
-
-logger = logging.getLogger("cosmogrb.lightcurve.gbm_lighcurve")
+logger = setup_logger(__name__)
 
 
 class GBMLightCurve(LightCurve):
@@ -42,7 +40,8 @@ class GBMLightCurve(LightCurve):
     def _filter_deadtime(self):
 
         n_intervals = len(self._times)
-        time, pha, selection = _gbm_dead_time(self._times, self._pha, n_intervals)
+        time, pha, selection = _gbm_dead_time(
+            self._times, self._pha, n_intervals)
 
         selection = np.array(selection, dtype=bool)
 

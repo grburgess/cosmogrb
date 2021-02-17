@@ -1,12 +1,11 @@
 import numpy as np
 
-from cosmogrb.instruments.gbm.gbm_lightcurve_analyzer import GBMLightCurveAnalyzer
 from cosmogrb.grb.grb_detector import GRBDetector
+from cosmogrb.instruments.gbm.gbm_lightcurve_analyzer import \
+    GBMLightCurveAnalyzer
+from cosmogrb.utils.logging import setup_logger
 
-import coloredlogs, logging
-import cosmogrb.utils.logging
-
-logger = logging.getLogger("cosmogrb.gbm.trigger")
+logger = setup_logger(__name__)
 
 
 class GBMTrigger(GRBDetector):
@@ -62,7 +61,8 @@ class GBMTrigger(GRBDetector):
 
                 angular_distances.append(lc.extra_info["angle"])
 
-                logger.debug(f"adding {name} with and {lc.extra_info['angle']}")
+                logger.debug(
+                    f"adding {name} with and {lc.extra_info['angle']}")
 
         angular_distances = np.array(angular_distances)
         lc_names = np.array(lc_names)
@@ -154,7 +154,8 @@ class GBMTrigger(GRBDetector):
 
                 self._triggered_detectors.append(self._lc_names[n_tested])
                 self._triggered_times.append(lc_analyzer.detection_time)
-                self._triggered_time_scales.append(lc_analyzer.detection_time_scale)
+                self._triggered_time_scales.append(
+                    lc_analyzer.detection_time_scale)
 
                 n_triggered += 1
 

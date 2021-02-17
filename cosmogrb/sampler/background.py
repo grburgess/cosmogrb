@@ -1,17 +1,13 @@
 import h5py
-import numpy as np
 import numba as nb
+import numpy as np
 
-import logging
-import coloredlogs
-import cosmogrb.utils.logging
-
+from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.numba_array import VectorFloat64
-
 
 from .sampler import Sampler
 
-logger = logging.getLogger("cosmogrb.background")
+logger = setup_logger(__name__)
 
 
 @nb.njit(fastmath=True)

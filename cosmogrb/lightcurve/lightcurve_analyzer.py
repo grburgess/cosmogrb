@@ -1,10 +1,9 @@
 import abc
+
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
+from cosmogrb.utils.logging import setup_logger
 
-import coloredlogs, logging
-import cosmogrb.utils.logging
-
-logger = logging.getLogger("cosmogrb.lightcurve.lc_analyzer")
+logger = setup_logger(__name__)
 
 
 class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
@@ -28,7 +27,8 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
 
         else:
 
-            logger.debug(f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
+            logger.debug(
+                f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
 
     @abc.abstractmethod
     def _compute_detection(self):

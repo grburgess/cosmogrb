@@ -1,16 +1,14 @@
 import os
+
 from gbm_drm_gen import DRMGenTTE
-from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
-from cosmogrb.utils.package_utils import get_path_of_data_file
-import coloredlogs, logging
-import cosmogrb.utils.logging
 
 # TODO: add occult to config
 from cosmogrb import cosmogrb_config
+from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
+from cosmogrb.utils.logging import setup_logger
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
-
-logger = logging.getLogger("cosmogrb.gbm.response_gen")
-
+logger = setup_logger(__name__)
 _det_translate = dict(
     n0="NAI_00",
     n1="NAI_01",
@@ -57,7 +55,8 @@ class ResponseGenerator(object, metaclass=SingletonMeta):
                 det_name=_det_translate[k],
                 time=1,
                 T0=T0,
-                cspecfile=get_path_of_data_file(os.path.join("gbm_cspec", f"{k}.pha")),
+                cspecfile=get_path_of_data_file(
+                    os.path.join("gbm_cspec", f"{k}.pha")),
                 poshist=get_path_of_data_file("posthist.fit"),
                 mat_type=2,
                 occult=False,

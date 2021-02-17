@@ -5,23 +5,19 @@ import logging
 
 import h5py
 import pandas as pd
+from dask.distributed import worker_client
 from IPython.display import display
 
-import coloredlogs
-import cosmogrb.utils.logging
 from cosmogrb import cosmogrb_config
 from cosmogrb.sampler.source_function import SourceFunction
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
+from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.meta import GRBMeta, RequiredParameter
-from dask.distributed import worker_client
 
 # from cosmogrb import cosmogrb_client
 
 
-
-
-
-logger = logging.getLogger("cosmogrb.grb")
+logger = setup_logger(__name__)
 
 
 class GRB(object, metaclass=GRBMeta):
@@ -85,7 +81,7 @@ class GRB(object, metaclass=GRBMeta):
         self._extra_info = {}
 
         self._setup()
-        
+
     @abc.abstractmethod
     def _setup(self):
 
@@ -149,8 +145,6 @@ class GRB(object, metaclass=GRBMeta):
         )
 
     def go(self, client=None, serial=False):
-
-        
 
         for key in self._required_names:
             assert self._required_params[key] is not None, f"you have not set {key}"

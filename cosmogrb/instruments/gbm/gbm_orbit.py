@@ -1,14 +1,11 @@
 import numpy as np
 from gbmgeometry import PositionInterpolator
-from cosmogrb.utils.package_utils import get_path_of_data_file
 
 from cosmogrb import cosmogrb_config
+from cosmogrb.utils.logging import setup_logger
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
-import coloredlogs, logging
-import cosmogrb.utils.logging
-
-
-logger = logging.getLogger("cosmogrb.gbm.gbm_orbit")
+logger = setup_logger(__name__)
 
 
 class GBMOrbit(object):
@@ -17,7 +14,8 @@ class GBMOrbit(object):
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
 
-            logger.debug("i'm creating a new instance! should only happen once")
+            logger.debug(
+                "i'm creating a new instance! should only happen once")
 
             cls._instance = super(GBMOrbit, cls).__new__(cls)
             # put any initialization here.

@@ -41,9 +41,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -U pip
-        pip install -e git://github.com/person142/numba-scipy.git@pin-scipy#egg=numba-scipy
-
-        pip install --upgrade flake8 numpy coverage pytest pytest-cov cython codecov
+        pip install --upgrade flake8 numpy astropy scipy coverage pytest pytest-cov cython codecov
         python setup.py install
     - name: Lint with flake8
       run: |

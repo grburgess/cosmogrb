@@ -30,7 +30,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8]
+        python-version: [3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -54,7 +54,7 @@ jobs:
       run: |
         python -m pytest -vv --cov=cosmogrb/ --cov-report=xml
       env:
-        NUMBA_DISABLE_JIT: 1
+        NUMBA_DISABLE_JIT: 0
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:

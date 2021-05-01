@@ -36,7 +36,7 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         self._is_processed = False
 
-        self._population = popsynth.Population.from_file(population_file)
+        self._population = popsynth.Population.from_file(population_file).to_sub_population()
 
         self._grb_base_name = grb_base_name
 

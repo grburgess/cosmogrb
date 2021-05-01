@@ -24,7 +24,7 @@ class GBM_CPL_Universe(Universe):
         self._local_parameters["ep_start"] = np.power(
             10, self._population.log_ep)
         self._local_parameters["alpha"] = self._population.alpha
-        self._local_parameters["peak_flux"] = self._population.latent_fluxes
+        self._local_parameters["peak_flux"] = self._population.fluxes_latent
         self._local_parameters["trise"] = self._population.trise
         self._local_parameters["tdecay"] = self._population.tdecay
         self._local_parameters["ep_tau"] = self._population.tau
@@ -130,7 +130,7 @@ class GBM_CPL_Constant_Universe(Universe):
 
         self._local_parameters["ep"] = np.power(10, self._population.log_ep)
         self._local_parameters["alpha"] = self._population.alpha
-        self._local_parameters["peak_flux"] = self._population.latent_fluxes
+        self._local_parameters["peak_flux"] = self._population.fluxes_latent
 
     def _parameter_server_type(self, **kwargs):
 

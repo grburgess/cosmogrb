@@ -1,6 +1,7 @@
 import numba as nb
 import numba_scipy
 import numpy as np
+
 from interpolation import interp
 from scipy.special import gamma, gammaincc
 
@@ -13,30 +14,30 @@ def cpl(x, alpha, xp, F, a, b):
 
     if alpha == -2:
 
-        Ec = xp / 0.0001  # TRICK: avoid a=-2
+        ec = xp / 0.0001  # TRICK: avoid a=-2
 
     else:
 
-        Ec = xp / (2 + alpha)
+        ec = xp / (2 + alpha)
 
     # Cutoff power law
 
     # get the intergrated flux
 
-    i1 = gammaincc(2 + alpha, a / Ec) * gamma(2 + alpha)
-    i2 = gammaincc(2 + alpha, b / Ec) * gamma(2 + alpha)
+    i1 = gammaincc(2. + alpha, a / ec) * gamma(2. + alpha)
+    i2 = gammaincc(2. + alpha, b / ec) * gamma(2. + alpha)
 
-    intflux = -Ec * Ec * (i2 - i1)
+    intflux = -ec * ec * (i2 - i1)
 
-    # intflux = ggrb_int_cpl(alpha, Ec, a, b)
+    # intflux = ggrb_int_cpl(alpha, ec, a, b)
 
     erg2keV = 6.24151e8
 
     norm = F * erg2keV / (intflux)
 
-    log_xc = np.log(Ec)
+    log_xc = np.log(ec)
 
-    log_v = alpha * (np.log(x) - log_xc) - (x / Ec)
+    log_v = alpha * (np.log(x) - log_xc) - (x / ec)
     flux = np.exp(log_v)
 
     # Cutoff power law

@@ -103,6 +103,11 @@ class Response(object):
         # self.effective_area_dict["mean_energy"] = self._energy_mean
         # self.effective_area_dict["ea_curve"] = ea_curve
 
+        # we do not want zeros
+        
+        idx = ea_curve>0.
+        
+        ea_curve[~idx] = 1.e-99
 
         self.effective_area_packed = np.vstack((self._energy_mean, ea_curve))
         

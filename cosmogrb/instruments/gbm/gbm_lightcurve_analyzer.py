@@ -18,10 +18,10 @@ _trigger_energy_ranges = {
 }
 
 _trigger_time_scales = {
-    "a": [_base_timescale * (2 ** i) for i in range(10)],
-    "b": [_base_timescale * (2 ** i) for i in range(10)],
-    "c": [_base_timescale * (2 ** i) for i in range(9)],
-    "d": [_base_timescale * (2 ** i) for i in range(4)],
+    "a": [_base_timescale * (2 ** i) for i in range(10)][::-1],
+    "b": [_base_timescale * (2 ** i) for i in range(10)][::-1],
+    "c": [_base_timescale * (2 ** i) for i in range(9)][::-1],
+    "d": [_base_timescale * (2 ** i) for i in range(4)][::-1],
 }
 
 
@@ -224,7 +224,7 @@ def _run_trigger(
             )
 
             # print(f"sig: {sig}")
-            if (sig >= threshold) and (starts[src_idx] > 0.0):
+            if (sig >= threshold) and (starts[src_idx] > -1.0):
 
                 return True, starts[src_idx]
 

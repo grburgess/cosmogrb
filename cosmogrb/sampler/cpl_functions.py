@@ -1,7 +1,6 @@
 import numba as nb
 import numba_scipy
 import numpy as np
-
 from interpolation import interp
 from scipy.special import gamma, gammaincc
 
@@ -24,8 +23,8 @@ def cpl(x, alpha, xp, F, a, b):
 
     # get the intergrated flux
 
-    i1 = gammaincc(2. + alpha, a / ec) * gamma(2. + alpha)
-    i2 = gammaincc(2. + alpha, b / ec) * gamma(2. + alpha)
+    i1 = gammaincc(2.0 + alpha, a / ec) * gamma(2.0 + alpha)
+    i2 = gammaincc(2.0 + alpha, b / ec) * gamma(2.0 + alpha)
 
     intflux = -ec * ec * (i2 - i1)
 
@@ -47,7 +46,7 @@ def cpl(x, alpha, xp, F, a, b):
 
 @nb.njit(fastmath=True, cache=False)
 def cpl_evolution(
-        energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, z
+    energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, z
 ):
     """
     evolution of the CPL function with time
@@ -70,21 +69,19 @@ def cpl_evolution(
     N = time.shape[0]
     M = energy.shape[0]
 
-    a = 10. * (1+z)  # keV
-    b = 1.e4 * (1+z)
+    a = 10.0 * (1 + z)  # keV
+    b = 1.0e4 * (1 + z)
 
     out = np.empty((N, M))
 
     for n in range(N):
 
-        K = norris(time[n], K=peak_flux, t_start=0.0,
-                   t_rise=trise, t_decay=tdecay)
+        K = norris(time[n], K=peak_flux, t_start=0.0, t_rise=trise, t_decay=tdecay)
 
         ep = ep_start / (1 + time[n] / ep_tau)
 
         for m in range(M):
-            out[n, m] = cpl(energy[m] * (1+z), alpha=alpha,
-                            xp=ep, F=K, a=a, b=b)
+            out[n, m] = cpl(energy[m] * (1 + z), alpha=alpha, xp=ep, F=K, a=a, b=b)
 
     return out
 
@@ -102,12 +99,10 @@ def folded_cpl_evolution(
     emin,
     emax,
     response,
-        z
+    z,
 ):
 
-    return interp(
-        response[0], response[1], energy
-    ) * cpl_evolution(
+    return interp(response[0], response[1], energy) * cpl_evolution(
         energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, z
     )
 
@@ -126,7 +121,7 @@ def sample_events(
     tdecay,
     effective_area,
     fmax,
-    z
+    z,
 ):
 
     time = tstart
@@ -158,7 +153,7 @@ def sample_events(
                 trise,
                 tdecay,
                 effective_area,
-                z
+                z,
             )
             / fmax
         )
@@ -171,12 +166,22 @@ def sample_events(
 
 @nb.njit(fastmath=True, cache=False)
 def sample_energy(
-        times, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, effective_area, z
+    times,
+    peak_flux,
+    ep_start,
+    ep_tau,
+    alpha,
+    trise,
+    tdecay,
+    emin,
+    emax,
+    effective_area,
+    z,
 ):
 
     N = times.shape[0]
 
-    egrid = np.power(10, np.linspace(np.log10(emin), np.log10(emax), 500))
+    egrid = np.power(10.0, np.linspace(np.log10(emin), np.log10(emax), 500))
 
     out = np.zeros(N)
 
@@ -192,7 +197,7 @@ def sample_energy(
         emin,
         emax,
         effective_area,
-        z
+        z,
     )
 
     x = np.empty(1)
@@ -228,32 +233,28 @@ def sample_energy(
                 1.0 / (alpha + 1.0),
             )
 
-            y = np.random.uniform(0, 1) * C * \
-                np.power(x[0] / egrid[idx], alpha)
+            y = np.random.uniform(0, 1) * C * np.power(x[0] / egrid[idx], alpha)
 
             # here the vtime is just to trick this into being an array
 
             vtime[0] = times[i]
 
-            if (
-                y
-                <= (
-                    folded_cpl_evolution(
-                        x,
-                        vtime,
-                        peak_flux,
-                        ep_start,
-                        ep_tau,
-                        alpha,
-                        trise,
-                        tdecay,
-                        emin,
-                        emax,
-                        effective_area,
-                        z
-                    )
-                )[0, 0]
-            ):
+            if y <= (
+                folded_cpl_evolution(
+                    x,
+                    vtime,
+                    peak_flux,
+                    ep_start,
+                    ep_tau,
+                    alpha,
+                    trise,
+                    tdecay,
+                    emin,
+                    emax,
+                    effective_area,
+                    z,
+                )
+            )[0, 0]:
 
                 out[i] = x[0]
                 break
@@ -263,13 +264,22 @@ def sample_energy(
 
 @nb.njit(fastmath=True, cache=False)
 def energy_integrated_evolution(
-        emin, emax, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, effective_area, z
+    emin,
+    emax,
+    time,
+    peak_flux,
+    ep_start,
+    ep_tau,
+    alpha,
+    trise,
+    tdecay,
+    effective_area,
+    z,
 ):
 
     n_energies = 75
 
-    energy_grid = np.power(10, np.linspace(
-        np.log10(emin), np.log10(emax), n_energies))
+    energy_grid = np.power(10.0, np.linspace(np.log10(emin), np.log10(emax), n_energies))
 
     energy_slice = folded_cpl_evolution(
         energy_grid,
@@ -283,7 +293,7 @@ def energy_integrated_evolution(
         emin,
         emax,
         effective_area,
-        z
+        z,
     )
 
     return np.trapz(energy_slice[0, :], energy_grid)
@@ -302,8 +312,8 @@ def time_integrated_evolution(
     tdecay,
     emin,
     emax,
-        effective_area,
-        z
+    effective_area,
+    z,
 ):
 
     n_times = 50
@@ -311,7 +321,17 @@ def time_integrated_evolution(
     time_grid = np.linspace(tmin, tmax, n_times)
 
     time_slice = folded_cpl_evolution(
-        energy, time_grid, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, effective_area,
+        energy,
+        time_grid,
+        peak_flux,
+        ep_start,
+        ep_tau,
+        alpha,
+        trise,
+        tdecay,
+        emin,
+        emax,
+        effective_area,
     )
 
     return np.trapz(time_slice[:, 0], time_grid)

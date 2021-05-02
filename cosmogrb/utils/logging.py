@@ -6,8 +6,8 @@ from pathlib import Path
 
 from .sys_tools import colored, supports_color
 
-def get_path_of_log_dir() -> Path:
 
+def get_path_of_log_dir() -> Path:
 
     user_log = Path().home() / ".cosmogrb" / "log"
 
@@ -32,42 +32,39 @@ def get_path_of_log_file(log_file: str) -> Path:
 
 
 DEFAULT_LOG_COLORS = {
-    'DEBUG': 'blue',
-    'INFO': 'green',
-    'WARNING': 'purple',
-    'ERROR': 'red',
-    'CRITICAL': 'bold_red',
-
+    "DEBUG": "blue",
+    "INFO": "green",
+    "WARNING": "purple",
+    "ERROR": "red",
+    "CRITICAL": "bold_red",
 }
 
 
 def esc(*x):
     """Create escaped code from format code"""
-    return '\033[' + ';'.join(x) + 'm'
+    return "\033[" + ";".join(x) + "m"
 
 
 # The following coloured log logic is from
 # https://github.com/borntyping/python-colorlog
 # I dropped some features and removed the Python 2.7 compatibility
 
-ESCAPE_CODES = {'reset': esc('0'), 'bold': esc('01'), 'thin': esc('02')}
+ESCAPE_CODES = {"reset": esc("0"), "bold": esc("01"), "thin": esc("02")}
 
-COLORS = ['black', 'red', 'green', 'yellow', 'blue', 'purple', 'cyan', 'white']
+COLORS = ["black", "red", "green", "yellow", "blue", "purple", "cyan", "white"]
 
 PREFIXES = [
     # Foreground without prefix
-    ('3', ''),
-    ('01;3', 'bold_'),
-    ('02;3', 'thin_'),
-
+    ("3", ""),
+    ("01;3", "bold_"),
+    ("02;3", "thin_"),
     # Foreground with fg_ prefix
-    ('3', 'fg_'),
-    ('01;3', 'fg_bold_'),
-    ('02;3', 'fg_thin_'),
-
+    ("3", "fg_"),
+    ("01;3", "fg_bold_"),
+    ("02;3", "fg_thin_"),
     # Background with bg_ prefix - bold/light works differently
-    ('4', 'bg_'),
-    ('10', 'bg_bold_'),
+    ("4", "bg_"),
+    ("10", "bg_bold_"),
 ]
 
 for _prefix, _prefix_name in PREFIXES:
@@ -77,7 +74,7 @@ for _prefix, _prefix_name in PREFIXES:
 
 def parse_colors(sequence):
     """Return escape codes from a color sequence."""
-    return ''.join(ESCAPE_CODES[n] for n in sequence.split(',') if n)
+    return "".join(ESCAPE_CODES[n] for n in sequence.split(",") if n)
 
 
 class ColoredRecord:
@@ -104,13 +101,15 @@ class ColoredFormatter(logging.Formatter):
     Based on https://github.com/borntyping/python-colorlog
     """
 
-    def __init__(self,
-                 fmt,
-                 datefmt=None,
-                 style='%',
-                 log_colors=None,
-                 reset=True,
-                 secondary_log_colors=None):
+    def __init__(
+        self,
+        fmt,
+        datefmt=None,
+        style="%",
+        log_colors=None,
+        reset=True,
+        secondary_log_colors=None,
+    ):
         """
         Set the format and colors the ColouredFormatter will use.
         The ``fmt``, ``datefmt`` and ``style`` args are passed on to the
@@ -133,8 +132,7 @@ class ColoredFormatter(logging.Formatter):
         """
         super(ColoredFormatter, self).__init__(fmt, datefmt, style)
 
-        self.log_colors = (log_colors
-                           if log_colors is not None else DEFAULT_LOG_COLORS)
+        self.log_colors = log_colors if log_colors is not None else DEFAULT_LOG_COLORS
         self.secondary_log_colors = secondary_log_colors
         self.reset = reset
 
@@ -146,12 +144,12 @@ class ColoredFormatter(logging.Formatter):
         if self.secondary_log_colors:
             for name, log_colors in self.secondary_log_colors.items():
                 color = escape_codes(log_colors, record.levelname)
-                setattr(record, name + '_log_color', color)
+                setattr(record, name + "_log_color", color)
 
         message = super(ColoredFormatter, self).format(record)
 
-        if self.reset and not message.endswith(ESCAPE_CODES['reset']):
-            message += ESCAPE_CODES['reset']
+        if self.reset and not message.endswith(ESCAPE_CODES["reset"]):
+            message += ESCAPE_CODES["reset"]
 
         return message
 
@@ -163,16 +161,15 @@ def escape_codes(log_colors, level_name):
 
 def hash_coloured(text):
     """Return a ANSI coloured text based on its hash"""
-    ansi_code = int(sha256(text.encode('utf-8')).hexdigest(), 16) % 230
+    ansi_code = int(sha256(text.encode("utf-8")).hexdigest(), 16) % 230
     return colored(text, ansi_code=ansi_code)
 
 
 def hash_coloured_escapes(text):
     """Return the ANSI hash colour prefix and suffix for a given text"""
-    ansi_code = int(sha256(text.encode('utf-8')).hexdigest(), 16) % 230
-    prefix, suffix = colored('SPLIT', ansi_code=ansi_code).split('SPLIT')
+    ansi_code = int(sha256(text.encode("utf-8")).hexdigest(), 16) % 230
+    prefix, suffix = colored("SPLIT", ansi_code=ansi_code).split("SPLIT")
     return prefix, suffix
-
 
 
 class LogFilter(object):
@@ -217,17 +214,16 @@ cosmogrb_usr_log_handler.setFormatter(_usr_formatter)
 name = "test"
 if supports_color():
     prefix_1, suffix = hash_coloured_escapes(name)
-    prefix_2, _ = hash_coloured_escapes(name + 'salt')
+    prefix_2, _ = hash_coloured_escapes(name + "salt")
 else:
-    prefix_1, prefix_2, suffix = ('', '', '')
+    prefix_1, prefix_2, suffix = ("", "", "")
 
-date_str = ''
+date_str = ""
 
-_console_formatter = ColoredFormatter('[%(log_color)s%(levelname)-8s%(reset)s]'
-                                      '%(log_color)s %(message)s',
-                                      datefmt="%H:%M:%S",
-
-                                      )
+_console_formatter = ColoredFormatter(
+    "[%(log_color)s%(levelname)-8s%(reset)s]" "%(log_color)s %(message)s",
+    datefmt="%H:%M:%S",
+)
 
 cosmogrb_console_log_handler = logging.StreamHandler(sys.stdout)
 cosmogrb_console_log_handler.setFormatter(_console_formatter)

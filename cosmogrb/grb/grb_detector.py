@@ -5,7 +5,7 @@ from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 
 
 class GRBDetector(object, metaclass=abc.ABCMeta):
-    def __init__(self, grb_save_file_name, instrument):
+    def __init__(self, grb_save_file_name: str, instrument):
         """
 
         A generic class for assessing if a GRB was detected or not

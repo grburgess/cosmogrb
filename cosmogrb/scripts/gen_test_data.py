@@ -67,7 +67,7 @@ pop_gen = popsynth.populations.ParetoSFRPopulation(
 )
 
 
-ep = LogNormalAuxSampler(name="log_ep", observed=False)
+ep = LogNormalAuxSampler(name="ep", observed=False)
 ep.mu = 500
 ep.tau = 0.5
 

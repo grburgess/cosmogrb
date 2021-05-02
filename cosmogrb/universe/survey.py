@@ -244,6 +244,8 @@ class Survey(collections.OrderedDict):
 
             # now fill the dict
 
+        logger.debug("assigning detected grbs to survey")
+        
         for name, grb_save_file, grb_detector_file in zip(
             self._names, self._grb_save_files, self._grb_detector_files
         ):

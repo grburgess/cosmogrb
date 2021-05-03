@@ -8,6 +8,12 @@ from popsynth.aux_samplers.trunc_normal_aux_sampler import \
 
 from cosmogrb.instruments.gbm import GBMGRB_CPL, GBM_CPL_Universe
 
+
+from cosmogrb.utils.logging import update_logging_level
+
+update_logging_level("DEBUG")
+
+
 # this is a script that is used to generate the test data for the
 # pytest. it is meant to be run from the top of the pacakge
 
@@ -97,7 +103,7 @@ trise.tau = 1.0
 
 t90 = Log10NormalAuxSampler(name="t90", observed=False)
 
-t90.mu = 2
+t90.mu = 1
 t90.tau = 0.25
 
 

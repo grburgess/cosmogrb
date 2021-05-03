@@ -1,46 +1,54 @@
 import abc
 import logging
 import os
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
-
-from cosmogrb.utils.logging import setup_logger
-
 import popsynth
-from cosmogrb.universe.survey import Survey
+from numpy.typing import ArrayLike
 
+from cosmogrb.universe.survey import Survey
+from cosmogrb.utils.logging import setup_logger
 
 logger = setup_logger(__name__)
 
 
 class Universe(object, metaclass=abc.ABCMeta):
-    """Documentation for Universe
+    """Documentation for Universe"""
 
-    """
+    def __init__(
+        self,
+        population_file: str,
+        grb_base_name: str = "SynthGRB",
+        save_path: str = ".",
+    ):
 
-    def __init__(self, population_file, grb_base_name="SynthGRB", save_path="."):
         """
 
+        The generic universe object
 
-
-        :param population_file: 
+        :param population_file: a popsynth population file name
+        :type population_file: str
         :param grb_base_name: 
+        :type grb_base_name: str
         :param save_path: 
+        :type save_path: str
         :returns: 
-        :rtype: 
 
         """
-
         # we want to store the absolute path so that we can find it later
-        self._population_file = os.path.abspath(population_file)
+        self._population_file: Path = Path(population_file).absolute()
 
-        self._is_processed = False
+        self._is_processed: bool = False
 
-        self._population = popsynth.Population.from_file(population_file).to_sub_population()
+        self._population: popsynth.Population = popsynth.Population.from_file(
+            population_file
+        ).to_sub_population()
 
-        self._grb_base_name = grb_base_name
+        self._grb_base_name: str = grb_base_name
 
-        self._save_path = save_path
+        self._save_path: Path = Path(save_path)
 
         assert sum(self._population.selection) == len(
             self._population.selection
@@ -48,12 +56,11 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         # assign the number of GRBs
 
-        self._n_grbs = len(self._population.selection)
+        self._n_grbs: int = len(self._population.selection)
 
         # build the GRBs
 
-        self._name = [
-            f"{self._grb_base_name}_{i}" for i in range(self._n_grbs)]
+        self._name = [f"{self._grb_base_name}_{i}" for i in range(self._n_grbs)]
 
         logger.debug(f"The Universe contains {self._n_grbs} GRBs")
 
@@ -64,26 +71,26 @@ class Universe(object, metaclass=abc.ABCMeta):
         self._process_populations()
         self._contstruct_parameter_servers()
 
-    def _get_sky_coord(self):
+    def _get_sky_coord(self) -> None:
 
-        self._ra = np.rad2deg(self._population.phi)
-        self._dec = 90 - np.rad2deg(self._population.theta)
+        self._ra: ArrayLike = self._population.ra
+        self._dec: ArrayLike = self._population.dec
 
-    def _get_redshift(self):
-        self._z = self._population.distances
+    def _get_redshift(self) -> None:
+        self._z: ArrayLike = self._population.distances
 
-    def _get_duration(self):
+    def _get_duration(self) -> None:
         try:
-            self._duration = self._population.duration
+            self._duration: ArrayLike = self._population.duration
 
         except:
 
             raise RuntimeError("The population must contain a duration value")
 
-    def _contstruct_parameter_servers(self):
+    def _contstruct_parameter_servers(self) -> None:
 
         for i in range(self._n_grbs):
-            param_dict = {}
+            param_dict: Dict[str, float] = {}
 
             param_dict["z"] = self._z[i]
             param_dict["ra"] = self._ra[i]
@@ -98,28 +105,27 @@ class Universe(object, metaclass=abc.ABCMeta):
 
                 param_dict[k] = v[i]
 
-            param_server = self._parameter_server_type(**param_dict)
+            param_server: ParameterServer = self._parameter_server_type(**param_dict)
 
-            file_name = os.path.join(
-                self._save_path, f"{self._name[i]}_store.h5")
+            file_name: Path = self._save_path / f"{self._name[i]}_store.h5"
 
             param_server.set_file_path(file_name)
 
             self._parameter_servers.append(param_server)
 
-    def _process_populations(self):
+    def _process_populations(self) -> None:
         self._get_sky_coord()
         self._get_redshift()
         self._get_duration()
 
-    def go(self, client=None):
+    def go(self, client=None) -> None:
         """
         Launch the creation of the Universe of GRBs.
         If no client is passed, it is done serially.
 
-        :param client: 
-        :returns: 
-        :rtype: 
+        :param client:
+        :returns:
+        :rtype:
 
         """
 
@@ -133,36 +139,32 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         else:
 
-            res = [self._grb_wrapper(ps, serial=True)
-                   for ps in self._parameter_servers]
+            res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers]
 
         self._is_processed = True
 
-    def save(self, file_name):
+    def save(self, file_name: Union[str, Path]) -> None:
         """
 
-        Save the infomation from the simulation to 
+        Save the infomation from the simulation to
         and HDF5 file
 
-        :param file_name: 
-        :returns: 
-        :rtype: 
+        :param file_name:
+        :returns:
+        :rtype:
 
         """
 
         if self._is_processed:
 
             grb_save_files = [
-                os.path.abspath(
-                    os.path.join(self._save_path,
-                                 f"{self._grb_base_name}_{i}_store.h5")
-                )
+                (self._save_path / f"{self._grb_base_name}_{i}_store.h5").absolute()
                 for i in range(self._n_grbs)
             ]
 
             # create a survey file to save all the information from the run
 
-            survey = Survey(
+            survey: Survey = Survey(
                 grb_save_files=grb_save_files, population_file=self._population_file
             )
 
@@ -180,21 +182,30 @@ class Universe(object, metaclass=abc.ABCMeta):
 
 
 class ParameterServer(object):
-    def __init__(self, name, ra, dec, z, duration, T0, **kwargs):
+    def __init__(
+        self,
+        name: str,
+        ra: float,
+        dec: float,
+        z: float,
+        duration: float,
+        T0: float,
+        **kwargs,
+    ):
         """FIXME! briefly describe function
 
-        :param name: 
-        :param ra: 
-        :param dec: 
-        :param z: 
-        :param duration: 
-        :param T0: 
-        :returns: 
-        :rtype: 
+        :param name:
+        :param ra:
+        :param dec:
+        :param z:
+        :param duration:
+        :param T0:
+        :returns:
+        :rtype:
 
         """
 
-        self._parameters = dict(
+        self._parameters: Dict[str, float] = dict(
             name=name, ra=ra, dec=dec, z=z, duration=duration, T0=T0
         )
 
@@ -202,18 +213,18 @@ class ParameterServer(object):
 
             self._parameters[k] = v
 
-        self._file_path = None
+        self._file_path: Optional[Path] = None
 
     @property
-    def parameters(self):
+    def parameters(self) -> Dict[str, float]:
         return self._parameters
 
-    def set_file_path(self, file_path):
+    def set_file_path(self, file_path: Path) -> None:
 
-        self._file_path = file_path
+        self._file_path: Path = file_path
 
     @property
-    def file_path(self):
+    def file_path(self) -> Path:
         return self._file_path
 
     def __repr__(self):

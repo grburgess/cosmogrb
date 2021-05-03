@@ -1,16 +1,14 @@
-import numpy as np
 import os
+
+import numpy as np
+from astropy.coordinates import SkyCoord
 from gbmgeometry import PositionInterpolator, gbm_detector_list
 
-
-from astropy.coordinates import SkyCoord
-
-from cosmogrb.utils.package_utils import get_path_of_data_file
-
-from cosmogrb.response.response import Response
+from cosmogrb import cosmogrb_config
 from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
 from cosmogrb.instruments.gbm.response_generator import gbm_response_generator
-from cosmogrb import cosmogrb_config
+from cosmogrb.response.response import Response
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 # These are just here for the position interpolator we used
 
@@ -34,26 +32,35 @@ _det_translate = dict(
 
 
 class GBMResponse(Response):
-    def __init__(self, detector_name, ra, dec, radius, height, save=False, name=None):
+    def __init__(
+        self,
+        detector_name: str,
+        ra: float,
+        dec: float,
+        radius: float,
+        height: float,
+        save: float = False,
+        name=None,
+    ):
         """
 
-        A generic GBM reponse that builds itself from the response 
+        A generic GBM reponse that builds itself from the response
         generator
 
-        :param detector_name: 
-        :param ra: 
-        :param dec: 
-        :param radius: 
-        :param height: 
-        :param save: 
-        :param name: 
-        :returns: 
-        :rtype: 
+        :param detector_name:
+        :param ra:
+        :param dec:
+        :param radius:
+        :param height:
+        :param save:
+        :param name:
+        :returns:
+        :rtype:
 
         """
 
-        self._radius = radius
-        self._height = height
+        self._radius: float = radius
+        self._height: float = height
 
         # if the config is set to use random times, the we
         # get a _relative_ time to the being of the posthist
@@ -62,20 +69,21 @@ class GBMResponse(Response):
 
         if cosmogrb_config["gbm"]["orbit"]["use_random_time"]:
 
-            time = gbm_orbit.random_time
+            time: float = gbm_orbit.random_time
 
         else:
 
             # if we want a fixed time, then choose the default
 
-            time = cosmogrb_config["gbm"]["orbit"]["default_time"]
+            time = cosmogrb_config.gbm.orbit.default_time
 
         # we pass this time to the repsonse generator. Note, our local
         # time is for the GRB will be at T0, but the response generator
         # will have its T0 at the the minimum of the posthist and thus,
+
         # we still need the relative time
 
-        self._time = time
+        self._time: float = time
 
         self._setup_gbm_geometry(detector_name, ra, dec)
 
@@ -83,21 +91,21 @@ class GBMResponse(Response):
 
         # assert time < tmax, "the time specified is out of bounds for the poshist"
 
-        self._ra = ra
-        self._dec = dec
+        self._ra: float = ra
+        self._dec: float = dec
 
-        self._detector_name = detector_name
+        self._detector_name: str = detector_name
 
         # compute the trigger time
-        self._trigger_time = gbm_orbit.met(time)
+        self._trigger_time: float = gbm_orbit.met(time)
 
         if save:
             assert name is not None, "if you want to save, you must have a name"
 
-        self._save = save
-        self._name = name
+        self._save: bool = save
+        self._name: str = name
 
-        geometric_area = self._compute_geometric_area()
+        geometric_area: float = self._compute_geometric_area()
 
         matrix, energy_edges, channel_edges = self._create_matrix(
             detector_name, ra, dec
@@ -113,7 +121,7 @@ class GBMResponse(Response):
         if self._save:
             self.to_fits(f"{self._name}_{detector_name}.rsp", overwrite=True)
 
-    def _setup_gbm_geometry(self, detector_name, ra, dec):
+    def _setup_gbm_geometry(self, detector_name: str, ra: float, dec: float) -> None:
 
         # get the detector
         detector = gbm_detector_list[detector_name](
@@ -133,17 +141,17 @@ class GBMResponse(Response):
         )
 
     @property
-    def separation_angle(self):
+    def separation_angle(self) -> float:
         return np.rad2deg(self._separation_angle)
 
-    def _compute_geometric_area(self):
+    def _compute_geometric_area(self) -> None:
         """
         compute the geometric area of the detector
         for a given viewing angle
 
-        :param angle: 
-        :returns: 
-        :rtype: 
+        :param angle:
+        :returns:
+        :rtype:
 
         """
 
@@ -155,12 +163,12 @@ class GBMResponse(Response):
         """
         Create the response matrix for the given time and location
 
-        :param detector_name: 
-        :param ra: 
-        :param dec: 
-        :param time: 
-        :returns: 
-        :rtype: 
+        :param detector_name:
+        :param ra:
+        :param dec:
+        :param time:
+        :returns:
+        :rtype:
 
         """
 
@@ -181,19 +189,19 @@ class GBMResponse(Response):
         )
 
     @property
-    def ra(self):
+    def ra(self) -> float:
         return self._ra
 
     @property
-    def dec(self):
+    def dec(self) -> float:
         return self._dec
 
     @property
-    def time(self):
+    def time(self) -> float:
         return self._time
 
     @property
-    def trigger_time(self):
+    def trigger_time(self) -> float:
         return self._trigger_time
 
     @property
@@ -203,17 +211,17 @@ class GBMResponse(Response):
         return gbm_orbit.met(self._time)
 
     @property
-    def detector_name(self):
+    def detector_name(self) -> str:
         return self._detector_name
 
-    def to_fits(self, file_name, overwrite=True):
+    def to_fits(self, file_name, overwrite=True) -> None:
         """
-        save the generated response to 
+        save the generated response to
         a file
 
-        :param file_name: 
-        :returns: 
-        :rtype: 
+        :param file_name:
+        :returns:
+        :rtype:
 
         """
 

@@ -22,7 +22,7 @@ class Observation(object):
         self,
         grb_save_file: str,
         grb_detector_file: Optional[str] = None,
-        population=None,
+        population: Optional[popsynth.Population] = None,
         idx=None,
     ):
         """
@@ -37,9 +37,9 @@ class Observation(object):
 
         """
 
-        self._grb = grb_save_file
+        self._grb: str = grb_save_file
 
-        self._detector = grb_detector_file
+        self._detector: str = grb_detector_file
 
     @property
     def grb(self):
@@ -245,7 +245,7 @@ class Survey(collections.OrderedDict):
             # now fill the dict
 
         logger.debug("assigning detected grbs to survey")
-        
+
         for name, grb_save_file, grb_detector_file in zip(
             self._names, self._grb_save_files, self._grb_detector_files
         ):

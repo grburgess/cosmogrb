@@ -1,7 +1,7 @@
 import dask
 import numba as nb
 import numpy as np
-
+from typing import Optional, Dict, List, Any
 from cosmogrb.lightcurve import LightCurveAnalyzer
 from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.time_interval import TimeIntervalSet
@@ -31,15 +31,15 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
     """
 
     def __init__(
-        self, lightcurve, threshold=4.5, background_duration=17, pre_window=4.0
+        self, lightcurve, threshold: float=4.5, background_duration: float = 17, pre_window: float=4.0
     ):
 
-        self._threshold = threshold
-        self._background_duration = background_duration
-        self._pre_window = pre_window
+        self._threshold: float = threshold
+        self._background_duration: float = background_duration
+        self._pre_window: float = pre_window
 
-        self._base_timescale = _base_timescale
-        self._trigger_time_scales = _trigger_time_scales
+        self._base_timescale: float = _base_timescale
+        self._trigger_time_scales: Dict[str, List[float]] = _trigger_time_scales
         self._trigger_energy_ranges = _trigger_energy_ranges
 
         self._n_bins_background = int(
@@ -53,7 +53,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
         super(GBMLightCurveAnalyzer, self).__init__(
             lightcurve, instrument="GBM")
-
+        
     def _compute_detection(self):
 
         # first we just need to compute the dead_time per intervals
@@ -141,14 +141,14 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         #     print("NO DETECTION")
 
     @property
-    def detection_time_scale(self):
+    def detection_time_scale(self) -> float:
         return self._detection_time_scale
 
     @property
-    def detection_time(self):
+    def detection_time(self) -> float:
         return self._detection_time
 
-    def _process_dead_time(self):
+    def _process_dead_time(self) -> None:
 
         dead_time_per_event = _calculate_dead_time_per_event(
             self._lightcurve.times, self._lightcurve.pha
@@ -156,7 +156,7 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
 
         self._dead_time_per_event = dead_time_per_event
 
-    def dead_time_of_interval(self, tmin, tmax):
+    def dead_time_of_interval(self, tmin, tmax) -> float:
         """
         get the dead time over and interval
 

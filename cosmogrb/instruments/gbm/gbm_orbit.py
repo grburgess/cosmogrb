@@ -23,8 +23,8 @@ class GBMOrbit(object):
 
     def __init__(self):
 
-        self._minimum_met = 576201540.940077
-        self._maximum_time = 86519.99999904633
+        self._minimum_met: float = 576201540.940077
+        self._maximum_time: float = 86519.99999904633
         self._T0 = self._minimum_met
         self._used_times = []
 

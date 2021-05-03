@@ -20,7 +20,7 @@ class TDecaySampler(popsynth.AuxiliarySampler):
 
     def true_sampler(self, size):
 
-        t90 = 10 ** self._secondary_samplers["log_t90"].true_values
+        t90 = self._secondary_samplers["t90"].true_values
         trise = self._secondary_samplers["trise"].true_values
 
         self._true_values = (
@@ -36,7 +36,7 @@ class DurationSampler(popsynth.AuxiliarySampler):
 
     def true_sampler(self, size):
 
-        t90 = 10 ** self._secondary_samplers["log_t90"].true_values
+        t90 = self._secondary_samplers["t90"].true_values
 
         self._true_values = 1.5 * t90
 
@@ -95,7 +95,7 @@ trise.mu = 1.0
 trise.tau = 1.0
 
 
-t90 = Log10NormalAuxSampler(name="log_t90", observed=False)
+t90 = Log10NormalAuxSampler(name="t90", observed=False)
 
 t90.mu = 2
 t90.tau = 0.25

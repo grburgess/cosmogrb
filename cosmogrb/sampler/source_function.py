@@ -22,8 +22,17 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         self._response = response
         self._source = None
 
+        self._differential_flux = None
+        
+        self._integral_function = None
+        
+        
+
+        
         self._emin = response.emin
         self._emax = response.emax
+
+
 
         
     def set_response(self, response):
@@ -33,6 +42,21 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         self._emax = response.emax
 
 
+    @property
+    def differential_flux(self):
+        return self._differential_flux
+
+    @property
+    def integral_function(self):
+        return self._integral_function
+
+        
+    def set_integral_function(self):
+
+        pass
+
+
+    
     @property
     def response(self):
 

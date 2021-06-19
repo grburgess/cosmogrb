@@ -206,12 +206,12 @@ class Response(object):
 
         self._integral_function = integral_function
 
-    def convolve(self, t1, t2):
+    def convolve(self):
 
         true_fluxes = np.array(
             [
                 self._integral_function(
-                    self._energy_edges[i], self._energy_edges[i + 1], t1, t2
+                    self._energy_edges[i], self._energy_edges[i + 1]
                 )
                 for i in range(len(self._energy_edges) - 1)
             ]

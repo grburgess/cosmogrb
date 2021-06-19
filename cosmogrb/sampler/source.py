@@ -140,3 +140,40 @@ class Source(Sampler):
         channel = response.digitize(photons)
 
         return channel
+
+class ConstantSource(Source):
+
+    def __init__(self, tstart, tstop, source_function, z):
+
+        super(ConstantSource, self).__init__( tstart, tstop, source_function, z)
+
+
+    
+    def sample_photons(self, times):
+
+
+        return np.ones_like(times)
+
+    def sample_channel(self, photons, response):
+
+        self._source_function.set_integral_function()
+        
+        # for a contant source we can just fold the mmatrix
+        response.set_function(self._source_function.integral_function)
+        folded_counts = response.convolve()
+
+        # now reweight the spectrum
+
+        p = folded_counts/ np.sum(folded_counts)
+        
+        N = len(photons)
+
+        pha = np.random.choice(np.arange(len(folded_counts), dtype=np.int64), size=N,  p=p)
+
+
+        return pha
+        
+        
+
+        
+

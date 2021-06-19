@@ -7,7 +7,8 @@ from cosmogrb.instruments.gbm.gbm_orbit import gbm_orbit
 from cosmogrb.instruments.gbm.gbm_response import BGOResponse, NaIResponse
 from cosmogrb.sampler.constant_cpl import ConstantCPL
 from cosmogrb.sampler.cpl_source import CPLSourceFunction
-from cosmogrb.sampler.source import Source
+from cosmogrb.sampler.source import ConstantSource, Source
+from cosmogrb.sampler.subphoto import SubPhoto
 from cosmogrb.utils.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -53,14 +54,30 @@ class GBMGRB(GRB):
                 response=self._responses[key], **self._source_params
             )
 
-            source = Source(
-                0.0,
-                self.duration,
-                source_function,
-                z=self.z,
-                use_plaw_sample=self._use_plaw_sample,
-            )
+            if source_function.differential_flux is None:
 
+            
+                source = Source(
+                    0.0,
+                    self.duration,
+                    source_function,
+                    z=self.z,
+                    use_plaw_sample=self._use_plaw_sample,
+                )
+
+            else:
+
+                source = ConstantSource(
+                    0.0,
+                    self.duration,
+                    source_function,
+                    z=self.z,
+                )
+
+
+                # the source is constant in time
+
+                
             lc = GBMLightCurve(
                 source,
                 self._backgrounds[key],
@@ -136,3 +153,19 @@ class GBMGRB_CPL_Constant(GBMGRB):
         super(GBMGRB_CPL_Constant, self).__init__(
             source_function_class=ConstantCPL, **kwargs,
         )
+
+
+
+class GBMGRB_SUBPHOTO(GBMGRB):
+    K = SourceParameter()
+    xi_b = SourceParameter()
+    r_i = SourceParameter()
+    r_0 = SourceParameter()
+    gamma = SourceParameter()
+    l_grb = SourceParameter()
+
+    def __init__(self, **kwargs):
+
+        # pass up
+        super(GBMGRB_SUBPHOTO, self).__init__(
+            source_function_class=SubPhoto, **kwargs)

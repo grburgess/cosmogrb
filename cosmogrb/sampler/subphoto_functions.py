@@ -10,6 +10,7 @@ import numba_scipy
 import numpy as np
 from interpolation import interp
 from interpolation.splines import eval_linear
+from cosmogrb.utils.interpolation import GridInterpolate, Interp1D
 from scipy.special import gamma, gammaincc
 
 from cosmogrb.sampler.cpl_functions import cpl
@@ -43,6 +44,9 @@ _values = tuple([np.array(x) for x in list(parameters.values())])
 
 n_energies = len(energies)
 
+
+
+
 @nb.njit(fastmath=True)
 def subphoto(energy, xi_b, r_i, r_0, gamma, l_grb, z):
     
@@ -58,18 +62,21 @@ def subphoto(energy, xi_b, r_i, r_0, gamma, l_grb, z):
     
     for i in range(n_energies):
 
-#         this_data = np.array(
-#                         ,
-#                         #dtype=float,
-#                     )
 
-        log_interpolations[i] = eval_linear( _values,
-                                            np.log10(grid[...,i]).reshape(*data_shape), 
-                                            param_values)
+        grid_interp = GridInterpolate(_values, np.log10(grid[...,i]).reshape(*data_shape))
+
+                
+        log_interpolations[i] = grid_interp(param_values)
+        
+        # log_interpolations[i] = eval_linear( _values,
+        #                                     np.log10(grid[...,i]).reshape(*data_shape), 
+        #                                     param_values)
 
     e_tilde = np.log10(energies * scale)
+
+    inter1d = Interp1D(e_tilde, log_interpolations)
     
-    values = np.power(10., interp(e_tilde, log_interpolations, log_energies))
+    values = np.power(10., interp1d.evaluate(log_energies))
     
     return values / scale
 

@@ -66,6 +66,24 @@ spec = [("x", nb.float64[:] ),
 ]
 
 
+spec2 = [("_grid", nb.float64[:] ),
+        ("_values", nb.float64[:] ),
+     ]
+
+
+@jitpickle
+@nb.experimental.jitclass(spec2)
+class GridInterpolate(object):
+    def __init__(self, grid, values):
+        self._grid = grid
+        self._values = np.ascontiguousarray(values)
+
+    def evaluate(self, v):
+
+        return eval_linear(self._grid, self._values, v)
+
+
+
 @jitpickle
 @nb.experimental.jitclass(spec)
 class Interp1D(object):

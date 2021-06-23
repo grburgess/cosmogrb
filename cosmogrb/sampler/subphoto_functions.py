@@ -10,21 +10,18 @@ import numba_scipy
 import numpy as np
 from interpolation import interp
 from interpolation.splines import eval_linear
-from cosmogrb.utils.interpolation import GridInterpolate, Interp1D
+from numba import float64, int32
+from numba.experimental import jitclass
 from scipy.special import gamma, gammaincc
 
 from cosmogrb.sampler.cpl_functions import cpl
+from cosmogrb.utils.interpolation import Interp1D, jitpickle
 from cosmogrb.utils.numba_array import VectorFloat64
 from cosmogrb.utils.package_utils import get_path_of_data_file
 
 file_name = get_path_of_data_file("subphoto.h5")
 
 with h5py.File(file_name, "r") as f:
-
-    # name = f.attrs["name"]
-    # description = f.attrs["description"] 
-    # interpolation_degree = f.attrs["interpolation_degree"] 
-    # spline_smoothing_factor = f.attrs["spline_smoothing_factor"] 
     
     energies = f["energies"][()]
     parameter_order = f["parameter_order"][()]
@@ -45,8 +42,6 @@ _values = tuple([np.array(x) for x in list(parameters.values())])
 n_energies = len(energies)
 
 
-
-
 @nb.njit(fastmath=True)
 def subphoto(energy, xi_b, r_i, r_0, gamma, l_grb, z):
     
@@ -55,7 +50,7 @@ def subphoto(energy, xi_b, r_i, r_0, gamma, l_grb, z):
     
     param_values = np.array([xi_b, r_i, r_0, gamma, l_grb])
     
-    log_energies = np.log10(energy)
+    log_energies = np.log10(energy).reshape((len(energy),1))
     
     log_interpolations = np.empty(n_energies)
     
@@ -63,20 +58,19 @@ def subphoto(energy, xi_b, r_i, r_0, gamma, l_grb, z):
     for i in range(n_energies):
 
 
-        grid_interp = GridInterpolate(_values, np.log10(grid[...,i]).reshape(*data_shape))
+        # grid_interp = GridInterpolate(np.log10(grid[...,i]).reshape(*data_shape),_values)
 
                 
-        log_interpolations[i] = grid_interp(param_values)
+        # log_interpolations[i] = grid_interp(param_values)
         
-        # log_interpolations[i] = eval_linear( _values,
-        #                                     np.log10(grid[...,i]).reshape(*data_shape), 
-        #                                     param_values)
+        log_interpolations[i] = eval_linear( _values,
+                                            np.log10(grid[...,i]).reshape(*data_shape), 
+                                            param_values)
 
-    e_tilde = np.log10(energies * scale)
+    e_tilde = np.log10(energies * scale),
 
-    inter1d = Interp1D(e_tilde, log_interpolations)
     
-    values = np.power(10., interp1d.evaluate(log_energies))
+    values = np.power(10., eval_linear(e_tilde, log_interpolations, log_energies))
     
     return values / scale
 

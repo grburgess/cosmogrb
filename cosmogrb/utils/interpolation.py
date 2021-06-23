@@ -80,7 +80,7 @@ class GridInterpolate(object):
 
     def evaluate(self, v):
 
-        return eval_linear(self._grid, self._values, v)
+        return eval_linear(self._grid, tuple(self._values), v)
 
 
 

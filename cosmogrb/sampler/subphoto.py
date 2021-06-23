@@ -59,20 +59,14 @@ class SubPhoto(SourceFunction):
 
     def set_integral_function(self):
         
-        def integral(e1, e2):
-            # Trapz rule
-            if isinstance(e1, Iterable):
-                # Energy given as list or array
+        def integral(e_edges):
+            diff_fluxes_edges = self._differential_flux(e_edges)
 
-                # Make sure we do not calculate the flux two times at the same energy
-                e_edges = np.append(e1, e2[-1])
-                diff_fluxes_edges = self._differential_flux(e_edges)
+            e1 = e_edges[:-1]
+            e2 = e_edges[1:]
                 
-                return _trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T, np.array([e1, e2]).T)
-            else:
-                # single energy values given
-                return _trapz(np.array([self._differential_flux(e1), self._differential_flux(e2)]), np.array([e1, e2]))
-
+            return _trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T, np.array([e1, e2]).T)
+           
         self._integral_function = integral
                               
 

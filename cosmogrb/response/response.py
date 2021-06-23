@@ -208,15 +208,17 @@ class Response(object):
 
     def convolve(self):
 
-        true_fluxes = np.array(
-            [
-                self._integral_function(
-                    self._energy_edges[i], self._energy_edges[i + 1]
-                )
-                for i in range(len(self._energy_edges) - 1)
-            ]
-        )
+        # true_fluxes = np.array(
+        #     [
+        #         self._integral_function(
+        #             self._energy_edges[i], self._energy_edges[i + 1]
+        #         )
+        #         for i in range(len(self._energy_edges) - 1)
+        #     ]
+        # )
 
+        true_fluxes = self._integral_function(self._energy_edges)
+        
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where
         # many functions (like a power law) are not defined. In the response these
         # channels have usually a 0, but unfortunately for a computer

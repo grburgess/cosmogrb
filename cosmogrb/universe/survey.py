@@ -276,7 +276,7 @@ class Survey(collections.OrderedDict):
 
             f.attrs["n_grbs"] = self._n_grbs
             f.attrs["is_processed"] = self._is_processed
-            f.attrs["population_file"] = self._population_file
+            f.attrs["population_file"] = str(self._population_file)
 
             grbs = f.create_dataset(
                 "grb_saves", data=np.array(self._grb_save_files, dtype=dt)

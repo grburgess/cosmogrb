@@ -24,6 +24,7 @@ file_name = get_path_of_data_file("subphoto.h5")
 with h5py.File(file_name, "r") as f:
     
     energies = f["energies"][()]
+
     parameter_order = f["parameter_order"][()]
     
     grid = np.ascontiguousarray(f["grid"][()])

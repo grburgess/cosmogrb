@@ -219,8 +219,8 @@ class GBM_SUBPHOTO_Universe(Universe):
         self._local_parameters["xi_b"] = self._population.xi_b
         self._local_parameters["r_0"] = self._population.r_0
         self._local_parameters["r_i"] = self._population.r_i
-        self._local_parameters["r_0"] = self._population.gamma
-        self._local_parameters["l_grb"] = self._population.luminosities
+        self._local_parameters["gamma"] = self._population.gamma
+        self._local_parameters["l_grb"] = self._population.luminosities_latent
         
     def _parameter_server_type(self, **kwargs):
 

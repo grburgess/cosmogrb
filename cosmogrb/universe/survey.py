@@ -75,7 +75,7 @@ class Survey(collections.OrderedDict):
         super(Survey, self).__init__()
 
         self._n_grbs: int = len(grb_save_files)
-        self._grb_save_files: List[str] = grb_save_files
+        self._grb_save_files: List[str] = [str(x) for x in grb_save_files]
         self._names: List[str] = []
 
         # build  a population from the file
@@ -115,7 +115,7 @@ class Survey(collections.OrderedDict):
 
             self._is_processed = True
 
-            self._grb_detector_files = natsorted(grb_detector_files)
+            self._grb_detector_files = [str(x) for x innatsorted(grb_detector_files)]
 
             assert len(grb_detector_files) == len(grb_save_files)
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-from cosmogrb.instruments.gbm.gbm_grb import GBMGRB_CPL, GBMGRB_CPL_Constant
+from cosmogrb.instruments.gbm.gbm_grb import GBMGRB_CPL, GBMGRB_CPL_Constant, GBMGRB_SUBPHOTO
 from cosmogrb.universe.universe import GRBWrapper, ParameterServer, Universe
 
 

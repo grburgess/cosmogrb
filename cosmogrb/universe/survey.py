@@ -104,6 +104,7 @@ class Survey(collections.OrderedDict):
 
             except(FileNotFoundError):
 
+                pass
                 # perhaps the file is more local
 
                     

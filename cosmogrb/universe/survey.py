@@ -115,7 +115,7 @@ class Survey(collections.OrderedDict):
 
             self._is_processed = True
 
-            self._grb_detector_files = [str(x) for x innatsorted(grb_detector_files)]
+            self._grb_detector_files = [str(x) for x in natsorted(grb_detector_files)]
 
             assert len(grb_detector_files) == len(grb_save_files)
 

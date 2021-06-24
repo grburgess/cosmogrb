@@ -92,14 +92,21 @@ class Survey(collections.OrderedDict):
             self._population_file = None
             self._population = None
 
-            logger.warnings(f"{population_file} does not exist. Perhaps you moved it?")
+            logger.warning(f"{population_file} does not exist. Perhaps you moved it?")
 
         for f in self._grb_save_files:
 
-            with h5py.File(f, "r") as f:
+            try:
+            
+                with h5py.File(f, "r") as f:
 
-                self._names.append(f.attrs["grb_name"])
+                    self._names.append(f.attrs["grb_name"])
 
+            except(FileNotFoundError):
+
+                # perhaps the file is more local
+
+                    
         # we start off with not being processed unless
         # we find that there are some detector files
 

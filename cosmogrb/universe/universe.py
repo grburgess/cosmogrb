@@ -38,7 +38,7 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         """
         # we want to store the absolute path so that we can find it later
-        self._population_file: Path = Path(population_file).absolute()
+        self._population_file: Path = Path(population_file)#.absolute()
 
         self._is_processed: bool = False
 
@@ -158,7 +158,7 @@ class Universe(object, metaclass=abc.ABCMeta):
         if self._is_processed:
 
             grb_save_files = [
-                (self._save_path / f"{self._grb_base_name}_{i}_store.h5").absolute()
+                (self._save_path / f"{self._grb_base_name}_{i}_store.h5")#.absolute()
                 for i in range(self._n_grbs)
             ]
 

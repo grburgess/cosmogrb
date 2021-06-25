@@ -116,8 +116,11 @@ class GBMResponse(Response):
             geometric_area=geometric_area,
             energy_edges=energy_edges,
             channel_edges=channel_edges,
+            separation_angle=self._separation_angle
         )
 
+        
+        
         if self._save:
             self.to_fits(f"{self._name}_{detector_name}.rsp", overwrite=True)
 

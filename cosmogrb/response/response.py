@@ -33,6 +33,7 @@ class Response(object):
         energy_edges,
         channel_edges=None,
         channel_starts_at=0,
+        separation_angle=0
     ):
 
         self._matrix = matrix.astype('f8')
@@ -51,7 +52,7 @@ class Response(object):
 
         self._channels = np.arange(len(self._channel_width), dtype=np.int64)
 
-        self._separation_angle = 0.
+        self._separation_angle = separation_angle
         
         self._build_effective_area_curve()
 

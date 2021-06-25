@@ -210,6 +210,8 @@ class GRBSave(collections.UserDict):
                     channel_edges=channel_edges,
                 )
 
+                print(separation_angle)
+                
                 rsp._separation_angle = separation_angle
 
                 responses[lc_name] = rsp

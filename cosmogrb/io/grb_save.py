@@ -201,6 +201,7 @@ class GRBSave(collections.UserDict):
                 energy_edges = rsp_group["energy_edges"][()]
                 channel_edges = rsp_group["channel_edges"][()]
                 geometric_area = rsp_group.attrs["geometric_area"]
+                separation_angle = rsp_group.attrs["separation_angle"]
 
                 rsp = Response(
                     matrix=matrix,
@@ -208,6 +209,8 @@ class GRBSave(collections.UserDict):
                     energy_edges=energy_edges,
                     channel_edges=channel_edges,
                 )
+
+                rsp._separation_angle = separation_angle
 
                 responses[lc_name] = rsp
 

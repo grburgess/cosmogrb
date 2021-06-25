@@ -51,6 +51,8 @@ class Response(object):
 
         self._channels = np.arange(len(self._channel_width), dtype=np.int64)
 
+        self._separation_angle = 0.
+        
         self._build_effective_area_curve()
 
         self._geometric_area = geometric_area
@@ -117,6 +119,10 @@ class Response(object):
     @property
     def effective_area_max(self):
         return self._max_energy
+
+    @property
+    def separation_angle(self) -> float:
+        return np.rad2deg(self._separation_angle)
 
     def get_photon_bin(self, energy):
 

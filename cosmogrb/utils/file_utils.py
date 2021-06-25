@@ -1,8 +1,8 @@
 import os
-from contextlib import contextmanager
-import tempfile
 import shutil
+import tempfile
 import uuid
+from contextlib import contextmanager
 
 
 def file_existing_and_readable(filename):

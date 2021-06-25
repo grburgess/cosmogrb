@@ -290,6 +290,7 @@ class GRB(object, metaclass=GRBMeta):
                     compression="lzf",
                 )
                 rsp_group.attrs["geometric_area"] = lightcurve.response.geometric_area
+                rsp_group.attrs["separation_angle"] = lightcurve.response.separation_angle
 
             if clean_up:
 

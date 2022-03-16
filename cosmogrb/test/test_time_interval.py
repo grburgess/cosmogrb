@@ -263,7 +263,7 @@ def test_time_interval_equivalence():
 
     assert t1 == TimeInterval(10.523, 20.32)
 
-    assert not t1 == None
+    assert t1 is not None
 
 
 def test_time_interval_set_pop():
@@ -287,7 +287,7 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == False
+    assert not ts.is_contiguous()
 
     t1 = TimeInterval(0.0, 1.0)
     t2 = TimeInterval(1.0, 2.0)
@@ -295,7 +295,7 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == True
+    assert ts.is_contiguous()
 
     t1 = TimeInterval(0.0, 1.0)
     t2 = TimeInterval(1.1, 2.0)
@@ -303,7 +303,7 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == False
+    assert not ts.is_contiguous()
 
     t1 = TimeInterval(0.0, 1.0)
     t2 = TimeInterval(2.0, 3.0)
@@ -311,11 +311,11 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == False
+    assert not ts.is_contiguous()
 
     new_ts = ts.sort()
 
-    assert new_ts.is_contiguous() == True
+    assert new_ts.is_contiguous()
 
 
 def test_merging_set_intervals():

@@ -40,7 +40,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        pip install -U pip
+        python -m pip install --upgrade pip wheel
         pip install decorator==4.3
         pip install --upgrade flake8 numpy numba extension-helpers coverage pytest pytest-cov cython codecov
         python setup.py install

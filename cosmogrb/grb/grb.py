@@ -5,14 +5,13 @@ import logging
 
 import h5py
 import pandas as pd
-from dask.distributed import worker_client
-from IPython.display import display
-
 from cosmogrb import cosmogrb_config
 from cosmogrb.sampler.source_function import SourceFunction
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.meta import GRBMeta, RequiredParameter
+from dask.distributed import worker_client
+from IPython.display import display
 
 # from cosmogrb import cosmogrb_client
 
@@ -30,15 +29,17 @@ class GRB(object, metaclass=GRBMeta):
     duration = RequiredParameter(default=1, vmin=0)
 
     def __init__(
-        self, source_function_class=None, **kwargs,
+        self,
+        source_function_class=None,
+        **kwargs,
     ):
         """
         A basic GRB
 
-        :param name: 
-        :param verbose: 
-        :returns: 
-        :rtype: 
+        :param name:
+        :param verbose:
+        :returns:
+        :rtype:
 
         """
         self._source_params = {}
@@ -99,12 +100,12 @@ class GRB(object, metaclass=GRBMeta):
 
     def _add_lightcurve(self, lightcurve):
         """
-        add a light curve to the GRB. This is really just adding 
+        add a light curve to the GRB. This is really just adding
         a detector on
 
-        :param lightcurve: 
-        :returns: 
-        :rtype: 
+        :param lightcurve:
+        :returns:
+        :rtype:
 
         """
 
@@ -117,12 +118,12 @@ class GRB(object, metaclass=GRBMeta):
     ):
         """FIXME! briefly describe function
 
-        :param time: 
-        :param energy: 
-        :param ax: 
-        :param cmap: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param energy:
+        :param ax:
+        :param cmap:
+        :returns:
+        :rtype:
 
         """
 
@@ -133,10 +134,10 @@ class GRB(object, metaclass=GRBMeta):
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function
 
-        :param time: 
-        :param ax: 
-        :rtype: 
-        :returns: 
+        :param time:
+        :param ax:
+        :rtype:
+        :returns:
 
         """
 
@@ -155,15 +156,13 @@ class GRB(object, metaclass=GRBMeta):
         logger.debug(f"created a GRB with name: {self.name}")
         logger.debug(f"created a GRB with ra: {self.ra} and dec: {self.dec}")
         logger.debug(f"created a GRB with redshift: {self.z}")
-        logger.debug(
-            f"created a GRB with duration: {self.duration} and T0: {self.T0}")
+        logger.debug(f"created a GRB with duration: {self.duration} and T0: {self.T0}")
 
         if not serial:
 
             if client is not None:
 
-                futures = client.map(process_lightcurve,
-                                     self._lightcurves.values())
+                futures = client.map(process_lightcurve, self._lightcurves.values())
 
                 results = client.gather(futures)
 
@@ -171,8 +170,7 @@ class GRB(object, metaclass=GRBMeta):
 
                 with worker_client() as client:
 
-                    futures = client.map(
-                        process_lightcurve, self._lightcurves.values())
+                    futures = client.map(process_lightcurve, self._lightcurves.values())
 
                     results = client.gather(futures)
 
@@ -180,8 +178,7 @@ class GRB(object, metaclass=GRBMeta):
 
         else:
 
-            results = [process_lightcurve(lc)
-                       for lc in self._lightcurves.values()]
+            results = [process_lightcurve(lc) for lc in self._lightcurves.values()]
 
         for lc in results:
 
@@ -194,9 +191,9 @@ class GRB(object, metaclass=GRBMeta):
         save the grb to an HDF5 file
 
 
-        :param file_name: 
-        :returns: 
-        :rtype: 
+        :param file_name:
+        :returns:
+        :rtype:
 
         """
 
@@ -213,8 +210,7 @@ class GRB(object, metaclass=GRBMeta):
 
             # store the source function parameters
 
-            recursively_save_dict_contents_to_group(
-                f, "source", self._source_params)
+            recursively_save_dict_contents_to_group(f, "source", self._source_params)
 
             # now save everything from the detectors
 
@@ -251,10 +247,8 @@ class GRB(object, metaclass=GRBMeta):
 
                 total_group = lc_group.create_group("total_signal")
 
-                total_group.create_dataset(
-                    "pha", data=lc.pha, compression="lzf")
-                total_group.create_dataset(
-                    "times", data=lc.times, compression="lzf")
+                total_group.create_dataset("pha", data=lc.pha, compression="lzf")
+                total_group.create_dataset("times", data=lc.times, compression="lzf")
 
                 source_group = lc_group.create_group("source_signal")
 

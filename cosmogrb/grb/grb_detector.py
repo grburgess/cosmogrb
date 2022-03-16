@@ -1,5 +1,6 @@
-import h5py
 import abc
+
+import h5py
 from cosmogrb import GRBSave
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 
@@ -10,9 +11,9 @@ class GRBDetector(object, metaclass=abc.ABCMeta):
 
         A generic class for assessing if a GRB was detected or not
 
-        :param grb_save_file_name: 
-        :returns: 
-        :rtype: 
+        :param grb_save_file_name:
+        :returns:
+        :rtype:
 
         """
 

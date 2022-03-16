@@ -111,7 +111,7 @@ def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area, z):
 
     N = times.shape[0]
 
-    egrid = np.power(10., np.linspace(np.log10(emin), np.log10(emax), 500))
+    egrid = np.power(10.0, np.linspace(np.log10(emin), np.log10(emax), 500))
 
     out = np.zeros(N)
 
@@ -158,14 +158,19 @@ def sample_energy(times, peak_flux, ep, alpha, emin, emax, effective_area, z):
 
             vtime[0] = times[i]
 
-            if (
-                y
-                <= (
-                    folded_cpl_evolution(
-                        x, vtime, peak_flux, ep, alpha, emin, emax, effective_area, z
-                    )
-                )[0, 0]
-            ):
+            if y <= (
+                folded_cpl_evolution(
+                    x,
+                    vtime,
+                    peak_flux,
+                    ep,
+                    alpha,
+                    emin,
+                    emax,
+                    effective_area,
+                    z,
+                )
+            )[0, 0]:
 
                 out[i] = x[0]
                 break
@@ -180,7 +185,9 @@ def energy_integrated_evolution(
 
     n_energies = 75
 
-    energy_grid = np.power(10., np.linspace(np.log10(emin), np.log10(emax), n_energies))
+    energy_grid = np.power(
+        10.0, np.linspace(np.log10(emin), np.log10(emax), n_energies)
+    )
 
     energy_slice = folded_cpl_evolution(
         energy_grid, time, peak_flux, ep, alpha, emin, emax, effective_area, z

@@ -9,17 +9,19 @@ logger = setup_logger(__name__)
 
 
 class GBMLightCurve(LightCurve):
-    def __init__(self, source, background, response, name, grb_name, tstart, tstop):
+    def __init__(
+        self, source, background, response, name, grb_name, tstart, tstop
+    ):
         """FIXME! briefly describe function
 
-        :param source: 
-        :param background: 
-        :param response: 
-        :param name: 
-        :param grb_name: 
-        :param verbose: 
-        :returns: 
-        :rtype: 
+        :param source:
+        :param background:
+        :param response:
+        :param name:
+        :param grb_name:
+        :param verbose:
+        :returns:
+        :rtype:
 
         """
 
@@ -41,7 +43,8 @@ class GBMLightCurve(LightCurve):
 
         n_intervals = len(self._times)
         time, pha, selection = _gbm_dead_time(
-            self._times, self._pha, n_intervals)
+            self._times, self._pha, n_intervals
+        )
 
         selection = np.array(selection, dtype=bool)
 

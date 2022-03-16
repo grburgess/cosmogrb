@@ -35,17 +35,17 @@ class LightCurveStorage(object):
         """
         Container class for light curve objects
 
-        :param pha: 
-        :param times: 
-        :param pha_source: 
-        :param times_source: 
-        :param pha_background: 
-        :param times_background: 
-        :param channels: 
-        :param ebounds: 
-        :param T0: 
-        :returns: 
-        :rtype: 
+        :param pha:
+        :param times:
+        :param pha_source:
+        :param times_source:
+        :param pha_background:
+        :param times_background:
+        :param channels:
+        :param ebounds:
+        :param T0:
+        :returns:
+        :rtype:
 
         """
 
@@ -155,12 +155,12 @@ class LightCurveStorage(object):
         """
         return the idx of events between certain channels
 
-        :param emin: 
-        :param emax: 
-        :param pha: 
-        :param original_idx: 
-        :returns: 
-        :rtype: 
+        :param emin:
+        :param emax:
+        :param pha:
+        :param original_idx:
+        :returns:
+        :rtype:
 
         """
 
@@ -190,12 +190,12 @@ class LightCurveStorage(object):
         """
         return the idx of event between certain times
 
-        :param tmin: 
-        :param tmax: 
-        :param times: 
-        :param original_idx: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :param times:
+        :param original_idx:
+        :returns:
+        :rtype:
 
         """
 
@@ -203,13 +203,13 @@ class LightCurveStorage(object):
 
     def get_idx_over_interval(self, tmin, tmax):
         """
-        returns the selection over an interval of the 
+        returns the selection over an interval of the
         full light curve
 
-        :param tmin: 
-        :param tmax: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :returns:
+        :rtype:
 
         """
 
@@ -220,15 +220,15 @@ class LightCurveStorage(object):
 
         bin the light curve for plotting
 
-        :param dt: 
-        :param emin: 
-        :param emax: 
-        :param times: 
-        :param pha: 
-        :param tmin: 
-        :param tmax: 
-        :returns: 
-        :rtype: 
+        :param dt:
+        :param emin:
+        :param emax:
+        :param times:
+        :param pha:
+        :param tmin:
+        :param tmax:
+        :returns:
+        :rtype:
 
         """
 
@@ -247,7 +247,8 @@ class LightCurveStorage(object):
         bins = np.arange(tmin, tmax, dt)
 
         logger.debug(
-            f"created {len(bins)} spanning {tmin} to {tmax} at a cadence of {dt}")
+            f"created {len(bins)} spanning {tmin} to {tmax} at a cadence of {dt}"
+        )
 
         idx = np.ones_like(times, dtype=bool)
 
@@ -272,15 +273,15 @@ class LightCurveStorage(object):
 
         get the time bins and counts for a given selection
 
-        :param dt: 
-        :param emin: 
-        :param emax: 
-        :param times: 
-        :param pha: 
-        :param tmin: 
-        :param tmax: 
-        :returns: 
-        :rtype: 
+        :param dt:
+        :param emin:
+        :param emax:
+        :param times:
+        :param pha:
+        :param tmin:
+        :param tmax:
+        :returns:
+        :rtype:
 
         """
 
@@ -323,7 +324,13 @@ class LightCurveStorage(object):
             return fig
 
         xbins, rate = self._bin_lightcurve(
-            dt=dt, emin=emin, emax=emax, times=times, pha=pha, tmin=tmin, tmax=tmax
+            dt=dt,
+            emin=emin,
+            emax=emax,
+            times=times,
+            pha=pha,
+            tmin=tmin,
+            tmax=tmax,
         )
 
         logger.debug(f"there are {len(xbins)} bins")
@@ -336,18 +343,25 @@ class LightCurveStorage(object):
         return fig
 
     def display_lightcurve(
-        self, dt=1, tmin=None, tmax=None, emin=None, emax=None, ax=None, **kwargs
+        self,
+        dt=1,
+        tmin=None,
+        tmax=None,
+        emin=None,
+        emax=None,
+        ax=None,
+        **kwargs,
     ):
         """FIXME! briefly describe function
 
-        :param dt: 
-        :param tmin: 
-        :param tmax: 
-        :param emin: 
-        :param emax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param dt:
+        :param tmin:
+        :param tmax:
+        :param emin:
+        :param emax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -368,19 +382,26 @@ class LightCurveStorage(object):
         return fig
 
     def display_background(
-        self, dt=1, tmin=None, tmax=None, emin=None, emax=None, ax=None, **kwargs
+        self,
+        dt=1,
+        tmin=None,
+        tmax=None,
+        emin=None,
+        emax=None,
+        ax=None,
+        **kwargs,
     ):
         """
         display the background light curve
 
-        :param dt: 
-        :param tmin: 
-        :param tmax: 
-        :param emin: 
-        :param emax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param dt:
+        :param tmin:
+        :param tmax:
+        :param emin:
+        :param emax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
         logger.debug("DISPLAY BACKGROUND LIGHTCURVE")
@@ -400,19 +421,26 @@ class LightCurveStorage(object):
         return fig
 
     def display_source(
-        self, dt=1, tmin=None, tmax=None, emin=None, emax=None, ax=None, **kwargs
+        self,
+        dt=1,
+        tmin=None,
+        tmax=None,
+        emin=None,
+        emax=None,
+        ax=None,
+        **kwargs,
     ):
         """
         display the source only light curve
 
-        :param dt: 
-        :param tmin: 
-        :param tmax: 
-        :param emin: 
-        :param emax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param dt:
+        :param tmin:
+        :param tmax:
+        :param emin:
+        :param emax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -436,12 +464,12 @@ class LightCurveStorage(object):
         """
         bin the spectrum into counts
 
-        :param tmin: 
-        :param tmax: 
-        :param times: 
-        :param pha: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :param times:
+        :param pha:
+        :returns:
+        :rtype:
 
         """
 
@@ -468,13 +496,13 @@ class LightCurveStorage(object):
 
         generic count spectrum plotter
 
-        :param times: 
-        :param pha: 
-        :param tmin: 
-        :param tmax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param times:
+        :param pha:
+        :param tmin:
+        :param tmax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -507,11 +535,11 @@ class LightCurveStorage(object):
         """
         display the total count spectrum
 
-        :param tmin: 
-        :param tmax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -521,15 +549,17 @@ class LightCurveStorage(object):
 
         return fig
 
-    def display_count_spectrum_source(self, tmin=None, tmax=None, ax=None, **kwargs):
+    def display_count_spectrum_source(
+        self, tmin=None, tmax=None, ax=None, **kwargs
+    ):
         """
         display the source count spectrum
 
-        :param tmin: 
-        :param tmax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -545,16 +575,21 @@ class LightCurveStorage(object):
         """
         display the background count spectrum
 
-        :param tmin: 
-        :param tmax: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
         fig = self._display_count_spectrum(
-            self._times_background, self._pha_background, tmin, tmax, ax, **kwargs
+            self._times_background,
+            self._pha_background,
+            tmin,
+            tmax,
+            ax,
+            **kwargs,
         )
 
         return fig

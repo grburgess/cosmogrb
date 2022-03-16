@@ -1,6 +1,6 @@
-from cosmogrb.io.grb_save import GRBSave
 import collections
 
+from cosmogrb.io.grb_save import GRBSave
 from cosmogrb.utils.plotting.skyplot import skyplot
 
 
@@ -51,5 +51,6 @@ class ReloadedUniverse(object):
         else:
 
             raise ValueError(
-                "Configuration key %s does not exist in %s." % (key, self._filename)
+                "Configuration key %s does not exist in %s."
+                % (key, self._filename)
             )

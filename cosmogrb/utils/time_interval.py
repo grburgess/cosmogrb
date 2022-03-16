@@ -1,8 +1,9 @@
 # from 3ML
 
-import matplotlib.pyplot as plt
 import copy
-from operator import itemgetter, attrgetter
+from operator import attrgetter, itemgetter
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 from cosmogrb.utils.plotting import step_plot
@@ -17,7 +18,9 @@ class IntervalsNotContiguous(RuntimeError):
 
 
 class TimeInterval(object):
-    def __init__(self, start, stop, counts=None, dead_time=0, swap_if_inverted=False):
+    def __init__(
+        self, start, stop, counts=None, dead_time=0, swap_if_inverted=False
+    ):
 
         self._start = float(start)
         self._stop = float(stop)
@@ -100,7 +103,11 @@ class TimeInterval(object):
 
     def __repr__(self):
 
-        return " interval %s - %s (width: %s)" % (self.start, self.stop, self.width,)
+        return " interval %s - %s (width: %s)" % (
+            self.start,
+            self.stop,
+            self.width,
+        )
 
     def intersect(self, interval):
         """
@@ -151,7 +158,9 @@ class TimeInterval(object):
 
         else:
 
-            raise IntervalsDoNotOverlap("Could not merge non-overlapping intervals!")
+            raise IntervalsDoNotOverlap(
+                "Could not merge non-overlapping intervals!"
+            )
 
     def overlaps_with(self, interval):
         """
@@ -230,9 +239,11 @@ class TimeIntervalSet(object):
         :return:
         """
 
-        assert len(starts) == len(stops), (
-            "starts length: %d and stops length: %d must have same length"
-            % (len(starts), len(stops))
+        assert len(starts) == len(
+            stops
+        ), "starts length: %d and stops length: %d must have same length" % (
+            len(starts),
+            len(stops),
         )
 
         if counts is not None:
@@ -348,7 +359,9 @@ class TimeIntervalSet(object):
 
                 if new_intervals[-1].overlaps_with(sorted_intervals[0]):
 
-                    new_intervals[-1] = new_intervals[-1].merge(sorted_intervals[0])
+                    new_intervals[-1] = new_intervals[-1].merge(
+                        sorted_intervals[0]
+                    )
 
                 else:
 
@@ -385,7 +398,9 @@ class TimeIntervalSet(object):
 
     def __eq__(self, other):
 
-        for interval_this, interval_other in zip(self.argsort(), other.argsort()):
+        for interval_this, interval_other in zip(
+            self.argsort(), other.argsort()
+        ):
 
             if not self[interval_this] == other[interval_other]:
                 return False
@@ -626,7 +641,9 @@ class TimeIntervalSet(object):
         """
 
         new_set = TimeIntervalSet()
-        new_set.extend([time_interval + number for time_interval in self._intervals])
+        new_set.extend(
+            [time_interval + number for time_interval in self._intervals]
+        )
 
         return new_set
 
@@ -648,10 +665,10 @@ class TimeIntervalSet(object):
         """
         plot the intervals as rates or counts
 
-        :param as_rates: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param as_rates:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 

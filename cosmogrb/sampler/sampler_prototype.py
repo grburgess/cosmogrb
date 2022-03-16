@@ -1,6 +1,8 @@
 import numba as nb
 import numpy as np
+
 from cosmogrb.utils.numba_array import VectorFloat64
+
 
 @nb.njit()
 def source_poisson_generator(tstart, tstop, function, fmax):
@@ -59,18 +61,18 @@ def evolution_sampler(times, N, function, grid, emin, emax):
 @nb.jit(forceobj=True)
 def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
     """
-    specialized sample for power law like functions for 
+    specialized sample for power law like functions for
     increased speed
 
 
-    :param times: 
-    :param N: 
-    :param function: 
-    :param index: 
-    :param emin: 
-    :param emax: 
-    :returns: 
-    :rtype: 
+    :param times:
+    :param N:
+    :param function:
+    :param index:
+    :param emin:
+    :param emax:
+    :returns:
+    :rtype:
 
     """
 
@@ -119,4 +121,3 @@ def plaw_evolution_sampler(times, N, function, index, emin, emax, eff_area_max):
                 break
 
     return out
-

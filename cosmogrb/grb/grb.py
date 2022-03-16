@@ -1,17 +1,19 @@
 import abc
+
 # import concurrent.futures as futures
 import collections
 import logging
 
 import h5py
 import pandas as pd
+from dask.distributed import worker_client
+from IPython.display import display
+
 from cosmogrb import cosmogrb_config
 from cosmogrb.sampler.source_function import SourceFunction
 from cosmogrb.utils.hdf5_utils import recursively_save_dict_contents_to_group
 from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.meta import GRBMeta, RequiredParameter
-from dask.distributed import worker_client
-from IPython.display import display
 
 # from cosmogrb import cosmogrb_client
 
@@ -127,7 +129,9 @@ class GRB(object, metaclass=GRBMeta):
 
         """
 
-        list(self._lightcurves.values())[0].display_energy_dependent_light_curve(
+        list(self._lightcurves.values())[
+            0
+        ].display_energy_dependent_light_curve(
             time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
         )
 
@@ -141,28 +145,36 @@ class GRB(object, metaclass=GRBMeta):
 
         """
 
-        list(self._lightcurves.values())[0].display_energy_integrated_light_curve(
-            time=time, ax=ax, **kwargs
-        )
+        list(self._lightcurves.values())[
+            0
+        ].display_energy_integrated_light_curve(time=time, ax=ax, **kwargs)
 
     def go(self, client=None, serial=False):
 
         for key in self._required_names:
-            assert self._required_params[key] is not None, f"you have not set {key}"
+            assert (
+                self._required_params[key] is not None
+            ), f"you have not set {key}"
 
         assert self.z > 0, f"z: {self.z} must be greater than zero"
-        assert self.duration > 0, f"duration: {self.duration} must be greater than zero"
+        assert (
+            self.duration > 0
+        ), f"duration: {self.duration} must be greater than zero"
 
         logger.debug(f"created a GRB with name: {self.name}")
         logger.debug(f"created a GRB with ra: {self.ra} and dec: {self.dec}")
         logger.debug(f"created a GRB with redshift: {self.z}")
-        logger.debug(f"created a GRB with duration: {self.duration} and T0: {self.T0}")
+        logger.debug(
+            f"created a GRB with duration: {self.duration} and T0: {self.T0}"
+        )
 
         if not serial:
 
             if client is not None:
 
-                futures = client.map(process_lightcurve, self._lightcurves.values())
+                futures = client.map(
+                    process_lightcurve, self._lightcurves.values()
+                )
 
                 results = client.gather(futures)
 
@@ -170,7 +182,9 @@ class GRB(object, metaclass=GRBMeta):
 
                 with worker_client() as client:
 
-                    futures = client.map(process_lightcurve, self._lightcurves.values())
+                    futures = client.map(
+                        process_lightcurve, self._lightcurves.values()
+                    )
 
                     results = client.gather(futures)
 
@@ -178,7 +192,9 @@ class GRB(object, metaclass=GRBMeta):
 
         else:
 
-            results = [process_lightcurve(lc) for lc in self._lightcurves.values()]
+            results = [
+                process_lightcurve(lc) for lc in self._lightcurves.values()
+            ]
 
         for lc in results:
 
@@ -210,7 +226,9 @@ class GRB(object, metaclass=GRBMeta):
 
             # store the source function parameters
 
-            recursively_save_dict_contents_to_group(f, "source", self._source_params)
+            recursively_save_dict_contents_to_group(
+                f, "source", self._source_params
+            )
 
             # now save everything from the detectors
 
@@ -247,8 +265,12 @@ class GRB(object, metaclass=GRBMeta):
 
                 total_group = lc_group.create_group("total_signal")
 
-                total_group.create_dataset("pha", data=lc.pha, compression="lzf")
-                total_group.create_dataset("times", data=lc.times, compression="lzf")
+                total_group.create_dataset(
+                    "pha", data=lc.pha, compression="lzf"
+                )
+                total_group.create_dataset(
+                    "times", data=lc.times, compression="lzf"
+                )
 
                 source_group = lc_group.create_group("source_signal")
 
@@ -283,7 +305,9 @@ class GRB(object, metaclass=GRBMeta):
                     data=lightcurve.response.channel_edges,
                     compression="lzf",
                 )
-                rsp_group.attrs["geometric_area"] = lightcurve.response.geometric_area
+                rsp_group.attrs[
+                    "geometric_area"
+                ] = lightcurve.response.geometric_area
 
             if clean_up:
 

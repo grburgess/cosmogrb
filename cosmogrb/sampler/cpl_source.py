@@ -1,11 +1,12 @@
-
-
 import numpy as np
 
-from cosmogrb.sampler.cpl_functions import (cpl_evolution,
-                                            energy_integrated_evolution,
-                                            sample_energy, sample_events,
-                                            time_integrated_evolution)
+from cosmogrb.sampler.cpl_functions import (
+    cpl_evolution,
+    energy_integrated_evolution,
+    sample_energy,
+    sample_events,
+    time_integrated_evolution,
+)
 from cosmogrb.utils.numba_array import VectorFloat64
 
 from .source_function import SourceFunction
@@ -33,7 +34,9 @@ class CPLSourceFunction(SourceFunction):
         self._tdecay = tdecay
         self._alpha = alpha
 
-        assert alpha < 0.0, "the rejection sampler is slow as fuck if alpha is positive"
+        assert (
+            alpha < 0.0
+        ), "the rejection sampler is slow as fuck if alpha is positive"
 
         super(CPLSourceFunction, self).__init__(
             emin=emin, emax=emax, index=alpha, response=response
@@ -53,7 +56,7 @@ class CPLSourceFunction(SourceFunction):
             tdecay=self._tdecay,
             emin=self._emin,
             emax=self._emax,
-            z=self._z
+            z=self._z,
         )
 
     def time_integrated_spectrum(self, energy, tmin, tmax):
@@ -71,7 +74,7 @@ class CPLSourceFunction(SourceFunction):
             emin=self._emin,
             emax=self._emax,
             effective_area=self._response.effective_area_packed,
-            z=self._z
+            z=self._z,
         )
 
     def energy_integrated_evolution(self, time):
@@ -89,7 +92,7 @@ class CPLSourceFunction(SourceFunction):
             emin=self._emin,
             emax=self._emax,
             effective_area=ea,
-            z=self._z
+            z=self._z,
         )
 
     def sample_events(self, tstart, tstop, fmax):
@@ -107,7 +110,7 @@ class CPLSourceFunction(SourceFunction):
             emax=self._emax,
             effective_area=self._response.effective_area_packed,
             fmax=fmax,
-            z=self._z
+            z=self._z,
         )
 
     def sample_energy(self, times):
@@ -125,5 +128,5 @@ class CPLSourceFunction(SourceFunction):
             emin=self._emin,
             emax=self._emax,
             effective_area=ea,
-            z=self._z
+            z=self._z,
         )

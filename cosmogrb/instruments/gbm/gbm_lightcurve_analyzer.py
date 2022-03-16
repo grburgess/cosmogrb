@@ -1,7 +1,9 @@
+from typing import Any, Dict, List, Optional
+
 import dask
 import numba as nb
 import numpy as np
-from typing import Optional, Dict, List, Any
+
 from cosmogrb.lightcurve import LightCurveAnalyzer
 from cosmogrb.utils.logging import setup_logger
 from cosmogrb.utils.time_interval import TimeIntervalSet
@@ -26,12 +28,14 @@ _trigger_time_scales = {
 
 
 class GBMLightCurveAnalyzer(LightCurveAnalyzer):
-    """Documentation for GBMLightCurveAnalyzer
-
-    """
+    """Documentation for GBMLightCurveAnalyzer"""
 
     def __init__(
-        self, lightcurve, threshold: float=4.5, background_duration: float = 17, pre_window: float=4.0
+        self,
+        lightcurve,
+        threshold: float = 4.5,
+        background_duration: float = 17,
+        pre_window: float = 4.0,
     ):
 
         self._threshold: float = threshold
@@ -46,14 +50,16 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
             np.floor(self._background_duration / self._base_timescale)
         )
         self._n_bins_pre = int(
-            np.floor(self._pre_window / self._base_timescale))
+            np.floor(self._pre_window / self._base_timescale)
+        )
 
         self._detection_time = None
         self._detection_time_scale = None
 
         super(GBMLightCurveAnalyzer, self).__init__(
-            lightcurve, instrument="GBM")
-        
+            lightcurve, instrument="GBM"
+        )
+
     def _compute_detection(self):
 
         # first we just need to compute the dead_time per intervals
@@ -66,7 +72,8 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         stops = bins[:, 1]
 
         dead_time_per_interval = [
-            self.dead_time_of_interval(x, y) for x, y in bins]
+            self.dead_time_of_interval(x, y) for x, y in bins
+        ]
 
         #        self._dead_time_per_interval = dask.compute(*dead_time_per_interval)
         # go thru each energy range and look for a detection
@@ -161,10 +168,10 @@ class GBMLightCurveAnalyzer(LightCurveAnalyzer):
         get the dead time over and interval
 
 
-        :param tmin: 
-        :param tmax: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :returns:
+        :rtype:
 
         """
 
@@ -206,18 +213,18 @@ def _run_trigger(
         if i + n_bins_background + n_bins_pre + n_bins_source < len(stops):
 
             # bkg_exposure = starts[i + n_bins_background] - starts[i]
-            bkg_exposure = exposure[i: i + n_bins_background].sum()
+            bkg_exposure = exposure[i : i + n_bins_background].sum()
 
-            background_counts = counts[i: i + n_bins_background].sum()
+            background_counts = counts[i : i + n_bins_background].sum()
 
             # src
 
             src_idx = i + n_bins_background + n_bins_pre
 
             # src_exposure = starts[src_idx + n_bins_source] - starts[src_idx]
-            src_exposure = exposure[src_idx: src_idx + n_bins_source].sum()
+            src_exposure = exposure[src_idx : src_idx + n_bins_source].sum()
 
-            src_counts = counts[src_idx: src_idx + n_bins_source].sum()
+            src_counts = counts[src_idx : src_idx + n_bins_source].sum()
 
             sig = dumb_significance(
                 src_counts, background_counts, src_exposure, bkg_exposure

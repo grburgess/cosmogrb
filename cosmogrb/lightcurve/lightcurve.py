@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
@@ -22,14 +21,14 @@ class LightCurve(object):
     ):
         """
         Lightcurve generator f{lenource and backgroun after dead time filteringd
-        per detector. 
+        per detector.
 
 
 
-        :param source: 
-        :param background: 
-        :returns: 
-        :rtype: 
+        :param source:
+        :param background:
+        :returns:
+        :rtype:
 
         """
 
@@ -76,8 +75,8 @@ class LightCurve(object):
         """
         samples the source times and energies
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -96,7 +95,8 @@ class LightCurve(object):
         pha = self._source.sample_channel(photons, self._response)
 
         logger.debug(
-            f"{self._grb_name} {self._name}: now has digitized its events")
+            f"{self._grb_name} {self._name}: now has digitized its events"
+        )
 
         self._photons = photons
         self._initial_source_light_curves = times
@@ -111,8 +111,8 @@ class LightCurve(object):
         """
         sample the background
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -132,8 +132,8 @@ class LightCurve(object):
         """
         combine the source and background photons
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -141,8 +141,9 @@ class LightCurve(object):
             self._initial_bkg_light_curves, self._initial_source_light_curves
         )
 
-        self._pha = np.append(self._initial_bkg_channels,
-                              self._initial_source_channels)
+        self._pha = np.append(
+            self._initial_bkg_channels, self._initial_source_channels
+        )
 
         idx = self._times.argsort()
 
@@ -206,12 +207,12 @@ class LightCurve(object):
     ):
         """FIXME! briefly describe function
 
-        :param time: 
-        :param energy: 
-        :param ax: 
-        :param cmap: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param energy:
+        :param ax:
+        :param cmap:
+        :returns:
+        :rtype:
 
         """
 
@@ -222,15 +223,16 @@ class LightCurve(object):
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function
 
-        :param time: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
         self._source.display_energy_integrated_light_curve(
-            time=time, ax=ax, **kwargs)
+            time=time, ax=ax, **kwargs
+        )
 
     @property
     def time_adjustment(self):

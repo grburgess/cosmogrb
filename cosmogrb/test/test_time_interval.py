@@ -1,9 +1,15 @@
 from __future__ import print_function
+
 from builtins import zip
+
 import pytest
 
-from cosmogrb.utils.time_interval import TimeInterval, TimeIntervalSet
-from cosmogrb.utils.time_interval import IntervalsDoNotOverlap, IntervalsNotContiguous
+from cosmogrb.utils.time_interval import (
+    IntervalsDoNotOverlap,
+    IntervalsNotContiguous,
+    TimeInterval,
+    TimeIntervalSet,
+)
 
 
 def test_time_interval_constructor():

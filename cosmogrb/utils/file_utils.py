@@ -1,8 +1,8 @@
 import os
-from contextlib import contextmanager
-import tempfile
 import shutil
+import tempfile
 import uuid
+from contextlib import contextmanager
 
 
 def file_existing_and_readable(filename):
@@ -85,7 +85,9 @@ def within_directory(directory):
 
     if not os.path.exists(directory):
 
-        raise IOError("Directory %s does not exists!" % os.path.abspath(directory))
+        raise IOError(
+            "Directory %s does not exists!" % os.path.abspath(directory)
+        )
 
     try:
         os.chdir(directory)

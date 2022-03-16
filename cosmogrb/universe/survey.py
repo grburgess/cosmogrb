@@ -58,7 +58,10 @@ class Observation(object):
 
 class Survey(collections.OrderedDict):
     def __init__(
-        self, grb_save_files: List[str], population_file: str, grb_detector_files=None
+        self,
+        grb_save_files: List[str],
+        population_file: str,
+        grb_detector_files=None,
     ) -> None:
         """
         A container for a survey of observed GRBs. Holds file locations
@@ -92,7 +95,9 @@ class Survey(collections.OrderedDict):
             self._population_file = None
             self._population = None
 
-            logger.warnings(f"{population_file} does not exist. Perhaps you moved it?")
+            logger.warnings(
+                f"{population_file} does not exist. Perhaps you moved it?"
+            )
 
         for f in self._grb_save_files:
 
@@ -135,7 +140,8 @@ class Survey(collections.OrderedDict):
             ):
 
                 self[name] = Observation(
-                    grb_save_file=grb_save_file, grb_detector_file=grb_detector_file
+                    grb_save_file=grb_save_file,
+                    grb_detector_file=grb_detector_file,
                 )
 
         else:
@@ -194,7 +200,9 @@ class Survey(collections.OrderedDict):
 
         """
 
-        assert issubclass(detector_type, GRBDetector), "Not a valid GRB detector"
+        assert issubclass(
+            detector_type, GRBDetector
+        ), "Not a valid GRB detector"
 
         if not serial:
 
@@ -285,7 +293,8 @@ class Survey(collections.OrderedDict):
             if self._is_processed:
 
                 grb_dets = f.create_dataset(
-                    "grb_dets", data=np.array(self._grb_detector_files, dtype=dt)
+                    "grb_dets",
+                    data=np.array(self._grb_detector_files, dtype=dt),
                 )
 
     @classmethod

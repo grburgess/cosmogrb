@@ -4,10 +4,10 @@ class Sampler(object):
         Superclass of the background and source
         samplers
 
-        :param tstart: 
-        :param tstop: 
-        :returns: 
-        :rtype: 
+        :param tstart:
+        :param tstop:
+        :returns:
+        :rtype:
 
         """
 

@@ -46,7 +46,17 @@ def cpl(x, alpha, xp, F, a, b):
 
 @nb.njit(fastmath=True, cache=False)
 def cpl_evolution(
-    energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, z
+    energy,
+    time,
+    peak_flux,
+    ep_start,
+    ep_tau,
+    alpha,
+    trise,
+    tdecay,
+    emin,
+    emax,
+    z,
 ):
     """
     evolution of the CPL function with time
@@ -76,12 +86,16 @@ def cpl_evolution(
 
     for n in range(N):
 
-        K = norris(time[n], K=peak_flux, t_start=0.0, t_rise=trise, t_decay=tdecay)
+        K = norris(
+            time[n], K=peak_flux, t_start=0.0, t_rise=trise, t_decay=tdecay
+        )
 
         ep = ep_start / (1 + time[n] / ep_tau)
 
         for m in range(M):
-            out[n, m] = cpl(energy[m] * (1 + z), alpha=alpha, xp=ep, F=K, a=a, b=b)
+            out[n, m] = cpl(
+                energy[m] * (1 + z), alpha=alpha, xp=ep, F=K, a=a, b=b
+            )
 
     return out
 
@@ -103,7 +117,17 @@ def folded_cpl_evolution(
 ):
 
     return interp(response[0], response[1], energy) * cpl_evolution(
-        energy, time, peak_flux, ep_start, ep_tau, alpha, trise, tdecay, emin, emax, z
+        energy,
+        time,
+        peak_flux,
+        ep_start,
+        ep_tau,
+        alpha,
+        trise,
+        tdecay,
+        emin,
+        emax,
+        z,
     )
 
 
@@ -279,7 +303,9 @@ def energy_integrated_evolution(
 
     n_energies = 75
 
-    energy_grid = np.power(10.0, np.linspace(np.log10(emin), np.log10(emax), n_energies))
+    energy_grid = np.power(
+        10.0, np.linspace(np.log10(emin), np.log10(emax), n_energies)
+    )
 
     energy_slice = folded_cpl_evolution(
         energy_grid,

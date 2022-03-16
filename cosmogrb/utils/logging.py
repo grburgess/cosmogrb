@@ -26,7 +26,9 @@ def get_path_of_log_file(log_file: str) -> Path:
     """
     returns the path of the log files
     """
-    assert log_file in _log_file_names, f"{log_file} is not one of {_log_file_names}"
+    assert (
+        log_file in _log_file_names
+    ), f"{log_file} is not one of {_log_file_names}"
 
     return get_path_of_log_dir() / log_file
 
@@ -132,7 +134,9 @@ class ColoredFormatter(logging.Formatter):
         """
         super(ColoredFormatter, self).__init__(fmt, datefmt, style)
 
-        self.log_colors = log_colors if log_colors is not None else DEFAULT_LOG_COLORS
+        self.log_colors = (
+            log_colors if log_colors is not None else DEFAULT_LOG_COLORS
+        )
         self.secondary_log_colors = secondary_log_colors
         self.reset = reset
 

@@ -7,8 +7,10 @@ from cosmogrb.instruments.gbm.gbm_trigger import GBMTrigger
 from cosmogrb.instruments.gbm.process_gbm_universe import process_gbm_universe
 from cosmogrb.universe.survey import Survey
 from cosmogrb.utils.file_utils import file_existing_and_readable
-from cosmogrb.utils.package_utils import (get_path_of_data_dir,
-                                          get_path_of_data_file)
+from cosmogrb.utils.package_utils import (
+    get_path_of_data_dir,
+    get_path_of_data_file,
+)
 
 
 def test_gbm_trigger_constructor(gbm_trigger):

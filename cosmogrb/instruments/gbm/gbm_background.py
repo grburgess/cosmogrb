@@ -1,8 +1,7 @@
-from cosmogrb.sampler.background import Background, BackgroundSpectrumTemplate
-from cosmogrb.utils.package_utils import get_path_of_data_file
-
 import os
 
+from cosmogrb.sampler.background import Background, BackgroundSpectrumTemplate
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 _allowed_gbm_detectors = (
     "n0",

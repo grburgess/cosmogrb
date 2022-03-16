@@ -56,7 +56,8 @@ class ResponseGenerator(object, metaclass=SingletonMeta):
                 time=1,
                 T0=T0,
                 cspecfile=get_path_of_data_file(
-                    os.path.join("gbm_cspec", f"{k}.pha")),
+                    os.path.join("gbm_cspec", f"{k}.pha")
+                ),
                 poshist=get_path_of_data_file("posthist.fit"),
                 mat_type=2,
                 occult=False,
@@ -100,10 +101,10 @@ class ResponseGenerator(object, metaclass=SingletonMeta):
         set the time of the specific response generator.
         Time is relative to T0
 
-        :param time: 
-        :param det_name: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param det_name:
+        :returns:
+        :rtype:
 
         """
 
@@ -118,10 +119,10 @@ class ResponseGenerator(object, metaclass=SingletonMeta):
 
         set the location of the specific reponse generator
 
-        :param time: 
-        :param det_name: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param det_name:
+        :returns:
+        :rtype:
 
         """
 

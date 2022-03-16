@@ -56,13 +56,17 @@ class Parameter(object):
 class SourceParameter(Parameter):
     def __init__(self, default=None, vmin=None, vmax=None):
 
-        super(SourceParameter, self).__init__("_source_params", default, vmin, vmax)
+        super(SourceParameter, self).__init__(
+            "_source_params", default, vmin, vmax
+        )
 
 
 class RequiredParameter(Parameter):
     def __init__(self, default=None, vmin=None, vmax=None):
 
-        super(RequiredParameter, self).__init__("_required_params", default, vmin, vmax)
+        super(RequiredParameter, self).__init__(
+            "_required_params", default, vmin, vmax
+        )
 
 
 class GRBMeta(type):

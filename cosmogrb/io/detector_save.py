@@ -1,7 +1,9 @@
+import collections
+
 import h5py
 import pandas as pd
 from IPython.display import display
-import collections
+
 from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
 
 
@@ -12,11 +14,11 @@ class DetectorSave(object):
         algorithm on a GRB
 
 
-        :param name: 
-        :param is_detected: 
-        :param extra_info: 
-        :returns: 
-        :rtype: 
+        :param name:
+        :param is_detected:
+        :param extra_info:
+        :returns:
+        :rtype:
 
         """
 
@@ -56,7 +58,9 @@ class DetectorSave(object):
 
             try:
 
-                extra_info = recursively_load_dict_contents_from_group(f, "extra_info")
+                extra_info = recursively_load_dict_contents_from_group(
+                    f, "extra_info"
+                )
 
             except:
 

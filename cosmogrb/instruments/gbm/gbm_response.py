@@ -121,7 +121,9 @@ class GBMResponse(Response):
         if self._save:
             self.to_fits(f"{self._name}_{detector_name}.rsp", overwrite=True)
 
-    def _setup_gbm_geometry(self, detector_name: str, ra: float, dec: float) -> None:
+    def _setup_gbm_geometry(
+        self, detector_name: str, ra: float, dec: float
+    ) -> None:
 
         # get the detector
         detector = gbm_detector_list[detector_name](
@@ -157,7 +159,9 @@ class GBMResponse(Response):
 
         return np.fabs(
             np.pi * (self._radius ** 2) * np.cos(self._separation_angle)
-        ) + np.fabs(2 * self._radius * self._height * np.sin(self._separation_angle))
+        ) + np.fabs(
+            2 * self._radius * self._height * np.sin(self._separation_angle)
+        )
 
     def _create_matrix(self, detector_name, ra, dec):
         """
@@ -267,7 +271,9 @@ class BGOResponse(GBMResponse):
         # this may be wrong
 
         return np.fabs(
-            np.pi * (self._radius ** 2) * np.cos(self._separation_angle + 0.5 * np.pi)
+            np.pi
+            * (self._radius ** 2)
+            * np.cos(self._separation_angle + 0.5 * np.pi)
         ) + np.fabs(
             2
             * self._radius

@@ -13,7 +13,9 @@ logger = setup_logger(__name__)
 
 
 class Source(Sampler):
-    def __init__(self, tstart, tstop, source_function, z, use_plaw_sample=False):
+    def __init__(
+        self, tstart, tstop, source_function, z, use_plaw_sample=False
+    ):
 
         self._source_function = source_function
 
@@ -46,10 +48,10 @@ class Source(Sampler):
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function
 
-        :param time: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -62,12 +64,12 @@ class Source(Sampler):
     ):
         """FIXME! briefly describe function
 
-        :param time: 
-        :param energy: 
-        :param ax: 
-        :param cmap: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param energy:
+        :param ax:
+        :param cmap:
+        :returns:
+        :rtype:
 
         """
 
@@ -88,10 +90,10 @@ class Source(Sampler):
         return the maximum flux in photon number integrated over the energy
         range
 
-        :param start: 
-        :param stop: 
-        :returns: 
-        :rtype: 
+        :param start:
+        :param stop:
+        :returns:
+        :rtype:
 
         """
 
@@ -101,7 +103,8 @@ class Source(Sampler):
         time_grid = np.linspace(self._tstart, self._tstop, num_grid_points)
 
         fluxes = [
-            self._source_function.energy_integrated_evolution(t) for t in time_grid
+            self._source_function.energy_integrated_evolution(t)
+            for t in time_grid
         ]
 
         return np.max(fluxes)
@@ -118,14 +121,16 @@ class Source(Sampler):
         sample the evolution function INTEGRATED
         over energy
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
         np.random.seed()
 
-        return self._source_function.sample_events(self._tstart, self._tstop, self._fmax)
+        return self._source_function.sample_events(
+            self._tstart, self._tstop, self._fmax
+        )
 
     def sample_photons(self, times):
 

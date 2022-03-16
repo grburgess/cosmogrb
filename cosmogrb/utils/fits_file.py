@@ -1,5 +1,6 @@
-from responsum.utils.fits_file import FITSFile, FITSExtension as FE
 import pkg_resources
+from responsum.utils.fits_file import FITSExtension as FE
+from responsum.utils.fits_file import FITSFile
 
 
 class FITSExtension(FE):
@@ -9,6 +10,10 @@ class FITSExtension(FE):
 
     def __init__(self, data_tuple, header_tuple):
 
-        creator = "COSMOGRB v.%s" % (pkg_resources.get_distribution("cosmogrb").version)
+        creator = "COSMOGRB v.%s" % (
+            pkg_resources.get_distribution("cosmogrb").version
+        )
 
-        super(FITSExtension, self).__init__(data_tuple, header_tuple, creator=creator)
+        super(FITSExtension, self).__init__(
+            data_tuple, header_tuple, creator=creator
+        )

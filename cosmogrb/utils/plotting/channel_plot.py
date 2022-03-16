@@ -6,12 +6,12 @@ from cosmogrb.utils.plotting import step_plot
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     """FIXME! briefly describe function
 
-    :param ax: 
-    :param chan_min: 
-    :param chan_max: 
-    :param counts: 
-    :returns: 
-    :rtype: 
+    :param ax:
+    :param chan_min:
+    :param chan_max:
+    :param counts:
+    :returns:
+    :rtype:
 
     """
 

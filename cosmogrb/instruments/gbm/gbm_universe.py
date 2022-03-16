@@ -5,15 +5,15 @@ from cosmogrb.universe.universe import GRBWrapper, ParameterServer, Universe
 
 
 class GBM_CPL_Universe(Universe):
-    """Documentation for GBM_CPL_Universe
-
-    """
+    """Documentation for GBM_CPL_Universe"""
 
     def __init__(self, population, save_path="."):
 
         super(GBM_CPL_Universe, self).__init__(population, save_path=save_path)
 
-    def _grb_wrapper(self, parameter_server: ParameterServer, serial: bool=False):
+    def _grb_wrapper(
+        self, parameter_server: ParameterServer, serial: bool = False
+    ):
         return GBM_CPL_Wrapper(parameter_server, serial=serial)
 
     def _process_populations(self):
@@ -34,9 +34,7 @@ class GBM_CPL_Universe(Universe):
 
 
 class GBM_CPL_Wrapper(GRBWrapper):
-    """Documentation for GBM_CPL_Wrapper
-
-    """
+    """Documentation for GBM_CPL_Wrapper"""
 
     def __init__(self, parameter_server, serial=False):
         super(GBM_CPL_Wrapper, self).__init__(
@@ -48,9 +46,7 @@ class GBM_CPL_Wrapper(GRBWrapper):
 
 
 class GBM_CPL_ParameterServer(ParameterServer):
-    """Documentation for GBM_CPL_ParameterServer
-
-    """
+    """Documentation for GBM_CPL_ParameterServer"""
 
     def __init__(
         self,
@@ -69,20 +65,20 @@ class GBM_CPL_ParameterServer(ParameterServer):
     ):
         """FIXME! briefly describe function
 
-        :param name: 
-        :param ra: 
-        :param dec: 
-        :param z: 
-        :param duration: 
-        :param T0: 
-        :param peak_flux: 
-        :param alpha: 
-        :param ep: 
-        :param tau: 
-        :param trise: 
-        :param tdecay: 
-        :returns: 
-        :rtype: 
+        :param name:
+        :param ra:
+        :param dec:
+        :param z:
+        :param duration:
+        :param T0:
+        :param peak_flux:
+        :param alpha:
+        :param ep:
+        :param tau:
+        :param trise:
+        :param tdecay:
+        :returns:
+        :rtype:
 
         """
 
@@ -108,16 +104,14 @@ class GBM_CPL_ParameterServer(ParameterServer):
 #
 
 
-        
 class GBM_CPL_Constant_Universe(Universe):
-    """Documentation for GBM_CPL_Constant_Universe
-
-    """
+    """Documentation for GBM_CPL_Constant_Universe"""
 
     def __init__(self, population, save_path="."):
 
         super(GBM_CPL_Constant_Universe, self).__init__(
-            population, save_path=save_path)
+            population, save_path=save_path
+        )
 
     def _grb_wrapper(self, parameter_server, serial=False):
         return GBM_CPL_Constant_Wrapper(parameter_server, serial=serial)
@@ -137,9 +131,7 @@ class GBM_CPL_Constant_Universe(Universe):
 
 
 class GBM_CPL_Constant_Wrapper(GRBWrapper):
-    """Documentation for GBM_CPL_Constant_Wrapper
-
-    """
+    """Documentation for GBM_CPL_Constant_Wrapper"""
 
     def __init__(self, parameter_server, serial=False):
         super(GBM_CPL_Constant_Wrapper, self).__init__(
@@ -151,36 +143,22 @@ class GBM_CPL_Constant_Wrapper(GRBWrapper):
 
 
 class GBM_CPL_Constant_ParameterServer(ParameterServer):
-    """Documentation for GBM_CPL_Constant_ParameterServer
+    """Documentation for GBM_CPL_Constant_ParameterServer"""
 
-    """
-
-    def __init__(
-        self,
-        name,
-        ra,
-        dec,
-        z,
-        duration,
-        T0,
-        peak_flux,
-        alpha,
-        ep
-
-    ):
+    def __init__(self, name, ra, dec, z, duration, T0, peak_flux, alpha, ep):
         """FIXME! briefly describe function
 
-        :param name: 
-        :param ra: 
-        :param dec: 
-        :param z: 
-        :param duration: 
-        :param T0: 
-        :param peak_flux: 
-        :param alpha: 
-        :param ep: 
-        :returns: 
-        :rtype: 
+        :param name:
+        :param ra:
+        :param dec:
+        :param z:
+        :param duration:
+        :param T0:
+        :param peak_flux:
+        :param alpha:
+        :param ep:
+        :returns:
+        :rtype:
 
         """
 
@@ -194,5 +172,4 @@ class GBM_CPL_Constant_ParameterServer(ParameterServer):
             peak_flux=peak_flux,
             alpha=alpha,
             ep=ep,
-
         )

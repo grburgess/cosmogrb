@@ -14,8 +14,7 @@ class GBMOrbit(object):
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
 
-            logger.debug(
-                "i'm creating a new instance! should only happen once")
+            logger.debug("i'm creating a new instance! should only happen once")
 
             cls._instance = super(GBMOrbit, cls).__new__(cls)
             # put any initialization here.
@@ -61,9 +60,9 @@ class GBMOrbit(object):
         """
         Get the MET of the time relative time
 
-        :param time: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :returns:
+        :rtype:
 
         """
 

@@ -2,7 +2,6 @@ import numba as nb
 import numpy as np
 
 
-
 @nb.njit(fastmath=True, cache=False)
 def norris(x, K, t_start, t_rise, t_decay):
     if x > t_start:

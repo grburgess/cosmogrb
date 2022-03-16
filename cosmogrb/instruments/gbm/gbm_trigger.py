@@ -3,8 +3,9 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 
 from cosmogrb.grb.grb_detector import GRBDetector
-from cosmogrb.instruments.gbm.gbm_lightcurve_analyzer import \
-    GBMLightCurveAnalyzer
+from cosmogrb.instruments.gbm.gbm_lightcurve_analyzer import (
+    GBMLightCurveAnalyzer,
+)
 from cosmogrb.utils.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -154,7 +155,9 @@ class GBMTrigger(GRBDetector):
                     # check the other trigger times to
                     # see if they are close to this one
 
-                    if self._check_simultaneous_triggers(lc_analyzer.detection_time):
+                    if self._check_simultaneous_triggers(
+                        lc_analyzer.detection_time
+                    ):
 
                         # ok, we found at least two triggers nearly the same time
 
@@ -165,7 +168,9 @@ class GBMTrigger(GRBDetector):
 
                 self._triggered_detectors.append(self._lc_names[n_tested])
                 self._triggered_times.append(lc_analyzer.detection_time)
-                self._triggered_time_scales.append(lc_analyzer.detection_time_scale)
+                self._triggered_time_scales.append(
+                    lc_analyzer.detection_time_scale
+                )
 
                 n_triggered += 1
 

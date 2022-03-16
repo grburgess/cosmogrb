@@ -34,8 +34,9 @@ def grbsave_to_gbm_fits(file_name, destination=".", detectors=None):
 
         if key in detectors:
 
-            tstart = det["lightcurve"].tstart + \
-                det["lightcurve"].time_adjustment
+            tstart = (
+                det["lightcurve"].tstart + det["lightcurve"].time_adjustment
+            )
             tstop = det["lightcurve"].tstop + det["lightcurve"].time_adjustment
 
             tte_file = TTEFile(
@@ -49,22 +50,27 @@ def grbsave_to_gbm_fits(file_name, destination=".", detectors=None):
                 emin=det["response"].channel_edges[:-1],
                 emax=det["response"].channel_edges[1:],
                 pha=det["lightcurve"].pha.astype(np.int16),
-                time=det["lightcurve"].times +
-                det["lightcurve"].time_adjustment,
+                time=det["lightcurve"].times
+                + det["lightcurve"].time_adjustment,
             )
 
             tte_file_name = os.path.join(
-                destination, f"tte_{grb.name}_{key}.fits")
+                destination, f"tte_{grb.name}_{key}.fits"
+            )
 
             tte_file.writeto(tte_file_name, overwrite=True)
 
             rsp = det["response"]
 
             rsp_file_name = os.path.join(
-                destination, f"rsp_{grb.name}_{key}.rsp")
+                destination, f"rsp_{grb.name}_{key}.rsp"
+            )
 
             rsp.to_fits(
-                rsp_file_name, telescope_name="fermi", instrument_name=key, overwrite=True
+                rsp_file_name,
+                telescope_name="fermi",
+                instrument_name=key,
+                overwrite=True,
             )
 
             sub_dict = {}

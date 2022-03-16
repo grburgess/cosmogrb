@@ -30,11 +30,11 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         :param population_file: a popsynth population file name
         :type population_file: str
-        :param grb_base_name: 
+        :param grb_base_name:
         :type grb_base_name: str
-        :param save_path: 
+        :param save_path:
         :type save_path: str
-        :returns: 
+        :returns:
 
         """
         # we want to store the absolute path so that we can find it later
@@ -105,7 +105,9 @@ class Universe(object, metaclass=abc.ABCMeta):
 
                 param_dict[k] = v[i]
 
-            param_server: ParameterServer = self._parameter_server_type(**param_dict)
+            param_server: ParameterServer = self._parameter_server_type(
+                **param_dict
+            )
 
             file_name: Path = self._save_path / f"{self._name[i]}_store.h5"
 
@@ -139,7 +141,10 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         else:
 
-            res = [self._grb_wrapper(ps, serial=True) for ps in self._parameter_servers]
+            res = [
+                self._grb_wrapper(ps, serial=True)
+                for ps in self._parameter_servers
+            ]
 
         self._is_processed = True
 
@@ -158,14 +163,17 @@ class Universe(object, metaclass=abc.ABCMeta):
         if self._is_processed:
 
             grb_save_files = [
-                (self._save_path / f"{self._grb_base_name}_{i}_store.h5").absolute()
+                (
+                    self._save_path / f"{self._grb_base_name}_{i}_store.h5"
+                ).absolute()
                 for i in range(self._n_grbs)
             ]
 
             # create a survey file to save all the information from the run
 
             survey: Survey = Survey(
-                grb_save_files=grb_save_files, population_file=self._population_file
+                grb_save_files=grb_save_files,
+                population_file=self._population_file,
             )
 
             survey.write(file_name)

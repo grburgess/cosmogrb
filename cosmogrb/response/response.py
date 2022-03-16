@@ -39,15 +39,17 @@ class Response(object):
         self._energy_edges = energy_edges.astype('f8')
         self._energy_width = np.diff(self._energy_edges)
         self._energy_mean = (
-            self._energy_edges[:-1] + self._energy_edges[1:]) / 2.0
+            self._energy_edges[:-1] + self._energy_edges[1:]
+        ) / 2.0
 
         self._emin = self._energy_edges[0]
         self._emax = self._energy_edges[-1]
-        
+
         self._channel_edges = channel_edges.astype('f8')
         self._channel_width = np.diff(self._channel_edges)
         self._channel_mean = (
-            self._channel_edges[:-1] + self._channel_edges[1:]) / 2.0
+            self._channel_edges[:-1] + self._channel_edges[1:]
+        ) / 2.0
 
         self._channels = np.arange(len(self._channel_width), dtype=np.int64)
 
@@ -84,7 +86,7 @@ class Response(object):
             self._energy_mean,
             ea_curve,
             self._energy_mean.min(),
-            self._energy_mean.max()
+            self._energy_mean.max(),
         )
 
         # However is very difficult to serialize
@@ -104,13 +106,13 @@ class Response(object):
         # self.effective_area_dict["ea_curve"] = ea_curve
 
         # we do not want zeros
-        
-        idx = ea_curve>0.
-        
-        ea_curve[~idx] = 1.e-99
+
+        idx = ea_curve > 0.0
+
+        ea_curve[~idx] = 1.0e-99
 
         self.effective_area_packed = np.vstack((self._energy_mean, ea_curve))
-        
+
         idx = ea_curve[:-10].argmax()
         self._max_energy = self._energy_mean[idx]
 
@@ -143,34 +145,37 @@ class Response(object):
             / self._total_probability_per_bin[non_zero_idx, np.newaxis]
         )
 
-        self._detection_probability = 1 - \
-            np.exp(-self._total_probability_per_bin)
+        self._detection_probability = 1 - np.exp(
+            -self._total_probability_per_bin
+        )
 
         self._cumulative_maxtrix = np.cumsum(
-            self._normed_probability_matrix, axis=1)
+            self._normed_probability_matrix, axis=1
+        )
 
     def digitize(self, photon_energies):
         """
         digitze the photon into a energy bin
         via the energy dispersion
 
-        :param photon_energy: 
+        :param photon_energy:
         :returns: (pha_channel, detected)
-        :rtype: 
+        :rtype:
 
         """
 
         np.random.seed()
 
         pha_channels = _digitize(
-            photon_energies, self._energy_edges, self._cumulative_maxtrix,
+            photon_energies,
+            self._energy_edges,
+            self._cumulative_maxtrix,
         )
         return pha_channels
 
     @property
     def energy_edges(self):
         return self._energy_edges
-
 
     @property
     def emin(self):
@@ -179,7 +184,7 @@ class Response(object):
     @property
     def emax(self):
         return self._emax
-    
+
     @property
     def channel_edges(self):
         return self._channel_edges

@@ -1,8 +1,8 @@
-import numpy as np
-import astropy.units as astropy_units
 import astropy.io.fits as fits
+import astropy.units as astropy_units
+import numpy as np
 
-from .fits_file import FITSFile, FITSExtension
+from .fits_file import FITSExtension, FITSFile
 
 _det_translate = dict(
     n0="NAI_00",
@@ -27,14 +27,26 @@ class EBOUNDS(FITSExtension):
         ("EXTNAME", "EBOUNDS", "Extension name"),
         ("CONTENT", "OGIP PHA data", "File content"),
         ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
-        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUVERS",
+            "1.1.0   ",
+            "Version of format (OGIP memo CAL/GEN/92-002a)",
+        ),
         (
             "HDUDOC",
             "OGIP memos CAL/GEN/92-002 & 92-002a",
             "Documents describing the forma",
         ),
-        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
-        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        (
+            "HDUVERS1",
+            "1.0.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
+        (
+            "HDUVERS2",
+            "1.1.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
         ("HDUCLAS1", "RESPONSE", "These are typically found in RMF files  "),
         ("HDUCLAS2", "EBOUNDS ", "Fram CAL/GEN/92-002"),
         ("FILTER", "", "Filter used"),
@@ -67,7 +79,16 @@ class EBOUNDS(FITSExtension):
     )
 
     def __init__(
-        self, det_name, tstart, tstop, trigger_time, ra, dec, channel, emin, emax
+        self,
+        det_name,
+        tstart,
+        tstop,
+        trigger_time,
+        ra,
+        dec,
+        channel,
+        emin,
+        emax,
     ):
 
         data_list = [
@@ -91,14 +112,26 @@ class EVENTS(FITSExtension):
         ("EXTNAME", "EVENTS", "Extension name"),
         ("CONTENT", "OGIP PHA data", "File content"),
         ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
-        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUVERS",
+            "1.1.0   ",
+            "Version of format (OGIP memo CAL/GEN/92-002a)",
+        ),
         (
             "HDUDOC",
             "OGIP memos CAL/GEN/92-002 & 92-002a",
             "Documents describing the forma",
         ),
-        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
-        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        (
+            "HDUVERS1",
+            "1.0.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
+        (
+            "HDUVERS2",
+            "1.1.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
         ("HDUCLAS1", "EVENTS", "Extension constains events  "),
         ("FILTER", "", "Filter used"),
         ("DETCHANS", 128, "Number of channels"),
@@ -131,7 +164,9 @@ class EVENTS(FITSExtension):
         ("DETNAM", None, "Individual detector name"),
     )
 
-    def __init__(self, det_name, tstart, tstop, trigger_time, ra, dec, pha, time):
+    def __init__(
+        self, det_name, tstart, tstop, trigger_time, ra, dec, pha, time
+    ):
 
         data_list = [("TIME", time * astropy_units.s), ("PHA", pha)]
 
@@ -154,14 +189,26 @@ class GTI(FITSExtension):
         ("EXTNAME", "GTI", "Extension name"),
         ("CONTENT", "OGIP PHA data", "File content"),
         ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
-        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUVERS",
+            "1.1.0   ",
+            "Version of format (OGIP memo CAL/GEN/92-002a)",
+        ),
         (
             "HDUDOC",
             "OGIP memos CAL/GEN/92-002 & 92-002a",
             "Documents describing the forma",
         ),
-        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
-        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        (
+            "HDUVERS1",
+            "1.0.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
+        (
+            "HDUVERS2",
+            "1.1.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
         ("HDUCLAS1", "GTI", "Extension constains events  "),
         ("FILTER", "", "Filter used"),
         ("TELESCOP", "GLAST", "Name of mission/satelite"),
@@ -202,8 +249,7 @@ class GTI(FITSExtension):
         self.hdu.header.set("TSTART", tstart)
         self.hdu.header.set("TSTOP", tstop)
         self.hdu.header.set("TRIGTIME", trigger_time)
-       
-        
+
         # self.hdu.header.set("TZERO1", trigger_time)
         self.hdu.header.set("DETNAM", _det_translate[det_name])
 
@@ -226,16 +272,15 @@ class TTEFile(FITSFile):
 
         # just to find the info
         primary = fits.PrimaryHDU()
-        
+
         primary.header.set("TSTART", tstart)
         primary.header.set("TSTOP", tstop)
         primary.header.set("TRIGTIME", trigger_time)
         primary.header.set("DATE-OBS", "2009-05-19T18:49:32")
-        primary.header.set("DATE-END","2009-05-19T18:49:32" )
-        primary.header.set("DETNAM",det_name )
-        primary.header.set("INSTRUME", "GBM" )
-        primary.header.set("TELESCOP", "GLAST" )
-        
+        primary.header.set("DATE-END", "2009-05-19T18:49:32")
+        primary.header.set("DETNAM", det_name)
+        primary.header.set("INSTRUME", "GBM")
+        primary.header.set("TELESCOP", "GLAST")
 
         ebounds_extension = EBOUNDS(
             det_name, tstart, tstop, trigger_time, ra, dec, channel, emin, emax
@@ -256,5 +301,9 @@ class TTEFile(FITSFile):
 
         super(TTEFile, self).__init__(
             primary_hdu=primary,
-            fits_extensions=[ebounds_extension, events_extension, gti_extension],
+            fits_extensions=[
+                ebounds_extension,
+                events_extension,
+                gti_extension,
+            ],
         )

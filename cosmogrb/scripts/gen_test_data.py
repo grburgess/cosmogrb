@@ -3,12 +3,11 @@ import popsynth
 from dask.distributed import Client, LocalCluster
 from popsynth.aux_samplers.lognormal_aux_sampler import Log10NormalAuxSampler
 from popsynth.aux_samplers.normal_aux_sampler import NormalAuxSampler
-from popsynth.aux_samplers.trunc_normal_aux_sampler import \
-    TruncatedNormalAuxSampler
+from popsynth.aux_samplers.trunc_normal_aux_sampler import (
+    TruncatedNormalAuxSampler,
+)
 
 from cosmogrb.instruments.gbm import GBMGRB_CPL, GBM_CPL_Universe
-
-
 from cosmogrb.utils.logging import update_logging_level
 
 update_logging_level("DEBUG")
@@ -20,6 +19,7 @@ update_logging_level("DEBUG")
 
 class TDecaySampler(popsynth.AuxiliarySampler):
     _auxiliary_sampler_name = "TDecaySampler"
+
     def __init__(self):
 
         super(TDecaySampler, self).__init__(name="tdecay", observed=False)
@@ -30,12 +30,15 @@ class TDecaySampler(popsynth.AuxiliarySampler):
         trise = self._secondary_samplers["trise"].true_values
 
         self._true_values = (
-            1.0 / 50.0 * (10 * t90 + trise + np.sqrt(trise) * np.sqrt(20 * t90 + trise))
+            1.0
+            / 50.0
+            * (10 * t90 + trise + np.sqrt(trise) * np.sqrt(20 * t90 + trise))
         )
 
 
 class DurationSampler(popsynth.AuxiliarySampler):
     _auxiliary_sampler_name = "DurationSampler"
+
     def __init__(self):
 
         super(DurationSampler, self).__init__(name="duration", observed=False)
@@ -46,7 +49,8 @@ class DurationSampler(popsynth.AuxiliarySampler):
 
         self._true_values = 1.5 * t90
 
-a_true =1.
+
+a_true = 1.0
 r0_true = 0.13
 rise_true = 0.1
 decay_true = 4.0

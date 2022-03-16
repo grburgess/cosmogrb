@@ -2,7 +2,6 @@ import abc
 
 import matplotlib.pyplot as plt
 
-
 from cosmogrb.utils.array_to_cmap import array_to_cmap
 
 
@@ -11,8 +10,8 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         """
         The source function in time an energy
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -25,13 +24,11 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         self._emin = response.emin
         self._emax = response.emax
 
-        
     def set_response(self, response):
 
         self._response = response
         self._emin = response.emin
         self._emax = response.emax
-
 
     @property
     def response(self):
@@ -42,7 +39,7 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
 
         self._source = source
         self._z = source.z
-        
+
     @abc.abstractmethod
     def evolution(self, energy, time):
         """
@@ -56,13 +53,13 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def energy_integrated_evolution(self, time):
         """
-        return the integral over energy at a given time 
+        return the integral over energy at a given time
         via Simpson's rule
 
         :param time: the time of the pulse
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -76,11 +73,11 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
     def time_integrated_spectrum(self, energy, t1, t2):
         """
 
-        :param energy: 
-        :param t1: 
-        :param t2: 
-        :returns: 
-        :rtype: 
+        :param energy:
+        :param t1:
+        :param t2:
+        :returns:
+        :rtype:
 
         """
 
@@ -104,10 +101,10 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         """
         plot the latent light curve integrated over energy
 
-        :param time: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 
@@ -134,10 +131,10 @@ class SourceFunction(object, metaclass=abc.ABCMeta):
         """
         plot the latent light curve integrated over energy
 
-        :param time: 
-        :param ax: 
-        :returns: 
-        :rtype: 
+        :param time:
+        :param ax:
+        :returns:
+        :rtype:
 
         """
 

@@ -1,13 +1,15 @@
+import pytest
+
 from cosmogrb.grb import GRB, SourceParameter
 from cosmogrb.sampler.constant_cpl import ConstantCPL
-
-import pytest
 
 
 class DummyGRB(GRB):
     def __init__(self, **kwargs):
 
-        super(DummyGRB, self).__init__(**kwargs, source_function_class=ConstantCPL)
+        super(DummyGRB, self).__init__(
+            **kwargs, source_function_class=ConstantCPL
+        )
 
     def _setup(self):
 

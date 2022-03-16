@@ -1,6 +1,5 @@
 from cosmogrb.instruments.gbm.gbm_background import GBMBackground
 
-
 allowed_dets = (
     "n0",
     "n1",

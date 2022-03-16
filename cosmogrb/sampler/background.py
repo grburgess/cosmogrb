@@ -14,11 +14,11 @@ logger = setup_logger(__name__)
 def background_poisson_generator(tstart, tstop, rate):
     """
 
-    :param tstart: 
-    :param tstop: 
-    :param rate: 
-    :returns: 
-    :rtype: 
+    :param tstart:
+    :param tstop:
+    :param rate:
+    :returns:
+    :rtype:
 
     """
 
@@ -47,12 +47,12 @@ def background_poisson_generator(tstart, tstop, rate):
 class BackgroundSpectrumTemplate(object):
     def __init__(self, counts, start_at_one=False):
         """
-        A background template stores and samples 
+        A background template stores and samples
         from a predefined background distribution
 
-        :param counts: 
-        :returns: 
-        :rtype: 
+        :param counts:
+        :returns:
+        :rtype:
 
         """
 
@@ -70,8 +70,8 @@ class BackgroundSpectrumTemplate(object):
         """
         get weights by normalizing the counts
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -81,9 +81,9 @@ class BackgroundSpectrumTemplate(object):
         """
         Sample from the background template
 
-        :param size: 
-        :returns: 
-        :rtype: 
+        :param size:
+        :returns:
+        :rtype:
 
         """
 
@@ -98,10 +98,10 @@ class BackgroundSpectrumTemplate(object):
         Read the counts from a HDF5 file that has
         a dataset in its top directory called counts
 
-        :param cls: 
-        :param file_name: 
-        :returns: 
-        :rtype: 
+        :param cls:
+        :param file_name:
+        :returns:
+        :rtype:
 
         """
 
@@ -114,7 +114,11 @@ class BackgroundSpectrumTemplate(object):
 
 class Background(Sampler):
     def __init__(
-        self, tstart, tstop, average_rate=1000, background_spectrum_template=None
+        self,
+        tstart,
+        tstop,
+        average_rate=1000,
+        background_spectrum_template=None,
     ):
 
         # TODO: change this as it is currently stupid
@@ -125,15 +129,16 @@ class Background(Sampler):
         logger.debug(f"background rate is {self._background_rate}")
 
         super(Background, self).__init__(
-            tstart=tstart, tstop=tstop,
+            tstart=tstart,
+            tstop=tstop,
         )
 
     def sample_times(self):
         """
         sample the background times
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -152,9 +157,9 @@ class Background(Sampler):
         Sample the background template. Other options
         do not exist yet
 
-        :param size: 
-        :returns: 
-        :rtype: 
+        :param size:
+        :returns:
+        :rtype:
 
         """
 

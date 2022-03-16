@@ -16,14 +16,18 @@
 #
 """Workaround for https://github.com/astropy/astropy/pull/9609."""
 from astropy.coordinates import ITRS, SphericalRepresentation
-from astropy.wcs.utils import _wcs_to_celestial_frame_builtin
-from astropy.wcs.utils import WCS_FRAME_MAPPINGS
+from astropy.wcs.utils import (
+    WCS_FRAME_MAPPINGS,
+    _wcs_to_celestial_frame_builtin,
+)
 
 
 def wcs_to_celestial_frame(*args, **kwargs):
     frame = _wcs_to_celestial_frame_builtin(*args, **kwargs)
     if isinstance(frame, ITRS):
-        frame = ITRS(obstime=frame.obstime, representation_type=SphericalRepresentation)
+        frame = ITRS(
+            obstime=frame.obstime, representation_type=SphericalRepresentation
+        )
     return frame
 
 

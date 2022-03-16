@@ -18,8 +18,7 @@ cosmogrb_config["gbm"]["orbit"]["use_random_time"] = False
 @pytest.fixture(scope="session")
 def client():
 
-    cluster = LocalCluster(n_workers=4, nanny=False,
-                            threads_per_worker=1)
+    cluster = LocalCluster(n_workers=4, nanny=False, threads_per_worker=1)
     client = Client(cluster)
 
     yield client

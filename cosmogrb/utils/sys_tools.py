@@ -8,37 +8,66 @@ import sys
 
 ATTRIBUTES = dict(
     list(
-        zip([
-            'bold', 'dark', '', 'underline', 'blink', '', 'reverse',
-            'concealed'
-        ], list(range(1, 9)))))
+        zip(
+            [
+                'bold',
+                'dark',
+                '',
+                'underline',
+                'blink',
+                '',
+                'reverse',
+                'concealed',
+            ],
+            list(range(1, 9)),
+        )
+    )
+)
 del ATTRIBUTES['']
 
-ATTRIBUTES_RE = r'\033\[(?:%s)m' % '|'  \
-                .join(['%d' % v for v in ATTRIBUTES.values()])
+ATTRIBUTES_RE = r'\033\[(?:%s)m' % '|'.join(
+    ['%d' % v for v in ATTRIBUTES.values()]
+)
 
 HIGHLIGHTS = dict(
     list(
-        zip([
-            'on_grey', 'on_red', 'on_green', 'on_yellow', 'on_blue',
-            'on_magenta', 'on_cyan', 'on_white'
-        ], list(range(40, 48)))))
+        zip(
+            [
+                'on_grey',
+                'on_red',
+                'on_green',
+                'on_yellow',
+                'on_blue',
+                'on_magenta',
+                'on_cyan',
+                'on_white',
+            ],
+            list(range(40, 48)),
+        )
+    )
+)
 
-HIGHLIGHTS_RE = r'\033\[(?:%s)m' % '|'  \
-                .join(['%d' % v for v in HIGHLIGHTS.values()])
+HIGHLIGHTS_RE = r'\033\[(?:%s)m' % '|'.join(
+    ['%d' % v for v in HIGHLIGHTS.values()]
+)
 
 COLORS = dict(
     list(
-        zip([
-            'grey',
-            'red',
-            'green',
-            'yellow',
-            'blue',
-            'magenta',
-            'cyan',
-            'white',
-        ], list(range(30, 38)))))
+        zip(
+            [
+                'grey',
+                'red',
+                'green',
+                'yellow',
+                'blue',
+                'magenta',
+                'cyan',
+                'white',
+            ],
+            list(range(30, 38)),
+        )
+    )
+)
 
 COLORS_RE = r'\033\[(?:%s)m' % '|'.join(['%d' % v for v in COLORS.values()])
 

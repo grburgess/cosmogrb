@@ -28,7 +28,8 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
         else:
 
             logger.debug(
-                f"lightcurve {lightcurve.name} has no source counts. SKIPPING")
+                f"lightcurve {lightcurve.name} has no source counts. SKIPPING"
+            )
 
     @abc.abstractmethod
     def _compute_detection(self):
@@ -53,10 +54,10 @@ class LightCurveAnalyzer(object, metaclass=abc.ABCMeta):
         return the exposure of the interval
 
 
-        :param tmin: 
-        :param tmax: 
-        :returns: 
-        :rtype: 
+        :param tmin:
+        :param tmax:
+        :returns:
+        :rtype:
 
         """
 

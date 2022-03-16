@@ -147,24 +147,27 @@ The following example demonstrates most of the features of this module.
 """  # noqa: E501
 from itertools import product
 
-from astropy.convolution import convolve_fft, Gaussian2DKernel
+import numpy as np
+from astropy import units as u
+from astropy.convolution import Gaussian2DKernel, convolve_fft
 from astropy.coordinates import SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time
 from astropy.visualization.wcsaxes import WCSAxes
-from astropy.visualization.wcsaxes.formatter_locator import AngleFormatterLocator
+from astropy.visualization.wcsaxes.formatter_locator import (
+    AngleFormatterLocator,
+)
 from astropy.visualization.wcsaxes.frame import EllipticalFrame
 from astropy.wcs import WCS
-from astropy import units as u
 from matplotlib import rcParams
 from matplotlib.offsetbox import AnchoredOffsetbox
 from matplotlib.patches import ConnectionPatch, FancyArrowPatch, PathPatch
 from matplotlib.projections import projection_registry
-import numpy as np
 from reproject import reproject_from_healpix
 from scipy.optimize import minimize_scalar
-from .angle import reference_angle_deg
+
 from . import itrs_frame_monkeypatch
+from .angle import reference_angle_deg
 
 itrs_frame_monkeypatch.install()
 
@@ -189,7 +192,9 @@ class WCSInsetPatch(PathPatch):
 
     def get_path(self):
         frame = self._ax.coords.frame
-        return frame.patch.get_path().interpolated(50).transformed(frame.transform)
+        return (
+            frame.patch.get_path().interpolated(50).transformed(frame.transform)
+        )
 
 
 class WCSInsetConnectionPatch(ConnectionPatch):
@@ -204,7 +209,8 @@ class WCSInsetConnectionPatch(ConnectionPatch):
             loc = int(loc)
         corners = ax_inset.viewLim.corners()
         transform = (
-            ax_inset.coords.frame.transform + ax.coords.frame.transform.inverted()
+            ax_inset.coords.frame.transform
+            + ax.coords.frame.transform.inverted()
         )
         xy_inset = corners[self._corners_map[loc]]
         xy = transform.transform_point(xy_inset)
@@ -275,7 +281,9 @@ class AutoScaledWCSAxes(WCSAxes):
 
         """
         return self.add_patch(
-            WCSInsetPatch(ax, *args, transform=self.get_transform("world"), **kwargs)
+            WCSInsetPatch(
+                ax, *args, transform=self.get_transform("world"), **kwargs
+            )
         )
 
     def connect_inset_axes(self, ax, loc, *args, **kwargs):
@@ -302,7 +310,9 @@ class AutoScaledWCSAxes(WCSAxes):
         patch : `matplotlib.patches.ConnectionPatch`
 
         """
-        return self.add_patch(WCSInsetConnectionPatch(self, ax, loc, *args, **kwargs))
+        return self.add_patch(
+            WCSInsetConnectionPatch(self, ax, loc, *args, **kwargs)
+        )
 
     def compass(self, x, y, size):
         """Add a compass to indicate the north and east directions.
@@ -359,7 +369,13 @@ class AutoScaledWCSAxes(WCSAxes):
         return self.add_patch(ScaleBar(self, *args, **kwargs))
 
     def _reproject_hpx(
-        self, data, hdu_in=None, order="bilinear", nested=False, field=0, smooth=None
+        self,
+        data,
+        hdu_in=None,
+        order="bilinear",
+        nested=False,
+        field=0,
+        smooth=None,
     ):
         if isinstance(data, np.ndarray):
             data = (data, self.header["RADESYS"])
@@ -423,7 +439,12 @@ class AutoScaledWCSAxes(WCSAxes):
 
         """  # noqa: E501
         img = self._reproject_hpx(
-            data, hdu_in=hdu_in, order=order, nested=nested, field=field, smooth=smooth
+            data,
+            hdu_in=hdu_in,
+            order=order,
+            nested=nested,
+            field=field,
+            smooth=smooth,
         )
         return self.contour(img, **kwargs)
 
@@ -462,7 +483,12 @@ class AutoScaledWCSAxes(WCSAxes):
 
         """  # noqa: E501
         img = self._reproject_hpx(
-            data, hdu_in=hdu_in, order=order, nested=nested, field=field, smooth=smooth
+            data,
+            hdu_in=hdu_in,
+            order=order,
+            nested=nested,
+            field=field,
+            smooth=smooth,
         )
         return self.contourf(img, **kwargs)
 
@@ -501,7 +527,12 @@ class AutoScaledWCSAxes(WCSAxes):
 
         """  # noqa: E501
         img = self._reproject_hpx(
-            data, hdu_in=hdu_in, order=order, nested=nested, field=field, smooth=smooth
+            data,
+            hdu_in=hdu_in,
+            order=order,
+            nested=nested,
+            field=field,
+            smooth=smooth,
         )
         return self.imshow(img, **kwargs)
 
@@ -520,10 +551,14 @@ class ScaleBar(FancyArrowPatch):
         self._transAxesToWorld = (
             ax.transAxes - ax.transData
         ) + ax.coords.frame.transform
-        dx = minimize_scalar(self._func, args=xy, bounds=[0, 1 - x], method="bounded").x
+        dx = minimize_scalar(
+            self._func, args=xy, bounds=[0, 1 - x], method="bounded"
+        ).x
         custom_kwargs = kwargs
         kwargs = dict(
-            capstyle="round", color="black", linewidth=rcParams["lines.linewidth"],
+            capstyle="round",
+            color="black",
+            linewidth=rcParams["lines.linewidth"],
         )
         kwargs.update(custom_kwargs)
         super().__init__(
@@ -619,11 +654,15 @@ class Globe(AutoScaledWCSAxes):
         }
         if rotate is not None:
             header["LONPOLE"] = u.Quantity(rotate).to_value(u.deg)
-        super().__init__(*args, frame_class=EllipticalFrame, header=header, **kwargs)
+        super().__init__(
+            *args, frame_class=EllipticalFrame, header=header, **kwargs
+        )
 
 
 class Zoom(AutoScaledWCSAxes):
-    def __init__(self, *args, center="0d 0d", radius="1 deg", rotate=None, **kwargs):
+    def __init__(
+        self, *args, center="0d 0d", radius="1 deg", rotate=None, **kwargs
+    ):
         center = SkyCoord(center).icrs
         radius = u.Quantity(radius).to(u.deg).value
         header = {
@@ -663,7 +702,9 @@ class AllSkyAxes(AutoScaledWCSAxes):
             "CTYPE2": self._ycoord + "-" + self._wcsprj,
             "RADESYS": self._radesys,
         }
-        super().__init__(*args, frame_class=EllipticalFrame, header=header, **kwargs)
+        super().__init__(
+            *args, frame_class=EllipticalFrame, header=header, **kwargs
+        )
         self.coords[0].set_ticks(spacing=45 * u.deg)
         self.coords[1].set_ticks(spacing=30 * u.deg)
         self.coords[0].set_ticklabel(exclude_overlapping=True)

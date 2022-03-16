@@ -8,6 +8,7 @@ from interpolation import interp
 from numba import float64, int32
 from numba.experimental import jitclass
 
+
 class jitpickler:
     '''
     pickler
@@ -45,6 +46,7 @@ class jitpickler:
 
 def jitpickle(cls):
     decoratorkw = '_decorator'
+
     @wraps(cls)
     def decorator(*args, **kwargs):
         if kwargs.get(decoratorkw, True):
@@ -53,23 +55,21 @@ def jitpickle(cls):
         else:
             kwargs.pop(decoratorkw, None)
             return cls(*args, **kwargs)
+
     return decorator
 
 
-
-spec = [("x", nb.float64[:] ),
-        ("y", nb.float64[:] ),
-        ("xmin", nb.float32 ),
-        ("xmax", nb.float32 ),
-
-
+spec = [
+    ("x", nb.float64[:]),
+    ("y", nb.float64[:]),
+    ("xmin", nb.float32),
+    ("xmax", nb.float32),
 ]
 
 
 @jitpickle
 @nb.experimental.jitclass(spec)
 class Interp1D(object):
-
     def __init__(self, x, y, xmin, xmax):
 
         self.x = x
@@ -85,8 +85,8 @@ class Interp1D(object):
 
         for i in range(v.shape[0]):
             if v[i] > self.xmax:
-                out[i] = 0.
+                out[i] = 0.0
             elif v[i] < self.xmin:
-                out[i] = 0.
+                out[i] = 0.0
 
         return out

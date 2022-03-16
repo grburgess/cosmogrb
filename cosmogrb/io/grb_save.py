@@ -1,10 +1,12 @@
-import h5py
 import collections
+
+import h5py
 import pandas as pd
 from IPython.display import display
-from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
+
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 from cosmogrb.response.response import Response
+from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
 
 
 class GRBSave(collections.UserDict):
@@ -23,11 +25,11 @@ class GRBSave(collections.UserDict):
     ):
         """
 
-        :param grb_name: 
-        :param lightcurves: 
-        :param responses: 
-        :returns: 
-        :rtype: 
+        :param grb_name:
+        :param lightcurves:
+        :param responses:
+        :returns:
+        :rtype:
 
         """
 
@@ -47,7 +49,9 @@ class GRBSave(collections.UserDict):
 
         for k, v in responses.items():
 
-            assert isinstance(v, Response), print(f"{k} is not of type Response")
+            assert isinstance(v, Response), print(
+                f"{k} is not of type Response"
+            )
 
         for key1, key2 in zip(responses.keys(), lightcurves.keys()):
 
@@ -64,7 +68,9 @@ class GRBSave(collections.UserDict):
 
         for key in lightcurves.keys():
 
-            data[key] = dict(lightcurve=lightcurves[key], response=responses[key])
+            data[key] = dict(
+                lightcurve=lightcurves[key], response=responses[key]
+            )
 
         #
 
@@ -153,11 +159,15 @@ class GRBSave(collections.UserDict):
             z = f.attrs["z"]
             duration = f.attrs["duration"]
 
-            source_params = recursively_load_dict_contents_from_group(f, "source")
+            source_params = recursively_load_dict_contents_from_group(
+                f, "source"
+            )
 
             try:
 
-                extra_info = recursively_load_dict_contents_from_group(f, "extra_info")
+                extra_info = recursively_load_dict_contents_from_group(
+                    f, "extra_info"
+                )
 
             except:
 

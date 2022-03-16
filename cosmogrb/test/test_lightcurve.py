@@ -1,5 +1,5 @@
-from cosmogrb.utils.package_utils import get_path_of_data_file
 from cosmogrb.io.grb_save import GRBSave
+from cosmogrb.utils.package_utils import get_path_of_data_file
 
 
 def test_lightcurve_plotting(grb):

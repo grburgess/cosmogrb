@@ -31,16 +31,17 @@ def Vector(numba_type):
         @property
         def arr(self):
             """Return the subarray."""
-            return self.full_arr[:self.n]
+            return self.full_arr[: self.n]
 
         @property
         def last(self):
             """The last element in the array."""
             if self.n:
-                return self.full_arr[self.n-1]
+                return self.full_arr[self.n - 1]
             else:
                 raise IndexError(
-                    "This numbavec has no elements: cannot return 'last'.")
+                    "This numbavec has no elements: cannot return 'last'."
+                )
 
         @property
         def first(self):
@@ -49,7 +50,8 @@ def Vector(numba_type):
                 return self.full_arr[0]
             else:
                 raise IndexError(
-                    "This numbavec has no elements: cannot return 'first'.")
+                    "This numbavec has no elements: cannot return 'first'."
+                )
 
         def clear(self):
             """Remove all elements from the array."""
@@ -66,7 +68,7 @@ def Vector(numba_type):
             """
             n_required = self.size + other.size
             self.reserve(n_required)
-            self.full_arr[self.size:n_required] = other
+            self.full_arr[self.size : n_required] = other
             self.n = n_required
             return self
 
@@ -91,7 +93,7 @@ def Vector(numba_type):
             """
             if n > self.m:  # Only change size if we are
                 temp = np.empty(int(n), dtype=numba_type)
-                temp[:self.n] = self.arr
+                temp[: self.n] = self.arr
                 self.full_arr = temp
                 self.m = n
             return self
@@ -105,13 +107,13 @@ def Vector(numba_type):
 
         def __array__(self):
             """Array inteface for Numpy compatibility."""
-            return self.full_arr[:self.n]
+            return self.full_arr[: self.n]
 
         def _expand(self):
             """Internal function that handles the resizing of the array."""
             self.m = int(self.m * _EXPANSION_CONSTANT_) + 1
             temp = np.empty(self.m, dtype=numba_type)
-            temp[:self.n] = self.full_arr[:self.n]
+            temp[: self.n] = self.full_arr[: self.n]
             self.full_arr = temp
 
         def set_to(self, arr):
@@ -121,7 +123,7 @@ def Vector(numba_type):
             ---------
             arr : 1d array
                 Array to set this vector to. After this operation, self.arr
-                will be equal to arr. The dtype of this array must be the 
+                will be equal to arr. The dtype of this array must be the
                 same dtype as used to create the vector. Cannot be a readonly
                 vector.
             """
@@ -135,19 +137,24 @@ def Vector(numba_type):
             ---------
             arr : 1d array
                 Array to set this vector to. After this operation, self.arr
-                will be equal to arr. The dtype of this array must be the 
+                will be equal to arr. The dtype of this array must be the
                 same dtype as used to create the vector.
             """
             self.full_arr = arr.copy()
             self.n = self.m = arr.size
 
     if numba_type not in Vector._saved_type:
-        spec = [("n", numba.uint64),
-                ("m", numba.uint64),
-                ("full_arr", numba_type[:])]
-        Vector._saved_type[numba_type] = numba.experimental.jitclass(spec)(_Vector)
+        spec = [
+            ("n", numba.uint64),
+            ("m", numba.uint64),
+            ("full_arr", numba_type[:]),
+        ]
+        Vector._saved_type[numba_type] = numba.experimental.jitclass(spec)(
+            _Vector
+        )
 
     return Vector._saved_type[numba_type]
+
 
 Vector._saved_type = dict()
 

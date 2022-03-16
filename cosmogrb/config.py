@@ -68,7 +68,9 @@ if _config_file.is_file():
 
     _local_config = OmegaConf.load(_config_file)
 
-    cosmogrb_config: CosmogrbConfig = OmegaConf.merge(cosmogrb_config, _local_config)
+    cosmogrb_config: CosmogrbConfig = OmegaConf.merge(
+        cosmogrb_config, _local_config
+    )
 
 # Write defaults
 else:

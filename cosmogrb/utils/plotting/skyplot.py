@@ -1,9 +1,12 @@
-from astropy.coordinates import SkyCoord
 import matplotlib.pyplot as plt
+from astropy.coordinates import SkyCoord
+
 from cosmogrb.utils.plotting.projections import *
 
 
-def skyplot(ax=None, projection="astro degrees mollweide", center=None, radius=10.0):
+def skyplot(
+    ax=None, projection="astro degrees mollweide", center=None, radius=10.0
+):
 
     if ax is None:
 

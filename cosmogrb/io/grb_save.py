@@ -1,10 +1,13 @@
-import h5py
 import collections
+
+import h5py
+import numpy as np
 import pandas as pd
 from IPython.display import display
-from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
+
 from cosmogrb.lightcurve.light_curve_storage import LightCurveStorage
 from cosmogrb.response.response import Response
+from cosmogrb.utils.hdf5_utils import recursively_load_dict_contents_from_group
 
 
 class GRBSave(collections.UserDict):
@@ -212,7 +215,7 @@ class GRBSave(collections.UserDict):
 
                 
                 
-                rsp._separation_angle = separation_angle
+                rsp._separation_angle = np.deg2rad(separation_angle)
 
                 responses[lc_name] = rsp
 

@@ -41,8 +41,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip wheel
-        pip install decorator==4.3
-        pip install --upgrade flake8 numpy numba extension-helpers coverage pytest pytest-cov cython codecov
+        python -m pip install decorator==4.3
+        python -m pip install --upgrade flake8 numpy numba tempita extension-helpers coverage pytest pytest-cov cython codecov
         python setup.py install
     - name: Lint with flake8
       run: |

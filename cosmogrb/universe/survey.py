@@ -284,17 +284,18 @@ class Survey(collections.OrderedDict):
 
             f.attrs["n_grbs"] = self._n_grbs
             f.attrs["is_processed"] = self._is_processed
-            f.attrs["population_file"] = self._population_file
+            f.attrs["population_file"] = np.string_(self._population_file)
 
             grbs = f.create_dataset(
-                "grb_saves", data=np.array(self._grb_save_files, dtype=dt)
+                "grb_saves", 
+                data=np.array(self._grb_save_files, dtype = str).astype(dt)
             )
 
             if self._is_processed:
 
                 grb_dets = f.create_dataset(
                     "grb_dets",
-                    data=np.array(self._grb_detector_files, dtype=dt),
+                    data=np.array(self._grb_detector_files, dtype=dt)
                 )
 
     @classmethod

@@ -1,6 +1,6 @@
 import numpy as np
 
-from cosmogrb.utils.plotting import step_plot
+from cosmogrb.utils.plotting.step_plot import step_plot
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):

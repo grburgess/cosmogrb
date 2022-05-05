@@ -152,7 +152,7 @@ class Universe(object, metaclass=abc.ABCMeta):
         """
 
         Save the infomation from the simulation to
-        and HDF5 file
+        an HDF5 file
 
         :param file_name:
         :returns:

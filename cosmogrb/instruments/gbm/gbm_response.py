@@ -31,6 +31,7 @@ _det_translate = dict(
 )
 
 
+
 class GBMResponse(Response):
     def __init__(
         self,
@@ -39,6 +40,7 @@ class GBMResponse(Response):
         dec: float,
         radius: float,
         height: float,
+        rng: np.random._generator.Generator,
         save: float = False,
         name=None,
     ):
@@ -69,7 +71,10 @@ class GBMResponse(Response):
 
         if cosmogrb_config["gbm"]["orbit"]["use_random_time"]:
 
-            time: float = gbm_orbit.random_time
+            # make sure to put all detectors at same position 
+            # in orbit by passing random number generator
+
+            time: float = gbm_orbit.random_time(rng)
 
         else:
 
@@ -238,7 +243,7 @@ class GBMResponse(Response):
 
 
 class NaIResponse(GBMResponse):
-    def __init__(self, detector_name, ra, dec, save=False, name=None):
+    def __init__(self, detector_name, ra, dec, rng, save=False, name=None):
 
         super(NaIResponse, self).__init__(
             ra=ra,
@@ -246,13 +251,14 @@ class NaIResponse(GBMResponse):
             detector_name=detector_name,
             radius=0.5 * 12.7,
             height=1.27,
+            rng=rng,
             save=save,
             name=name,
         )
 
 
 class BGOResponse(GBMResponse):
-    def __init__(self, detector_name, ra, dec, save=False, name=None):
+    def __init__(self, detector_name, ra, dec, rng, save=False, name=None):
 
         super(BGOResponse, self).__init__(
             detector_name=detector_name,
@@ -260,6 +266,7 @@ class BGOResponse(GBMResponse):
             dec=dec,
             radius=0.5 * 12.7,
             height=12.7,
+            rng=rng,
             save=save,
             name=name,
         )

@@ -48,10 +48,13 @@ class GBMOrbit(object):
         """
         return self._T0
 
-    @property
-    def random_time(self):
+    def random_time(self,rng):
 
-        time = np.random.uniform(0, self._maximum_time)
+        # sample from chosen random number generator 
+        # (same for all detectors for one GRB)
+
+        time = rng.uniform(0, self._maximum_time)
+
         self._used_times.append(time)
 
         return time

@@ -15,7 +15,7 @@ logger = setup_logger(__name__)
 
 
 class Universe(object, metaclass=abc.ABCMeta):
-    """Documentation for Universe"""
+    """Generate a Universe of GRBs from a population file (output popsynth)"""
 
     def __init__(
         self,
@@ -30,9 +30,9 @@ class Universe(object, metaclass=abc.ABCMeta):
 
         :param population_file: a popsynth population file name
         :type population_file: str
-        :param grb_base_name:
+        :param grb_base_name: base name of saved GRB files
         :type grb_base_name: str
-        :param save_path:
+        :param save_path: path where GRB files are stored
         :type save_path: str
         :returns:
 

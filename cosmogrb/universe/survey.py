@@ -164,6 +164,28 @@ class Survey(collections.OrderedDict):
     def n_grbs(self) -> int:
         return self._n_grbs
 
+    @property
+    def names_detected_grbs(self):
+        return np.array(self._names)[self._detected]
+
+    @property
+    def names_grbs(self):
+        return np.array(self._names)
+
+    @property
+    def mask_detected_grbs(self):
+        #length of array = number of selected GRBs by popsynth
+        #True: GRB was detected, False: GRB was NOT detected
+        return self._detected
+
+    @property
+    def grb_save_files(self):
+        return np.array(self._grb_save_files)
+
+    @property
+    def files_detected_grbs(self):
+        return np.array(self._grb_save_files)[self._detected]
+
     def info(self) -> None:
         """
         display the information about the survey
@@ -225,7 +247,7 @@ class Survey(collections.OrderedDict):
                 _submit([grb_file, detector_type, kwargs])
 
         # the survey has now had its triggers run
-        # so lets flip its status and make sure that when
+        # so lets flip its status and make sure that
         # when we save it, we record the new status
 
         self._is_processed = True
@@ -301,7 +323,7 @@ class Survey(collections.OrderedDict):
     @classmethod
     def from_file(cls, file_name):
         """
-        create a universe
+        create a survey
 
         :param cls:
         :param file_name:

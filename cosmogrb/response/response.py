@@ -79,7 +79,7 @@ class Response(object):
 
         ea_curve = self._matrix.sum(axis=1)
 
-        # we just a numba jitclass to interpolate
+        # we use a numba jitclass to interpolate
         # we want this passable to functions locally
 
         self.effective_area = Interp1D(

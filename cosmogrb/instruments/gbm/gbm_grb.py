@@ -1,4 +1,6 @@
 import logging
+import numpy as np
+from time import time
 
 from cosmogrb.grb import GRB, SourceParameter
 from cosmogrb.instruments.gbm.gbm_background import GBMBackground
@@ -81,7 +83,15 @@ class GBMGRB(GRB):
 
     def _setup(self):
 
+        # set a random seed to make sure that all detectors are set at same 
+        # same random time in orbit = same location in orbit for one GRB
+
+        random_seed = int(str(int(time()))[::-1])
+
         for det in self._gbm_detectors:
+
+            rng = np.random.default_rng(seed=random_seed)
+
             if det[0] == "b":
 
                 logger.debug(
@@ -89,7 +99,7 @@ class GBMGRB(GRB):
                 )
 
                 rsp = BGOResponse(
-                    det, self.ra, self.dec, save=False, name=self.name
+                    det, self.ra, self.dec, save=False, name=self.name, rng=rng
                 )
 
             else:
@@ -99,7 +109,7 @@ class GBMGRB(GRB):
                 )
 
                 rsp = NaIResponse(
-                    det, self.ra, self.dec, save=False, name=self.name
+                    det, self.ra, self.dec, save=False, name=self.name, rng=rng
                 )
 
             self._add_response(det, rsp)

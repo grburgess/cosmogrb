@@ -134,6 +134,26 @@ class GRB(object, metaclass=GRBMeta):
         ].display_energy_dependent_light_curve(
             time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
         )
+    
+    def display_time_dependent_spectrum(
+        self, time, energy, ax=None, cmap="viridis", **kwargs
+    ):
+        """FIXME! briefly describe function
+
+        :param time:
+        :param energy:
+        :param ax:
+        :param cmap:
+        :returns:
+        :rtype:
+
+        """
+
+        list(self._lightcurves.values())[
+            0
+        ].display_time_dependent_spectrum(
+            time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
+        )
 
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function

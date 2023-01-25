@@ -473,7 +473,7 @@ class LightCurveStorage(object):
 
         """
 
-        idx = np.ones_like(times, dtype=bool)
+        idx = np.zeros_like(times, dtype=bool)
 
         # filter times
 

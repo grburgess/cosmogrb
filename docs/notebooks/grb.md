@@ -5,10 +5,10 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.8.0
+      format_version: '1.3'
+      jupytext_version: 1.14.1
   kernelspec:
-    display_name: python3
+    display_name: Python 3 (ipykernel)
     language: python
     name: python3
 ---
@@ -16,12 +16,13 @@ jupyter:
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-%matplotlib inline
-#from jupyterthemes import jtplot
-#plt.style.use('mike') 
-#jtplot.style(context='talk', fscale=1, grid=False)
-
+#print(plt.style.available)
 import cosmogrb
+```
+
+```python
+%matplotlib widget
+plt.style.use('seaborn-v0_8-pastel') 
 ```
 
 # GRBs
@@ -45,7 +46,7 @@ grb = cosmogrb.gbm.GBMGRB_CPL(
     ra=312.0,
     dec=-62.0,
     z=1.0,
-    peak_flux=5e-7,
+    peak_flux=1e-6,
     alpha=-0.66,
     ep=500.0,
     tau=2.0,
@@ -66,14 +67,20 @@ grb.info()
 time = np.linspace(0, 20, 500)
 
 grb.display_energy_integrated_light_curve(time, color="#A363DE");
-
-
 ```
 
 ```python hidden=true
 energy = np.logspace(1, 3, 1000)
 
 grb.display_energy_dependent_light_curve(time, energy, cmap='PRGn', lw=.25, alpha=.5)
+```
+
+```python
+fig,ax = plt.subplots(figsize=(7,5))
+time = np.linspace(0, 5, 15)
+energy = np.logspace(1, 3, 100)
+grb.display_time_dependent_spectrum(time,energy,ax=ax)
+ax.set_ylim(1e-3,9e2)
 ```
 
 ## Simulate the GRB 
@@ -139,11 +146,13 @@ for k,v  in grb_reload.items():
 axes[3,2].set_visible(False)  
 axes[3,3].set_visible(False)    
 plt.tight_layout()
+plt.show()
 ```
 
 And we can look at the generated count spectra/
 
 ```python
+%matplotlib widget
 fig, axes = plt.subplots(4,4,sharex=False,sharey=False,figsize=(10,10))
 row=0
 col = 0
@@ -153,9 +162,9 @@ for k, v in grb_reload.items():
     
     lightcurve = v['lightcurve']
     
-    lightcurve.display_count_spectrum(tmin=0, tmax=5, ax=ax,color='#25C68C')
-    lightcurve.display_count_spectrum_source(tmin=0, tmax=5, ax=ax,color="#A363DE")
-    lightcurve.display_count_spectrum_background(tmin=0, tmax=5, ax=ax, color="#2C342E")
+    lightcurve.display_count_spectrum(tmin=0, tmax=5,ax=ax,color='#25C68C',label='All')
+    lightcurve.display_count_spectrum_source(tmin=0, tmax=5, ax=ax,color="#A363DE",label='Source')
+    lightcurve.display_count_spectrum_background(tmin=0, tmax=5, ax=ax, color="#2C342E",label='Bkg')
     ax.set_title(k,size=8)
     
     if col < 3:
@@ -163,7 +172,8 @@ for k, v in grb_reload.items():
     else:
         row+=1
         col=0
-        
+
+axes[0,0].legend()
 axes[3,2].set_visible(False)  
 axes[3,3].set_visible(False)  
 plt.tight_layout()
@@ -175,7 +185,7 @@ In the case of GBM, we can convert the saved HDF5 files into TTE files for analy
 
 ```python
 cosmogrb.grbsave_to_gbm_fits("test_grb.h5")
-!ls SynthGRB_*
+#!ls SynthGRB_*
 ```
 
 ```python

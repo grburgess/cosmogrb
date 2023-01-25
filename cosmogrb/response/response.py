@@ -260,7 +260,7 @@ class Response(object):
             instrument_name,
         )
 
-        fits_file.writeto(filename, clobber=overwrite)
+        fits_file.writeto(filename, overwrite=overwrite)
 
 
 __all__ = ["Response"]

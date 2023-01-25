@@ -111,3 +111,9 @@ venv.bak/
 /docs/notebooks/*.rsp
 /docs/notebooks/*.fits
 /docs/notebooks/*.ipynb
+
+# hdf5
+*.h5
+
+# Dask worker space
+dask-worker-space/

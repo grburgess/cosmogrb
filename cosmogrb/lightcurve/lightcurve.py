@@ -220,6 +220,24 @@ class LightCurve(object):
             time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
         )
 
+    def display_time_dependent_spectrum(
+        self, time, energy, ax=None, cmap="viridis", **kwargs
+    ):
+        """FIXME! briefly describe function
+
+        :param time:
+        :param energy:
+        :param ax:
+        :param cmap:
+        :returns:
+        :rtype:
+
+        """
+
+        self._source.display_time_dependent_spectrum(
+            time=time, energy=energy, ax=ax, cmap=cmap, **kwargs
+        )
+
     def display_energy_integrated_light_curve(self, time, ax=None, **kwargs):
         """FIXME! briefly describe function
 

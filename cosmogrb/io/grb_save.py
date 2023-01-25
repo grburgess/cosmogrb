@@ -18,6 +18,7 @@ class GRBSave(collections.UserDict):
         dec,
         duration,
         z,
+        time_adjustment,
         lightcurves,
         responses,
         source_params,
@@ -72,7 +73,7 @@ class GRBSave(collections.UserDict):
                 lightcurve=lightcurves[key], response=responses[key]
             )
 
-        #
+
 
         super(GRBSave, self).__init__(data)
 
@@ -91,6 +92,7 @@ class GRBSave(collections.UserDict):
         self._dec = dec
         self._z = z
         self._duration = duration
+        self._time_adjustment = time_adjustment
 
     def __setitem__(self, key, value):
 
@@ -134,6 +136,10 @@ class GRBSave(collections.UserDict):
     @property
     def T0(self):
         return self._T0
+
+    @property
+    def time_adjustment(self):
+        return self._time_adjustment
 
     @property
     def extra_info(self):
@@ -247,6 +253,7 @@ class GRBSave(collections.UserDict):
             ra=ra,
             dec=dec,
             z=z,
+            time_adjustment = time_adjustment,
             duration=duration,
             lightcurves=lightcurves,
             responses=responses,
@@ -256,7 +263,7 @@ class GRBSave(collections.UserDict):
 
     def __repr__(self):
 
-        return self._output().to_string()
+        return self._output().to_string(float_format=lambda x: "{:.3e}".format(x))
 
     def info(self):
 

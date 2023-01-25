@@ -77,6 +77,24 @@ class Source(Sampler):
             time, energy, ax, cmap, **kwargs
         )
 
+    def display_time_dependent_spectrum(
+        self, time, energy, ax=None, cmap="viridis", **kwargs
+    ):
+        """FIXME! briefly describe function
+
+        :param time:
+        :param energy:
+        :param ax:
+        :param cmap:
+        :returns:
+        :rtype:
+
+        """
+
+        self._source_function.display_time_dependent_spectrum(
+            time, energy, ax, cmap, **kwargs
+        )
+
     def set_response(self, response):
         """
         called if there is no response upon creation
